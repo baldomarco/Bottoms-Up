@@ -1,3 +1,6 @@
+
+# Bob Muscarella web site  https://bobmuscarella.github.io/SDM-course/Exercise2.html
+
 # R test for LaTeX 
 
 library(gdalUtilities)
