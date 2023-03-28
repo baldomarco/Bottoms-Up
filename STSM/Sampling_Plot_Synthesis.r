@@ -4,11 +4,11 @@
 #                                27/02/2023  Sapienza - University of Rome
 
 
-#            This script reads in the yield table excel and based on that we can select species, 
-#           Site index and make a list of trees for iLand initialization for artifical landscapes.
+#            This script read and manipulate the Bottoms Up database of multi-taxonomic samples devided in plots
+#            for the study region of the Czech Republic and prepare the input tables required to synthesise the 
+#            forest and sites structures into the iLand model of forest dynamics and disturbances simulations
 
 
-# to convert a list of coordinates from angular to metric units in R
 # To convert a list of coordinates from angular to metric units in R
 # To set a smaller value for cellsize, you can modify the cellsize argument in the rasterize() function. For example, to set cellsize to 0.1, you can use the following 
 
