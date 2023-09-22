@@ -1080,7 +1080,7 @@ desired_columns <- select(data, x, y, species, treedb, treeht)      # Select the
 colnames(desired_columns)<-c("x","y","species","dbh","height")      # CHANGE THE NAME OF THE COLUMNS
 
 {desired_columns <- mutate(desired_columns, species = if_else(species == "abies", "piab", species))
-  desired_columns <- mutate(desired_columns, species = if_else(species == "alba", "abal", species))
+  # desired_columns <- mutate(desired_columns, species = if_else(species == "alba", "abal", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "decidua", "lade", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "sylvestris", "pisy", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "sylvatica", "fasy", species))
