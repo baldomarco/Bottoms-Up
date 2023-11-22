@@ -1,3 +1,15 @@
+
+#                                       Dr. Marco Baldo, MSc
+# 
+#                                11/10/2023  CZU and Sapienza - University of Rome 
+
+
+#            This script will read and manipulate the Bottoms Up database of multi-taxonomic samples divided into plots
+#            for the study region of the Czech Republic and prepare the input tables required to synthesize the 
+#            forest and sites structures into the iLand model of forest dynamics and disturbances simulations
+
+#            This a clean and automatized script to synthesize the whole Bottoms-Up database into input tables readable in iLand model
+
 library(geosphere)
 library(sf)
 library(ggpubr)
