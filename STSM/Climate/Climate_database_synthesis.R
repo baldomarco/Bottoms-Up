@@ -8,6 +8,9 @@
 # and based on the fact that this data needs to be consistent with the iLand
 # climete variables needed as input in the simulation model
 
+
+# Important to downoload the required files and example download the folder in https://zenodo.org/records/10193821
+
 library(readxl)
 library(dplyr)
 
