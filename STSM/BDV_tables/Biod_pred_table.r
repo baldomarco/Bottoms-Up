@@ -1,3 +1,5 @@
+# Missing the folder with the full set of plots -> find it in Zenedo Marco Baldo
+
 # Marco Baldo 25-07-2023
 # Create a table of predictors of multi-taxa biodiversity indicators in forest ecosystem of Czechia
 
