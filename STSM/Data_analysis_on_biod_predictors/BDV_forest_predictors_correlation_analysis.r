@@ -161,7 +161,7 @@ filtered_df <- subset(new_data, dbh_condition_2 & !treesp %in% species_to_remove
 # Print the filtered dataframe
 print(filtered_df)
 
-write.csv(filtered_df, "C:/iLand/2023/plot_bottoms_up/Jenik/hhh.csv")
+write.csv(filtered_df, "C:/iLand/2023/plot_bottoms_up/Jenik/broadl_filtered_results.csv")
 
 # Now sum the basal area 
 # Group by plotID and species, then calculate the sum of basal areas
@@ -274,5 +274,7 @@ species_proportions_L1 <- site_L1_proportions$SpeciesProportion
 
 # Print the array or string of species proportions
 cat("Species Proportions in Site L1:", species_proportions_L1, "\n")
+
+#-------------------------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------------------------
