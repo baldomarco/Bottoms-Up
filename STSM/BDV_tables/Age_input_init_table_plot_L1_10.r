@@ -24,19 +24,29 @@ filtered_age_L1_10 <- age_L1_10[, 12]
 rep_age <- rep(filtered_age_L1_10$`mean age`, each = 4)
 
 # Round just for the integers
-age <- as.integer(round(as.numeric(rep_age)))
+round_rep_age <- as.integer(round(as.numeric(rep_age)))
 
 # Create a new dataframe with the replicated values in a single column
-new_age_L1_10 <- data.frame(age)
+new_age_L1_10 <- data.frame(round_rep_age)
 
 # Print the new dataframe
 print(new_age_L1_10)
 
-mean(new_age_L1_10$age)
+mean(new_age_L1_10$round_rep_age)
 #-------------------------------------------------------------------------------
 # Combind columns between the init_L1_10 dataframe and age
-init_L1_10 <- bind_cols(init_L1_10, new_column = new_age_L1_10$age)
+init_L1_10 <- bind_cols(init_L1_10, age = new_age_L1_10$round_rep_age)
 
 # Write the updated data to the same path
-write.table(init_L1_10, file = "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/init/L1_10_init_age.txt", sep = ";", row.names = FALSE)
+
+write.table(init_L1_10, 
+            file = "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/init/L1_10_init_age.txt",
+            append = FALSE, 
+            quote = FALSE, 
+            sep = " ", 
+            eol = "\n", 
+            na = "NA",
+            dec = ".", 
+            row.names = FALSE, 
+            col.names = TRUE)
 
