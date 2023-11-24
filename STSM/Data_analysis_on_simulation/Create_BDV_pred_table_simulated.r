@@ -1,4 +1,6 @@
 library(RSQLite)
+library(readxl)
+library(writexl)
 
 # 4th scenarios browsing probability = 0.6
 
@@ -28,163 +30,115 @@ stand_4scen <- dbReadTable(db4, "stand")
 tree_4scen <- dbReadTable(db4, "tree")
 
 dbDisconnect(db4)    # close the file
-}
+
 
 # Create the LAI time series
 
-
-
-
+LAI <- landscape_4scen %>% 
+  group_by(year) %>%
+  summarise(LAI = sum(LAI))%>%
+  select(year, LAI)
+  
 # EDIT IT FOR THE PREDICTORS BA BROADLEAF - TREE_10_40 - BROAD>40
 
 #-------------------------------------------------------------------------------
-# Sum BA for every species in every plot
-
-# Group by plotID and species, then calculate the sum of basal areas
-summed_tree_areas <- new_data %>%
-  group_by(plotID, treesp) %>%
-  summarize(total_basal_area = sum(basal_area))
-
-# Print the resulting dataframe
-print(summed_tree_areas)
-
-unique_plots <- unique(summed_tree_areas$plotID)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
-print(unique_plots) # 99 plots
-
-write.csv(summed_tree_areas, "C:/iLand/2023/plot_bottoms_up/Jenik/summed_tree_areas.csv")
-
-# Calculate the Shannon diversity index
-shannon_index <- summed_tree_areas %>%
-  group_by(plotID) %>%
-  summarize(shannon = diversity(total_basal_area, base = exp(1)))
-
-# Print the resulting dataframe
-print(shannon_index)
-
-write.csv(shannon_index, "C:/iLand/2023/plot_bottoms_up/Jenik/shannon_index_ba.csv")
-
-#-------------------------------------------------------------------------------
 # Calculate the number of trees between 10 and 40 cm
-library(readxl)
-library(writexl)
 
 # Specify the range for DBH
 dbh_min <- 10
 dbh_max <- 40
 
-# Calculate the number of trees in each plot with DBH between 10 and 40 cm
-result <- data %>%
-  filter(treedb >= dbh_min, treedb <= dbh_max) %>%
-  group_by(plotID) %>%
+# Calculate the number of trees in each year with DBH between 10 and 40 cm
+tree_10_40 <- tree_4scen %>%
+  filter(dbh >= dbh_min, dbh <= dbh_max) %>%
+  group_by(year) %>%
   summarise(tree_10_40 = n())
 
-# Generate a list of all unique plotIDs
-all_plotIDs <- data %>%
-  distinct(plotID)
 
-# Left join the summarized data with the list of all unique plotIDs
-result <- left_join(all_plotIDs, result, by = "plotID")
+#-------------------------------------------------------------------------------
+# To define the species to be removed
+unique_sp <- unique(landscape_4scen$species)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
+print(unique_sp)
 
-# Replace NA values with 0
-result[is.na(result)] <- 0
+species_to_remove <- c("piab", "pisy", "abal",
+                       "lade")
 
-# Print or use the result
-print(result)
+# Use subset to filter the dataframe
+filtered_broadl <- subset(landscape_4scen, !species %in% species_to_remove)
 
-# In this modified script, we first generate a list of all unique plotID values and then use a left join to combine it with the summarized data. This ensures that even the plots with zero trees in the specified DBH range are included in the result. Finally, we replace any NA values with 0 to represent the plots with no matching trees in the given DBH range.
+# Print the filtered dataframe
+print(filtered_broadl)
 
-# Save the result to a new Excel file
-write_xlsx(result, "trees_10_40_file.xlsx")
+# Sum BA for every broadleaf species in every year
+summed_broadl_ba <- filtered_broadl %>%
+  group_by(year) %>%
+  summarize(basal_area_m2 = sum(basal_area_m2))%>%
+  select(year,basal_area_m2)
 
+View(summed_broadl_ba)
 
 #-------------------------------------------------------------------------------
 # Calculate the basal area only of the broadleave with a dbh > 40cm
-# Define the conditions for filtering
-dbh_condition_2 <- new_data$treedb > 40
 
-# To define the species to be removed
-unique_sp <- unique(new_data$treesp)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
-print(unique_sp) # in 99 plots
+# Create a data frame with all unique years
+all_years <- data.frame(year = unique(tree_4scen$year))
 
-species_to_remove <- c("Picea abies", "Pinus sylvestris", "Larix decidua",
-                       "Abies alba","Pinus nigra","Pinus strobus")
+# Perform left join with the summarization result
+broadl_40 <- all_years %>%
+  left_join(
+    tree_4scen %>%
+      group_by(year) %>%
+      filter(dbh > 40 & !species %in% species_to_remove) %>%
+      summarise(broadl_40 = n()),
+    by = "year"
+  ) %>%
+  replace(is.na(.), 0)
 
-# Use subset to filter the dataframe
-filtered_df <- subset(new_data, dbh_condition_2 & !treesp %in% species_to_remove)
-
-# Print the filtered dataframe
-print(filtered_df)
-
-write.csv(filtered_df, "C:/iLand/2023/plot_bottoms_up/Jenik/broadl_filtered_results.csv")
-
-# Now sum the basal area 
-# Group by plotID and species, then calculate the sum of basal areas
-
-summed_tree_areas_sp <- filtered_df %>%
-  group_by(plotID, treesp) %>%
-  summarize(total_basal_area = sum(basal_area))
-
-# Print the resulting dataframe
-print(summed_tree_areas_sp)
-
-write.csv(summed_tree_areas_sp, "C:/iLand/2023/plot_bottoms_up/Jenik/summed_tree_areas_sp_over40dbh.csv")
-
-# Do the same but only one value for each plot
-summed_tree_areas_plot <- filtered_df %>%
-  group_by(plotID) %>%
-  summarize(total_basal_area = sum(basal_area))
-
-# Print the resulting dataframe
-print(summed_tree_areas_plot)
-
-write.csv(summed_tree_areas_plot, "C:/iLand/2023/plot_bottoms_up/Jenik/summed_tree_ba_broadl_over40dbh.csv")
 
 #-------------------------------------------------------------------------------
-# Clean and harmonize 2 dataframes in the way to have the same plotID and n of rows
-
-# Filter df1 to keep only rows with plotID values that exist in df2
-tab2_broadl <- tab2 %>%
-  filter(plotID %in% summed_tree_areas_plot$plotID)
-
-# Use left_join to merge the harmonized dataframes based on plotID
-merged_df <- left_join(tab2_broadl, summed_tree_areas_plot, by = "plotID")
-
-# Print the merged dataframe
-print(merged_df)
-
-write.csv(merged_df, "C:/iLand/2023/plot_bottoms_up/Jenik/Bdv_predictors_table_final_broadl_40.csv")
-
-#-------------------------------------------------------------------------------
-{# Second way - To create the basal area of any plots per species from their dbh
-  
-  # Create a vector of DBH measurements for each tree in the plot
-  dbh_measurements <- c(30, 40, 35, 25, 42, 38)  # Replace with your actual DBH measurements
-  
-  # Calculate the basal area for each tree
-  basal_area_each_tree <- pi * (dbh_measurements / 200)^2  # Dividing by 2 and squaring gives area in square meters
-  
-  # Calculate the total basal area for the plot by summing the individual tree basal areas
-  total_basal_area <- sum(basal_area_each_tree)
-  
-  # Print the results
-  cat("Basal Area for Each Tree (in square meters):\n")
-  print(basal_area_each_tree)
-  
-  cat("\nTotal Basal Area for the Plot (in square meters):\n")
-  print(total_basal_area)
-}
-
-
-
-
 # Age - comes from the avarage age
 
+stand_age <- tree_4scen %>%
+  group_by(year) %>%
+  summarize(age = mean(age))
+stand_age <- round(stand_age)
 
+View(stand_age)
 
-
+#-------------------------------------------------------------------------------
 # DW volume - USE snags_c divided by 4 and converted into volume 
 # Alternative use the Carbon instead that volume
 
+#-----------------------------------------------------------------------------
+# CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
+
+totalC_kgha_iland <- data.frame(carbon_4scen %>% 
+                                  group_by(year) %>% 
+                                  summarise(tot_carbon=sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, regeneration_c, snags_c, snagsOther_c, downedWood_c, litter_c, soil_c)))
 
 
+# Good one
+totalC_kgha_DW_iland <- data.frame(carbon_4scen %>% 
+                                     group_by(year) %>% 
+                                     summarise(DW_C = sum(snags_c, snagsOther_c))) 
 
+# Create a new row with manually specified values
+new_row <- c(0, 4759.779)  # Add your values accordingly
+
+# Add the new row at the beginning of the data frame
+totalC_kgha_DW_iland <- rbind(new_row, totalC_kgha_DW_iland)
+
+# Print the modified data frame
+print(totalC_kgha_DW_iland)
+
+#-------------------------------------------------------------------------------
+# Merge the data frames Plot L1_10
+plot_L1_10_df_simul <- bind_cols(stand_age, 
+                                 DW_carbon = totalC_kgha_DW_iland$DW_C,
+                                 lai_sim = LAI$LAI,
+                                 ba_broadl = summed_broadl_ba$basal_area_m2,
+                                 trees_10_40 = tree_10_40$tree_10_40,
+                                 broadl_40 = broadl_40$broadl_40)
+
+
+write_xlsx(plot_L1_10_df_simul, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/tables_for_stat/plot_L1_10_df_simul.xlsx")
