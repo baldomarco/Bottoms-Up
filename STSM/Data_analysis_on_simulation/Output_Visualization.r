@@ -21,6 +21,7 @@ excel_sheets(t2)
 library(tidyr)
 library(dplyr)
 library(RSQLite)
+library(vegan)
 
 setwd("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/")
 
@@ -65,6 +66,10 @@ removals <- c()
 
 damage.all <- c()
 
+H_BA_heterogenity_scen <- c()
+
+landscape_removed_scen_natmor <- c()
+
 # damage.all<-c()
 
 # landscape_removed <- c()
@@ -72,6 +77,8 @@ damage.all <- c()
 # management <- ()
 
 variables.all <- c()
+
+plot_variables_all <- c()
 
 #-------------------------------------------------------------------------------
 # import the list of files within the folder in dataroot with .sqlite extension
@@ -174,6 +181,17 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   esp$BA[which(is.na(esp$BA)==T)]<-0
   
   #-----------------------------------------------------------------------------
+  # Create Shannon on BA heterogeneity
+  
+  # Calculate the Shannon diversity index
+  H_BA_heterogenity <- tree %>%
+    group_by(year, species) %>%
+    summarize(shannon_ba_heterog = diversity(basalArea, base = exp(1)))
+  
+  # Print the resulting dataframe
+  print(H_BA_heterogenity)
+  
+  #-----------------------------------------------------------------------------
   # CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
   
   ab.tot.c<- data.frame(carbon %>% 
@@ -222,6 +240,131 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # variables[which(is.na(damage$wind)==TRUE)] <-0                              # FOR MAKE THE na = 0 !!!! "
   
   head(variables)
+  
+#-------------------------------------------------------------------------------
+# Create tables for all variables of plot bdv predictors
+# Create the LAI time series
+  
+  LAI <- landscape %>% 
+    group_by(year) %>%
+    summarise(LAI = sum(LAI))%>%
+    select(year, LAI)
+  
+  # EDIT IT FOR THE PREDICTORS BA BROADLEAF - TREE_10_40 - BROAD>40
+  
+  #-------------------------------------------------------------------------------
+  # Calculate the number of trees between 10 and 40 cm
+  
+  # Specify the range for DBH
+  dbh_min <- 10
+  dbh_max <- 40
+  
+  # Calculate the number of trees in each year with DBH between 10 and 40 cm
+  tree_10_40 <- tree %>%
+    filter(dbh >= dbh_min, dbh <= dbh_max) %>%
+    group_by(year) %>%
+    summarise(tree_10_40 = n())
+  
+  
+  #-------------------------------------------------------------------------------
+  # To define the species to be removed
+  unique_sp <- unique(landscape$species)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
+
+  
+  species_to_remove <- c("piab", "pisy", "abal",
+                         "lade", "psme", "pini", 
+                         "pice")
+  
+  # Use subset to filter the dataframe
+  filtered_broadl <- subset(landscape, !species %in% species_to_remove)
+  
+  # Sum BA for every broadleaf species in every year
+  summed_broadl_ba <- filtered_broadl %>%
+    group_by(year) %>%
+    summarize(basal_area_m2 = sum(basal_area_m2))%>%
+    select(year,basal_area_m2)
+  
+  #-------------------------------------------------------------------------------
+  # Calculate the basal area only of the broadleave with a dbh > 40cm
+  
+  # Create a data frame with all unique years
+  all_years <- data.frame(year = unique(tree$year))
+  
+  # Perform left join with the summarization result
+  broadl_40 <- all_years %>%
+    left_join(
+      tree %>%
+        group_by(year) %>%
+        filter(dbh > 40 & !species %in% species_to_remove) %>%
+        summarise(broadl_40 = n()),
+      by = "year"
+    ) %>%
+    replace(is.na(.), 0)
+  
+  
+  #-------------------------------------------------------------------------------
+  # Age - comes from the avarage age
+  
+  stand_age <- tree %>%
+    group_by(year) %>%
+    summarize(age = mean(age))
+  stand_age <- round(stand_age)
+  
+  
+  #-------------------------------------------------------------------------------
+  # DW volume - USE snags_c divided by 4 and converted into volume 
+  # Alternative use the Carbon instead that volume
+  
+  #-----------------------------------------------------------------------------
+  # CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
+  
+  totalC_kgha_iland <- data.frame(carbon %>% 
+                                    group_by(year) %>% 
+                                    summarise(totalC_kgha_iland=sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, regeneration_c, snags_c, snagsOther_c, downedWood_c, litter_c, soil_c)))
+  
+  # DW carbon total
+  total_DW_C_kgha <- data.frame(carbon %>% 
+                                    group_by(year) %>% 
+                                    summarise(total_DW_C_kgha=sum(snags_c, snagsOther_c, downedWood_c)))
+  
+  # Good one
+  standing_DW_C <- data.frame(carbon %>% 
+                                       group_by(year) %>% 
+                                       summarise(standing_DW_C = sum(snags_c))) 
+  
+  # Create a new row with manually specified values
+  new_row_1 <- c(0, 749)          # Add your values accordingly
+  new_row_2 <- c(0, 3966.662)  # Add your values accordingly : original 749+233+225
+  new_row_3 <- c(0, 283716.5)  # Add your values accordingly
+  
+  # Add the new row at the beginning of the data frame in all Carbon variables
+  totalC_kgha_iland <- rbind(new_row_3, totalC_kgha_iland)
+  total_DW_C_kgha <- rbind(new_row_2, total_DW_C_kgha)
+  standing_DW_C <- rbind(new_row_1, standing_DW_C)
+  
+  
+  #-------------------------------------------------------------------------------
+  # Merge the data frames Plot L1_10
+  plot_L1_10_df_simul <- bind_cols(stand_age, 
+                                   standing_DW_C = standing_DW_C$standing_DW_C,
+                                   totalC_kgha_iland = totalC_kgha_iland$totalC_kgha_iland,
+                                   total_DW_C_kgha = total_DW_C_kgha$total_DW_C_kgha,
+                                   lai_sim = LAI$LAI,
+                                   ba_broadl = summed_broadl_ba$basal_area_m2,
+                                   trees_10_40 = tree_10_40$tree_10_40,
+                                   broadl_40 = broadl_40$broadl_40)
+  
+
+  #-----------------------------------------------------------------------------
+  # CREATE A COLUMN WITH CUMULATIVE MORTALITY IN VOLUME
+  
+  landscape_removed_natmor <- landscape_removed %>%
+    filter(reason == "N") %>%
+    group_by(species) %>%
+    arrange(year) %>%  # Ensure the data is ordered by year before calculating cumulative sum
+    mutate(cumm_mortality_total_carbon = cumsum(total_carbon)) %>%
+    ungroup()
+  
   
   #-----------------------------------------------------------------------------
   # CREATE THE CALCULATION FOR DAMAGES LOOK LINE 370
@@ -344,13 +487,28 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # w <-rbind(w, wind)
 
   # CREATE THE VARIABLE FOR THE DIFFERENT WOOD REMOVAL ACTIVITY
+  # HERE IT IS NOT NEEDED TO CHANGE CASE TO RUN BECAUSE ALREADY DONE
   removals<-rbind(removals,ab.regcuts,ab.finalcuts,ab.thinnig,ab.salvaged)
   
   # CREATE THE VARIABLE DAMAGE FOR ALL THE RUNS
+  damage <-(damage %>% mutate(run=case))
   damage.all<-rbind(damage.all, damage)                                         # PUT ALL THE DAMAGE RUNS INTO A SINGLE DATAFRAME WITH DIFF CASES TO BE PLOT ALL TOGETHER IN LINE 370
   
   # CREATE THE VARIABLES DF FOR ALL THE RUNS
+  variables <-(variables %>% mutate(run=case))
   variables.all<-rbind(variables.all, variables) 
+  
+  # CREATE THE VARIABLE H of BA per species FOR ALL THE RUNS
+  H_BA_heterogenity <-(H_BA_heterogenity %>% mutate(run=case))
+  H_BA_heterogenity_scen <- rbind(H_BA_heterogenity_scen, H_BA_heterogenity)
+  
+  # CREATE THE VARIABLE NATURAL MORTALITY FOR ALL THE RUNS
+  landscape_removed_natmor <-(landscape_removed_natmor %>% mutate(run=case))
+  landscape_removed_scen_natmor <- rbind(landscape_removed_scen_natmor, landscape_removed_natmor)
+  
+  # CREATE THE VARIABLES NEEDED IN THE BDV STUDY
+  plot_L1_10_df_simul <-(plot_L1_10_df_simul %>% mutate(run=case))
+  plot_variables_all <- rbind(plot_variables_all, plot_L1_10_df_simul)
   
 }                                                                               # CLOSE THE WHOLE FOR CYCLE
 
@@ -367,8 +525,8 @@ library(ggplot2)
 library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231127/"
-pdf(paste0(dataroot, "20231127_mng_plot_L1_10_300.pdf"), height=8, width=12)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
+pdf(paste0(dataroot, "20231130_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -668,13 +826,16 @@ nm1 <- ggplot(landscape_removed_scen_natmor, aes(year,volume_m3, fill=factor(spe
   theme(plot.title = element_text(hjust = 0.5))
 
 
+# CUMULATIVE NATURAL MORTALITY
+P1
+
 # CARBON 
 
 snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
-  geom_area() +
+  geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Max Tree snag_C [iLand snag_C fun]")+
-  labs(x = "Year",y="snag_C [kg/ha]")+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -682,7 +843,7 @@ snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
 # Shannon
 
 H.count <- ggplot(variables.all, aes(x=year, y=H.count))+
-  geom_area() +
+  geom_line() +
   facet_wrap(~case, ncol=2)+
   ggtitle("Shannon Index on numbers of individuals per species")+
   labs(x = "Year",y="Shannon Index")+
@@ -691,8 +852,8 @@ H.count <- ggplot(variables.all, aes(x=year, y=H.count))+
 
 # Shannon
 
-H.count <- ggplot(variables.all, aes(x=year, y=H.VOL))+
-  geom_area() +
+H.VOL <- ggplot(variables.all, aes(x=year, y=H.VOL))+
+  geom_line() +
   facet_wrap(~case, ncol=2)+
   ggtitle("Shannon Index on volume proportion per species")+
   labs(x = "Year",y="Shannon Index")+
@@ -701,14 +862,130 @@ H.count <- ggplot(variables.all, aes(x=year, y=H.VOL))+
 
 # Shannon
 
-H.count <- ggplot(variables.all, aes(x=year, y=H.BA))+
-  geom_area() +
+H.BA <- ggplot(variables.all, aes(x=year, y=H.BA))+
+  geom_line() +
   facet_wrap(~case, ncol=2)+
   ggtitle("Shannon Index on basal area per species")+
   labs(x = "Year",y="Shannon Index")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
-########################################################## CLOSE EVERY PLOT
+#-------------------------------------------------------------------------------
+# Make new plots
+
+# TOTAL CARBON IN THE PLOT (LIVING + DEADWOOD + LITTER + SOIL)
+totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Total Plot Carbon [living trees - deadwood - litter - soil]")+
+  labs(x = "Year",y="snag_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+# TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS + DOWNED DEADWOOD)
+total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
+  labs(x = "Year",y="Deadwood C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+# TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
+standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
+  labs(x = "Year",y="snag_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+
+# Age mean
+
+g7 <- ggplot(dys_scen, aes(x=year, y=age_mean))+
+  geom_line() +
+  ggtitle("Avarage Tree Age")+
+  facet_wrap(~run, ncol=2)+
+  labs(x = "Year",y="Age mean [years]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+
+
+# BA BROADLEAVE SP
+
+ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
+  geom_line() +
+  ggtitle("BA BROADLEAVE SP")+
+  facet_wrap(~run, ncol=2)+
+  labs(x = "Year",y="BA BROADLEAVE SP [m2]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+
+# NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included
+
+trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
+  geom_line() +
+  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
+  facet_wrap(~run, ncol=2)+
+  labs(x = "Year",y="No Trees with dbh from 10cm to 40cm [No]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+# NUMBER OF BROADLEAVE TREES WITH DBH > 40cm
+
+broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
+  geom_line() +
+  ggtitle("NUMBER OF BROADLEAVE TREES WITH DBH > 40cm")+
+  facet_wrap(~run, ncol=2)+
+  labs(x = "Year",y="No broadleave trees with dbh > 40cm [No]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+# Cumulative Natural Mortality
+
+P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbon, color=species )) +
+  geom_line(size = 0.6) +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Cumulative Natural Mortality in Carbon") +
+  ylab("Total Carbon in Nat. Mortality [kg/ha]") +
+  xlab("Year") +
+  theme_bw() +
+  theme(
+    plot.title = element_text(hjust = 0.5, lineheight = 3, face = "bold", color = "black", size = 20),
+    axis.title.y = element_text(size = rel(1.8), angle = 90),
+    axis.title.x = element_text(size = rel(1.8), angle = 0)
+  )
+
+# Display the plot
+P1
+
+# Shannon entropy of single species basal area (heterogeneity of individuals dimensions)
+
+{H_BA_sp <- ggplot(H_BA_heterogenity_scen, aes(x=year, y=shannon_ba_heterog))+
+  geom_line() +
+  ggtitle("Shannon entropy of single species basal area (heterogeneity of individuals dimensions)")+
+  facet_wrap(~run, ncol=2)+
+  labs(x = "Year",y="Shannon entropy per sp on individuals BA")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()}
+
+
+species.to.keep<-c("piab", "fasy","qupe", "pisy")
+
+
+H_BA_heterogenity_scen2 <- H_BA_heterogenity_scen %>% filter(species %in% species.to.keep)
+
+ggplot(data=H_BA_heterogenity_scen2, aes(x=year, y=shannon_ba_heterog, color=species)) + 
+  geom_line(size=0.6)+
+  ggtitle("Shannon entropy of single species basal area (heterogeneity of individuals dimensions)") +
+  facet_wrap(~run, ncol=2)+
+  theme(plot.title = element_text(hjust = 0.5))+
+  ylab("Shannon entropy per sp on individuals BA")+  
+  theme_bw()
+
+########################################################## CLOSE EVERY PLOTs
 
 dev.off()
