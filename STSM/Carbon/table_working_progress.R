@@ -388,3 +388,17 @@ combined_data <- combined_data %>%
 print(combined_data)
 View(combined_data)
 writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/CZ_JH1_C_combined_data.xlsx")
+
+
+#----------------------------------------------------------------------------------
+# MAKE THE OPPOSITE PASS FROM CARBON IN SNAG POOL - ILAND, TO VOLUME 
+
+
+
+
+
+
+
+
+
+
