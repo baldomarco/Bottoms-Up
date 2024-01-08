@@ -1,6 +1,6 @@
-# Marco Baldo 25-11-2023
-# Create iLand simulation results from the Bottoms-Up model plots to analyze the multi-taxa biodiversity indicators in forest ecosystem of Czechia
-
+# Marco Baldo 14-12-2023
+# Create iLand simulation results from the Bottoms-Up model plots to analyze the multi-taxa biodiversity indicators in the forest ecosystems of Czechia
+# Refer the results and visualization to the pdf within this same GitHub folder: OK_final_20231214_BDV_mng_plot_L1_10_300.pdf
 
 # Jenik grid just to control if needed
 
