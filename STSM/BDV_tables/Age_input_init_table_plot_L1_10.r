@@ -1,7 +1,7 @@
 library(dplyr)
 library(readxl)
 library(writexl)
-
+library(ggplot2)
 
 # Import the required tables
 age_L1_10 <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Plot L1_10 TreeAgesDerivedfromYieldTables.xlsx")
