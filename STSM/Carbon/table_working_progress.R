@@ -157,7 +157,7 @@ quartiles
 
 --------------------------------------------------------------------------------
 # Theory behind the statistical function
-# {
+#
 # The `quantile` function calculates quantiles based on a specified probability distribution. The formula for calculating the quantiles is based on the definition of quantiles and the probability distribution. 
 #   
 #   The formula for the quantile at probability `p` (where `p` is a value between 0 and 1) is defined as:
@@ -173,7 +173,8 @@ quartiles
 #   The `quantile` function in R uses linear interpolation to calculate quantiles. It estimates the quantiles by finding the order statistics `x[j]` and `x[j+1]` based on the specified `p`, and then performs the linear interpolation using the formula above to estimate the quantile value.
 #   
 #   In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at p = 0.25, 0.5, 0.75).
-# }
+
+
 --------------------------------------------------------------------------------
 
 # Run it always otherwise you will lose the consistency between clean_deadwood_iland and decstag
@@ -249,7 +250,7 @@ most_common_genus <- clean_deadwood_iland %>%
 
                                                                            {# Alternative way with weighted mean
   # weighted mean
-  {# Look at the species proportion per plot to assign a classification to those piece of wood not classified. Here I decided to assign it at the plot dominant species
+  # Look at the species proportion per plot to assign a classification to those piece of wood not classified. Here I decided to assign it at the plot dominant species
     species_proportion <- clean_deadwood_iland %>%
       group_by(plotID, treesp) %>%
       summarise(volume = n()) %>%
@@ -263,7 +264,7 @@ most_common_genus <- clean_deadwood_iland %>%
         }
       )
     
-    unique(standing_lying_deadwood_data$typldw)}
+    unique(standing_lying_deadwood_data$typldw)
   }  
 
 # Replace "undetermined" with the most common value per "keyID"
