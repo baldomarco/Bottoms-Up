@@ -157,22 +157,23 @@ quartiles
 
 --------------------------------------------------------------------------------
 # Theory behind the statistical function
-{The `quantile` function calculates quantiles based on a specified probability distribution. The formula for calculating the quantiles is based on the definition of quantiles and the probability distribution. 
-  
-  The formula for the quantile at probability `p` (where `p` is a value between 0 and 1) is defined as:
-    
-    Q(p) = (1 - g) * x[j] + g * x[j+1]
-  
-  Where:
-    - `Q(p)` is the quantile at probability `p`.
-  - `x[j]` is the `j`-th order statistic, which is the data point just below the `p`-th percentile.
-  - `x[j+1]` is the `j+1`-th order statistic, which is the data point just above the `p`-th percentile.
-  - `g` is the fractional part of the index `j` (i.e., the decimal portion).
-  
-  The `quantile` function in R uses linear interpolation to calculate quantiles. It estimates the quantiles by finding the order statistics `x[j]` and `x[j+1]` based on the specified `p`, and then performs the linear interpolation using the formula above to estimate the quantile value.
-  
-  In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at p = 0.25, 0.5, 0.75).
-}
+# {
+# The `quantile` function calculates quantiles based on a specified probability distribution. The formula for calculating the quantiles is based on the definition of quantiles and the probability distribution. 
+#   
+#   The formula for the quantile at probability `p` (where `p` is a value between 0 and 1) is defined as:
+#     
+#     Q(p) = (1 - g) * x[j] + g * x[j+1]
+#   
+#   Where:
+#     - `Q(p)` is the quantile at probability `p`.
+#   - `x[j]` is the `j`-th order statistic, which is the data point just below the `p`-th percentile.
+#   - `x[j+1]` is the `j+1`-th order statistic, which is the data point just above the `p`-th percentile.
+#   - `g` is the fractional part of the index `j` (i.e., the decimal portion).
+#   
+#   The `quantile` function in R uses linear interpolation to calculate quantiles. It estimates the quantiles by finding the order statistics `x[j]` and `x[j+1]` based on the specified `p`, and then performs the linear interpolation using the formula above to estimate the quantile value.
+#   
+#   In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at p = 0.25, 0.5, 0.75).
+# }
 --------------------------------------------------------------------------------
 
 # Run it always otherwise you will lose the consistency between clean_deadwood_iland and decstag
@@ -391,14 +392,4 @@ writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/
 
 
 #----------------------------------------------------------------------------------
-# MAKE THE OPPOSITE PASS FROM CARBON IN SNAG POOL - ILAND, TO VOLUME 
-
-
-
-
-
-
-
-
-
-
+# MAKE THE OPPOSITE PASS FROM CARBON IN SNAG POOL - ILAND, TO VOLUME
