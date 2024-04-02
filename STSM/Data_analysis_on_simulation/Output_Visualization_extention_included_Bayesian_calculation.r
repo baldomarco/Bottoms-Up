@@ -9,8 +9,8 @@ library(readxl)
 
 
 # source data table:
-t1<-read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Bdv_predictors_v2.xlsx")
-t2<-read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Jenyk_BDV_predictors_ENG.xlsx")
+t1<-read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_v2.xlsx")
+t2<-read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Jenyk_BDV_predictors_ENG.xlsx")
 
 
 excel_sheets(t1) # how many sheets are there and their name in the excel file f.
@@ -20,7 +20,7 @@ excel_sheets(t2)
 
 
 # BDV predictors by Jenik
-BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC.xlsx")
+BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC.xlsx")
 
 
 # Load required libraries
@@ -32,7 +32,7 @@ library(vegan)
 
 #-------------------------------------------------------------------------------
 # create a string of average c for iLand output
-decstag <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
+decstag <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
 
 # Select and create avg from the table
 average_density <- table %>%
