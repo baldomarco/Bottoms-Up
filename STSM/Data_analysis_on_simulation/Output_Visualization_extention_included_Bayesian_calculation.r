@@ -28,6 +28,7 @@ library(tidyr)
 library(dplyr)
 library(RSQLite)
 library(vegan)
+library(fields)
 
 
 #-------------------------------------------------------------------------------

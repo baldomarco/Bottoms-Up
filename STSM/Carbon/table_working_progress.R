@@ -20,7 +20,7 @@ writexl::write_xlsx(decstag, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/
 clean_deadwood_iland <- standing_lying_deadwood_data %>%
   select(keyID, siteID, standID, plotID, treesp, typldw, volume, decsta)
 
-# Deadwood decay stage basic wood density conversion from 5 to 4 classes in Eu tree sp (loop). This conversion is based on the adjusted values for a generalization in Europe of https://doi.org/10.1016/j.foreco.2023.121431. Tree species not into the table coming from the laboratory analysis on the deadwood deacy stages of every analyzed species are categorized as deciduous or coniferous unless the Genus was shared as in Alnus, Quercus, Pinus, Abies and Fraxinus see line 215 tree species conversion 
+# Deadwood decay stage basic wood density conversion from 5 to 4 classes in Eu tree sp (loop). This conversion is based on the adjusted values for a generalization in Europe of https://doi.org/10.1016/j.foreco.2023.121431. Tree species not into the table coming from the laboratory analysis (https://doi.org/10.1016/j.foreco.2023.121431) on the deadwood deacy stages of every analyzed species are categorized as deciduous or coniferous unless the Genus was shared as in Alnus, Quercus, Pinus, Abies and Fraxinus see line 215 tree species conversion 
 {
 # Create a list of original values for each species
 species_decstag <- list(
