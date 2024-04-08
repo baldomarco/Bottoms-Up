@@ -1,0 +1,67 @@
+---
+title: "Carbon Pools in R"
+author: "Marco Baldo"
+date: "2024-04-05"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Theory behind the statistical function
+
+The `quantile` function calculates quantiles based on a specified probability distribution. The formula for calculating the quantiles is based on the definition of quantiles and the probability distribution. 
+
+The formula for the quantile at probability `p` (where `p` is a value between 0 and 1) is defined as:
+
+\[
+Q(p) = (1 - g) \times x[j] + g \times x[j+1] \quad \text{(Eq. 1)}
+\]
+
+Where:
+
+- \( Q(p) \) is the quantile at probability \( p \).
+- \( x[j] \) is the \( j \)-th order statistic, which is the data point just below the \( p \)-th percentile.
+- \( x[j+1] \) is the \( j+1 \)-th order statistic, which is the data point just above the \( p \)-th percentile.
+- \( g \) is the fractional part of the index \( j \) (i.e., the decimal portion).
+  
+The `quantile` function in R uses linear interpolation to calculate quantiles. It estimates the quantiles by finding the order statistics \( x[j] \) and \( x[j+1] \) based on the specified \( p \), and then performs the linear interpolation using the formula above to estimate the quantile value.
+  
+In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at \( p = 0.25, 0.5, 0.75 \)).
+
+
+
+Table 1. Tables of deadwood decay classes per tree genus or tree functional type aggregated.
+
+| Species   | Decay Class 1 | Decay Class 2 | Decay Class 3 | Decay Class 4 | Decay Class 5 |
+|-----------|---------------|---------------|---------------|---------------|---------------|
+| Abies     | 343           | 305           | 247           | 174           | 149           |
+| Alnus     | 422           | 359           | 286           | 197           | 120           |
+| Deciduous | 523           | 442           | 345           | 241           | 152           |
+| Carpinus  | 428           | 392           | 336           | 211           | 140           |
+| Conifer   | 374           | 334           | 271           | 198           | 160           |
+| Fagus     | 520           | 379           | 261           | 229           | 220           |
+| Fraxinus  | 452           | 403           | 392           | 227           | 151           |
+| Picea     | 381           | 340           | 270           | 190           | 157           |
+| Pinus     | 379           | 334           | 277           | 214           | 165           |
+| Quercus   | 614           | 518           | 397           | 300           | 195           |
+
+Tables of deadwood decay classes per tree genus or tree functional type aggregated. All the values are expressed as dry biomass per volume \( \text{kg} \cdot \text{m}^{-3} \). The Decay Classes are a function of time, from the most recent wood decay stage to the oldest.
+
+
+```{r cars}
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+

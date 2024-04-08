@@ -671,8 +671,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
 
 View(plot_variables_all)
 View(average_density)
-View(Bayesian_BDV_model_bryophytes)
-str(Bayesian_BDV_model_bryophytes)
+View(Bayesian_BDV_model_V1)
+str(Bayesian_BDV_model_V1)
 # Create volume conversion
 
 
@@ -759,7 +759,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
-pdf(paste0(dataroot, "2023121444_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20240405_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -1070,6 +1070,63 @@ P1
 # CARBON 
 
 snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+
+snagsOther_c <- ggplot(carbon_scen, aes(x=year, y=snagsOther_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+downedWood_c <- ggplot(carbon_scen, aes(x=year, y=downedWood_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+downedWood_c_ag <- ggplot(carbon_scen, aes(x=year, y=downedWood_c_ag))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+stem_c <- ggplot(carbon_scen, aes(x=year, y=stem_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+branch_c <- ggplot(carbon_scen, aes(x=year, y=branch_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+coarseRoot_c <- ggplot(carbon_scen, aes(x=year, y=coarseRoot_c))+
+  geom_line() +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Snags_C [iLand snags_C fun]")+
+  labs(x = "Year",y="snags_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+fineRoot_c <- ggplot(carbon_scen, aes(x=year, y=fineRoot_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
   ggtitle("Snags_C [iLand snags_C fun]")+

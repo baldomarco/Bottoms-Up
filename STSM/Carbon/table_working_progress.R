@@ -9,11 +9,11 @@ library(writexl)
 #-------------------------------------------------------------------------------
 # Edit the table in the way to have consistances betweet alive and dead trees excel sheets
 # Load data from "alive_dead_trees" and "dead_trees" sheets
-live_dead_trees_data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final_corr.xlsx", sheet = "live_dead_trees")
-standing_lying_deadwood_data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final_corr.xlsx", sheet = "standing_lying_deadwood")
-decstag <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
+live_dead_trees_data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final_corr.xlsx", sheet = "live_dead_trees")
+standing_lying_deadwood_data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final_corr.xlsx", sheet = "standing_lying_deadwood")
+decstag <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
 
-writexl::write_xlsx(decstag, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
+writexl::write_xlsx(decstag, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/DeadwoodDensityGlobal_Katka_corr.xlsx")
 
 # Make a clean table for the analysis of the deadwood pools
 
@@ -58,7 +58,7 @@ for (species in names(species_decstag)) {
 }
 # More mechanical way to create the conversion
 {
-# Conver decay classes for Abies
+# Convert decay classes for Abies
   original_values <- c(48.90, 49.43, 49.91, 50.42, 50.37)
 
 # Determine quantiles and copy in the new csv table in hybrid mode (manually): 
@@ -299,7 +299,7 @@ swdCount <- merged_data %>%
   filter(typldw %in% swdC) %>%  # Filter rows with specific values
   group_by(keyID) %>%
   summarize(
-    count = n()
+    count = n()*4 # needs for normalize the plot in ha
   )
 
 # View the resulting dataframe
@@ -349,7 +349,7 @@ C_pools <- C_pools %>%
 print(C_pools)
 
 # write excel
-writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/CZ_JH1_C_pools.xlsx")
+writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/CZ_JH1_C_pools.xlsx")
 
 
 #-------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ combined_data <- combined_data %>%
 # View the resulting dataframe
 print(combined_data)
 View(combined_data)
-writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/CZ_JH1_C_combined_data.xlsx")
+writexl::write_xlsx(C_pools, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/CZ_JH1_C_combined_data.xlsx")
 
 
 #----------------------------------------------------------------------------------
