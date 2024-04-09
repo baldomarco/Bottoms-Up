@@ -76,7 +76,7 @@ abeStandRemoval_scen <- c()
 
 abeUnit_scen <- c()
 
-bb_scen <- c()
+#bb_scen <- c()
 
 landscape_removed_scen <- c()
 
@@ -94,7 +94,7 @@ carbonflow_scen <- c()
 
 removals <- c()
 
-damage.all <- c()
+#damage.all <- c()
 
 H_BA_heterogenity_scen <- c()
 
@@ -151,7 +151,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   abeStandDetail <- dbReadTable(db, "abeStandDetail")
   abeStandRemoval <- dbReadTable(db, "abeStandRemoval")
   abeUnit <- dbReadTable(db, "abeUnit")
-  barkbeetle <- dbReadTable(db,"barkbeetle")
+  #barkbeetle <- dbReadTable(db,"barkbeetle")
   carbon <- dbReadTable(db,"carbon")
   carbonflow <- dbReadTable(db, "carbonflow")
   dynamicstand <- dbReadTable(db, "dynamicstand")
@@ -375,9 +375,9 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
                                     summarise(total_DW_C_kgha=sum(snags_c, snagsOther_c, downedWood_c)))
   
   # DW carbon total without others snags
-  total_DW_C_kgha_2 <- data.frame(carbon %>% 
+  total_AGDW_C_kgha <- data.frame(carbon %>% 
                                     group_by(year) %>% 
-                                    summarise(total_DW_C_kgha_2=sum(snags_c, downedWood_c)))
+                                    summarise(total_AGDW_C_kgha=sum(snags_c, snagsOther_c)))
   
   # Good one
   standing_DW_C <- data.frame(carbon %>% 
@@ -393,7 +393,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   totalC_kgha_iland <- rbind(new_row_3, totalC_kgha_iland)
   total_DW_C_kgha <- rbind(new_row_2, total_DW_C_kgha)
   standing_DW_C <- rbind(new_row_1, standing_DW_C)
-  total_DW_C_kgha_2 <- rbind(new_row_4, total_DW_C_kgha_2)
+  total_AGDW_C_kgha <- rbind(new_row_4, total_AGDW_C_kgha)
   
   #-------------------------------------------------------------------------------
   # Merge the data frames Plot L1_10
@@ -401,7 +401,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
                                    standing_DW_C = standing_DW_C$standing_DW_C,
                                    totalC_kgha_iland = totalC_kgha_iland$totalC_kgha_iland,
                                    total_DW_C_kgha = total_DW_C_kgha$total_DW_C_kgha,
-                                   total_DW_C_kgha_2 = total_DW_C_kgha_2$total_DW_C_kgha_2,
+                                   total_AGDW_C_kgha = total_AGDW_C_kgha$total_AGDW_C_kgha,
                                    lai_sim = LAI$LAI,
                                    ba_broadl = summed_broadl_ba$basal_area_m2,
                                    trees_10_40 = tree_10_40$tree_10_40,
@@ -416,7 +416,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # ADD NECROMSS AND VOLUME DW
   Bayesian_BDV_model_bryophytes_V1 <- plot_L1_10_df_simul %>%
     group_by(year) %>%
-    mutate(necromass = total_DW_C_kgha_2*268/135)
+    mutate(necromass = total_AGDW_C_kgha*268/135)
   
   Bayesian_BDV_model_bryophytes_V1 <- Bayesian_BDV_model_bryophytes_V1 %>%
     group_by(year) %>%
@@ -528,22 +528,22 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   # wind and barkbeetle merging:
   
-  head(barkbeetle)
+  #head(barkbeetle)
   # head(wind)
   
   
-  damage <- data.frame(year=barkbeetle$year,                                      # CREATE THE DATA FRAME FOR FOR DAMAGE OF BARKBEETLE
-                       barkbeetle=barkbeetle$killedVolume, 
-                       case=case)
+  #damage <- data.frame(year=barkbeetle$year,                                      # CREATE THE DATA FRAME FOR FOR DAMAGE OF BARKBEETLE
+      #                 barkbeetle=barkbeetle$killedVolume, 
+       #                case=case)
   
   # ADD WIND IMPACT IN THE DAMAGE DATA FRAME
   # damage<-left_join(damage,wind[,c(1,8)],by=("year"))                           # LEFT_JOIN IS A FUNCTION TO JOIN A VARIABLE IN THIS CASE COLUMN 1 AND 2 AND MANY ROWS BASE ON YEAR VARIABLE NUMBER OF ROWS
-  damage<-left_join(damage,lnd_volume,by=("year"))                              # ADD THE LANDSCAPE VOLUME IN THE DAMAGE DATA FRAME
+ # damage<-left_join(damage,lnd_volume,by=("year"))                              # ADD THE LANDSCAPE VOLUME IN THE DAMAGE DATA FRAME
   # colnames(damage)<-c("year","barkbeetle","case","wind","volume")               # GIVE THE NAME AT EVERY VARIABLE
   
   # damage$wind[which(is.na(damage$wind)==TRUE)] <-0                            # FOR MAKE THE na = 0 !!!! "
   
-  head(damage)
+ # head(damage)
   
   #-----------------------------------------------------------------------------
   # Make the 3 categories of removals:
@@ -628,8 +628,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   carbonflow_scen <-rbind(carbonflow_scen, carbonflow)
 
   # Collect barkbeetle data FOR CREATE THE VARIABLE BB FOR ALL THE RUNS
-  barkbeetle <-(barkbeetle %>% mutate(run=case))
-  bb_scen <-rbind(bb_scen, barkbeetle)
+#  barkbeetle <-(barkbeetle %>% mutate(run=case))
+ # bb_scen <-rbind(bb_scen, barkbeetle)
   
   # Collect wind data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
   # wind <-(wind %>% mutate(run=case))
@@ -640,8 +640,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   removals<-rbind(removals,ab.regcuts,ab.finalcuts,ab.thinnig,ab.salvaged)
   
   # CREATE THE VARIABLE DAMAGE FOR ALL THE RUNS
-  damage <-(damage %>% mutate(run=case))
-  damage.all<-rbind(damage.all, damage)                                         # PUT ALL THE DAMAGE RUNS INTO A SINGLE DATAFRAME WITH DIFF CASES TO BE PLOT ALL TOGETHER IN LINE 370
+# damage <-(damage %>% mutate(run=case))
+#  damage.all<-rbind(damage.all, damage)                                         # PUT ALL THE DAMAGE RUNS INTO A SINGLE DATAFRAME WITH DIFF CASES TO BE PLOT ALL TOGETHER IN LINE 370
   
   # CREATE THE VARIABLES DF FOR ALL THE RUNS
   variables <-(variables %>% mutate(run=case))
@@ -687,7 +687,7 @@ writexl::write_xlsx(Bayesian_BDV_model_V1, "C:/iLand/2023/20230901_Bottoms_Up/pl
 # ADD NECROMSS AND VOLUME DW
 Bayesian_BDV_model_bryophytes_v1 <- plot_variables_all %>%
   group_by(year) %>%
-  mutate(necromass = total_DW_C_kgha_2*268/135)
+  mutate(necromass = total_AGDW_C_kgha*268/135)
 
 Bayesian_BDV_model_bryophytes_v1 <- Bayesian_BDV_model_bryophytes_v1 %>%
   group_by(year) %>%
@@ -758,8 +758,8 @@ library(ggplot2)
 library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
-pdf(paste0(dataroot, "20240405_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240401/20240407/"
+pdf(paste0(dataroot, "20240407_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -1081,56 +1081,56 @@ snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
 snagsOther_c <- ggplot(carbon_scen, aes(x=year, y=snagsOther_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("snagsOther_c ")+
+  labs(x = "Year",y="snagsOther [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 downedWood_c <- ggplot(carbon_scen, aes(x=year, y=downedWood_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("downedWood_c")+
+  labs(x = "Year",y="downedWood_c [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 downedWood_c_ag <- ggplot(carbon_scen, aes(x=year, y=downedWood_c_ag))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("downedWood_c_ag")+
+  labs(x = "Year",y="downedWood_c_ag [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 stem_c <- ggplot(carbon_scen, aes(x=year, y=stem_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("stems C [iLand fun]")+
+  labs(x = "Year",y="stem_c [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 branch_c <- ggplot(carbon_scen, aes(x=year, y=branch_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("branches [iLand snags_C fun]")+
+  labs(x = "Year",y="branch_c [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 coarseRoot_c <- ggplot(carbon_scen, aes(x=year, y=coarseRoot_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("coarse roots [iLand snags_C fun]")+
+  labs(x = "Year",y="coarseRoot_c [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 fineRoot_c <- ggplot(carbon_scen, aes(x=year, y=fineRoot_c))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Snags_C [iLand snags_C fun]")+
-  labs(x = "Year",y="snags_C [kg/ha]")+
+  ggtitle("fineRoot_c [iLand snags_C fun]")+
+  labs(x = "Year",y="fineRoot_c [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -1194,12 +1194,12 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
-# TOTAL DEADWOOD CARBON (SNAGS + DOWNED DEADWOOD)
-total_DW_C_kgha_2 <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha_2))+
+# TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS)
+total_AGDW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AGDW_C_kgha))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
-  ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
-  labs(x = "Year",y="Deadwood C [kg/ha]")+
+  ggtitle("Total Deadwood C in iLand Snags + Branches [kg/ha]")+
+  labs(x = "Year",y="Aboveground deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
