@@ -759,7 +759,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240401/20240407/"
-pdf(paste0(dataroot, "20240407_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20240412_BDV_mng_plot_L1_10_400.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
