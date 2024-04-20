@@ -12,7 +12,7 @@
 # To convert a list of coordinates from angular to metric units in R
 # To set a smaller value for cellsize, you can modify the cellsize argument in the rasterize() function. For example, to set cellsize to 0.1, you can use the following 
 
-load("C:/Users/baldo/Desktop/stsm_roma/alldata (1).RData") # Bottoms-Up data
+load("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/alldata (1).RData") # Bottoms-Up data
 
 #-------------------------------------------------------------------------------
 # Create the framework for make the plot list from the central DB
@@ -20,11 +20,15 @@ load("C:/Users/baldo/Desktop/stsm_roma/alldata (1).RData") # Bottoms-Up data
 # FIRST METHOD USED TO BUILD A SINGLE PLOT EXCEL FILE OF SITE L1-L6 FROM BOTTOMS UP IN ILAND
 
 library(rgdal)
+library(tidyr)
+library(dplyr)
 library(geosphere)
 library(sf)
 library(ggpubr)
 library(ggplot2)
 library(writexl)
+library(MASS)
+
 
 #-------------------------------------------------------------------------------
 # Create the framework for make the plot list from the central DB
@@ -139,7 +143,7 @@ for (plot in L1_plots){
   subset_clean$y <- st_coordinates(data_proj)[, 2]
   
   # Create a directory to store the plots
-  plot_dir <- "C:/Users/baldo/Desktop/bottoms up invoices/test_plots/"
+  plot_dir <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/" 
   if (!dir.exists(plot_dir)) {
     dir.create(plot_dir)
   }
@@ -182,7 +186,7 @@ for (plot in L1_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L1_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -248,7 +252,7 @@ for (plot in L2_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L2_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -314,7 +318,7 @@ for (plot in L3_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L3_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -379,7 +383,7 @@ for (plot in L4_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L4_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -444,7 +448,7 @@ for (plot in L5_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L5_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -509,7 +513,7 @@ for (plot in L6_plots){
   # Create a unique file name for the XLSX
   file_name <- paste0("plot_", plot)
   
-  dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/clean_plot/"
+  dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/"
   write_xlsx(L6_plot_subsets[[plot]],paste0(dataroot,file_name,".xlsx"))
   
 }
@@ -640,7 +644,7 @@ for (i in 1:length(L1_plot_subsets)) {
   # Create a unique file name for the PDF
   file_name <- paste0("plot_", i, ".pdf")
   
-  dataroot <- ("C:/iLand/2023/plot_bottoms_up/plots/Plot_coordinates_confront/")
+  dataroot <- ("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/Plot_coordinates_confront/")
   
   # Open a new PDF device with the unique file name
   pdf(my_plot, paste(dataroot, file_name), height=8, width=12)
@@ -745,132 +749,134 @@ for (i in 1:length(plot_subsets)) {
 
 
 
-
-
-
 #-------------------------------------------------------------------------------
 #           SECOND FASE OF THE ANALYSIS AND DATA PREPARATION
 #-------------------------------------------------------------------------------
 # CREATE THE TABLE FOR ILAND TREE AND ENVIRONMENT INITIALIZATION
-
 # read the data from the Excel file
 library(readxl)
+# Now you have all the data frames in data_list
+#---------------------------------------------
+# You can access each data frame using its corresponding file path
 
+#---------------------------------------------
 # data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/Raw_data_structure_CZ_JH1_final.xlsx")
 
 #-------------------------------SITE CZ_JH1_L1---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_03.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_07.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_10.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_13.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_17.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_18.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_22.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_24.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_26.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_27.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_31.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_33.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_34.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_36.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_38.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_43.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_44.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L1_48.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_03.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_07.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_10.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_13.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_17.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_18.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_22.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_24.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_26.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_27.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_31.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_33.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_34.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_36.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_38.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_43.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_44.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L1_48.xlsx")
 
 #-------------------------------SITE CZ_JH1_L2---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_01.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_05.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_06.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_09.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_13.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_14.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_16.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_17.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_18.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_20.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_26.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_27.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_30.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_32.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_33.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_34.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_38.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L2_44.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_01.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_05.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_06.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_09.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_13.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_14.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_16.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_17.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_18.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_20.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_26.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_27.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_30.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_32.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_33.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_34.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_38.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_44.xlsx")
 
 #-------------------------------SITE CZ_JH1_L3---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_10.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_12.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_16.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_18.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_23.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_24.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_26.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_27.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_02.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_31.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_32.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_34.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_37.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_38.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_41.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_42.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_06.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L3_09.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_10.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_12.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_16.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_18.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_23.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_24.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_26.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_27.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_02.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_31.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_32.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_34.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_37.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_38.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_41.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_42.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_06.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L3_09.xlsx")
 
 #-------------------------------SITE CZ_JH1_L4---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_10.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_11.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_16.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_17.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_18.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_20.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_23.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_25.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_26.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_27.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_02.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_30.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_31.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_32.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_33.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_39.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_42.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_04.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_06.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L4_09.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_10.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_11.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_16.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_17.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_18.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_20.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_23.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_25.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_26.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_27.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_02.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_30.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_31.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_32.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_33.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_39.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_42.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_04.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_06.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L4_09.xlsx")
 
 #-------------------------------SITE CZ_JH1_L5---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_01.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_05.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_12.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_18.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_19.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_21.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_25.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_28.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_32.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_33.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_37.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L5_38.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_01.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_05.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_12.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_18.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_19.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_21.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_25.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_28.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_32.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_33.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_37.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_38.xlsx")
 
 #-------------------------------SITE CZ_JH1_L6---------------------------------------
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_01.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_02.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_03.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_04.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_05.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_08.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_10.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_11.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_14.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_15.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_17.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_19.xlsx")
-# data <- read_excel("C:/iLand/2023/plot_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_01.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_02.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_03.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_04.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_05.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_08.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_10.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_11.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_14.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_15.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_17.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_19.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
+
+data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_14.xlsx")
 
 #------------------------------------------------------------------------------------
-# Species present in the plot
+# Species present in the plot 
 sp <- unique(data$treesp)
 sp
 
@@ -878,11 +884,15 @@ sp
 data$standID
 
 # Forest cataegory
-forest_cat <- plotdescdata_CZ %>%
-  select(plotID, catego, fortyp, habtyp)
+# Load
+plotdescdata_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/plotdescdata_CZ.rds")
 
-View(forest_cat)
-#-------------------------------------------------------------------------------
+# Create a vector with useful information!
+forest_cat <- plotdescdata_CZ %>% dplyr::select(plotID, catego, fortyp, habtyp)
+
+# View(forest_cat)
+
+#---------------------------------------------------------------------
 # IMPORTANT
 
 # Convert the data to a spatial object with WGS84 CRS
@@ -925,7 +935,7 @@ par(mfrow = c(1,2))
 plot(data$x, data$y, xlab = "Longitude [cm]", ylab = "Latitude [cm]", main = ("Plot L3_27 - Metric Coordinates"))
 plot(data$coordx, data$coordy, xlab = "Longitude [degrees]", 
      ylab = "Latitude [degrees]", main = ("Plot L3_27 - Angular Coordinates"))
-
+dev.off()
 
 # Compute the distance between points in meters
 data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
@@ -957,19 +967,35 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
   cat("Corner 4: ", corner4[1], ",", corner4[2], "\n")}
 
 # The formula I provided in the previous answer is a basic trigonometry formula for calculating the coordinates of a point based on its distance and direction from another point.
+ 
+ # Formula behind
+ # x2 = x1 + d * cos(theta)
+ # y2 = y1 + d * sin(theta)
 
- x2 = x1 + d * cos(theta)
- y2 = y1 + d * sin(theta)
-
+ 
+ 
+ 
+ 
+ stop!
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #                             Write out the RU and Stand grids
- 
+#------------------------------------------------------------------------------- 
  # This script is making RUgrid 100x100 and Standgrid for artifical landscape
  library(raster)
  library(fields)
  
- out.dataroot<-"C:/iLand/2023/plot_bottoms_up/gis/"  # where I am working and put the data
+ out.dataroot<-"C:/iLand/2023/plot_bottoms_up/gis/env_grid/"  # where I am working and put the data
  
  # WHERE ARE WE?
  x.coord.corner<- as.integer(corner1[1])
@@ -1005,7 +1031,7 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
  yn_<-10
  
  # For stands I usually put here IDs referring to the Site index (init) for which we will populate the trees. To a unified structure I just put here one SI, SI=26
- Stand.values<-rep(110, xn_*yn_)
+ Stand.values<-rep(110, xn_*yn_) # Here I should change this number based on the climate and plot number related
  
  # Order them into a matrix:
  Stand.grid<-matrix(Stand.values,ncol=xn_)
@@ -1018,10 +1044,10 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
  image.plot(RU.grid,main=paste0("Plot grid: ",xn_,"x",yn_),legend.width = 1.2)
  image.plot(Stand.grid, main="Stand grid")
  image.plot(RUindex.grid, main="RU index grid")
- 
+ dev.off()
 
 #---------------------------------------ENVIRONMENT-------------------------------------
-RU.grid.file<-paste0(out.dataroot,"environment_grid_plot.asc")
+RU.grid.file<-paste0(out.dataroot,"environment_grid_plot_L2_09.asc")
 
 write.table(paste("NCOLS",	xn, sep="\t"), file = RU.grid.file, append = FALSE, quote = FALSE, sep = "\t",
             eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
@@ -1075,8 +1101,23 @@ write.table(Stand.grid, file = S.grid.file, append = T, quote = FALSE, sep = "\t
 #------------------------------- MOST IMPORTANT PART ---------------------------
 #                           CREATE THE TABLE FOR THE TREES
 #-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # SELECT THE COLUMNS
-desired_columns <- select(data, x, y, species, treedb, treeht)      # Select the dataset
+desired_columns <- dplyr::select(data, x, y, species, treedb, treeht)      # Select the dataset
 colnames(desired_columns)<-c("x","y","species","dbh","height")      # CHANGE THE NAME OF THE COLUMNS
 
 {desired_columns <- mutate(desired_columns, species = if_else(species == "abies", "piab", species))
@@ -1135,7 +1176,7 @@ min_y <- min_y - 20
 #--------------------------------------------------------------------
 
 # 2nd way Let's apply the corner bottom left coordinates of the plot (also more robust as method)
-{min_x <- x.coord.corner
+min_x <- x.coord.corner
 min_y <- y.coord.corner
 
 # Make coordinates in the way to be zero (you should use the corner maybe)
@@ -1153,14 +1194,55 @@ desired_columns$x <- round(desired_columns$x, 2)
 desired_columns$y <- round(desired_columns$y, 2)
 desired_columns$height <- round(desired_columns$height, 2)
 
+# Add a new column 'tree_id' with sequential IDs
+desired_columns <- desired_columns %>% 
+  mutate(tree_id = row_number())
+
 # Set threshold
 threshold <- 50
 
-# Filter out rows where x or y exceeding the threshold
-desired_columns <- desired_columns %>%
-  filter(x <= threshold & y <= threshold)}
+# Filter out rows where x or y exceed the threshold
+trees_above_threshold <- desired_columns[desired_columns$x > threshold | desired_columns$y > threshold, ]
+trees_below_threshold <- desired_columns[desired_columns$x <= threshold & desired_columns$y <= threshold, ]
 
-print(c(no))
+# Perform kernel density estimation for trees within the threshold
+kde_result <- kde(trees_below_threshold[, c("x", "y")])
+
+# Determine number of kernels based on the number of trees outside the threshold
+num_kernels <- nrow(trees_above_threshold)
+
+# Sample new coordinates from the kernel density estimate
+sampled_points <- rkde(num_kernels, kde_result)
+
+# Reduce the numbers at 2 decimals
+sampled_points <- round(sampled_points, 2)
+
+# Check the class of sampled_points
+class(sampled_points)
+
+# If sampled_points is not a dataframe, convert it to a dataframe
+sampled_points <- as.data.frame(sampled_points)
+
+# Replace x and y coordinates in sampled_points exceeding the threshold with the threshold value
+sampled_points$x <- pmin(sampled_points$x, threshold)
+sampled_points$y <- pmin(sampled_points$y, threshold)
+
+# Replace x and y coordinates in sampled_points falling below zero with 0
+sampled_points$x <- pmax(sampled_points$x, 0)
+sampled_points$y <- pmax(sampled_points$y, 0)
+
+# Now, try the mutate() function again
+trees_above_threshold <- trees_above_threshold %>%
+  mutate(x = sampled_points$x,
+         y = sampled_points$y)
+
+desired_columns <- bind_rows(trees_above_threshold, trees_below_threshold) %>%
+  arrange(tree_id)
+
+desired_columns <- dplyr::select(desired_columns, -tree_id)
+
+# Print the modified data frame
+print(desired_columns)
 
 #--------------------------------------------------------------------------------
 # Replicate the same forest structure to cover the 100x100m from the source data at 50x50
@@ -1183,7 +1265,31 @@ print(c(no))
   # Combine the four data frames into a single data frame
   final_data <- rbind(desired_columns, desired_columns2, desired_columns3, desired_columns4)}
 
-#--------------------------------------------------------------------------------
+
+#---------------------INIT INPUT TABLE -----------------------------------------
+# write 
+out.dataroot<-"C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/init/"    # use the same place
+
+# write.table(desired_columns, file=paste(out.dataroot,"_init.txt",sep=";"), append = FALSE, quote = FALSE, sep = "\t" means sep by space,
+#             eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=TRUE)
+
+write.table(final_data, file = paste(out.dataroot, "L2_14_init.txt", sep = ""),
+            append = FALSE, quote = FALSE, sep = ";", eol = "\n", na = "NA",
+            dec = ".", row.names = FALSE, col.names = TRUE)
+
+
+#-------------------------------------------------------------------------------
+#                                       END
+#
+#-------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+
+
+
+
+#----------ALternative way to replicate values-----------------------------
 # FIRST WAY WITH THE LOOP - GOOD BUT IS OVERWRITING THE DATAFRAME (any cycle repeat the coordinates(rows=trees) of the previous new data frame that is the double of the previous one, in this case i1=122x2, i2=244x2, i3=488x2)
 # Replicate the same forest structure to cover the 100x100m from the data at 50x50
 
@@ -1200,8 +1306,7 @@ for (i in 1:3) {
   desired_columns <- rbind(desired_columns, desired_columns_shifted)
 }
 
-
-#--------------------------------------------------------------------------------
+________________________________________________________________________________
 # SECOND WAY
 # Replicate the same forest structure to cover the 100x100m from the data at 50x50
 
@@ -1221,20 +1326,3 @@ shifted_trees <- lapply(1:3, function(i) {
 result <- do.call(rbind, shifted_trees)
 
 desired_columns <- rbind(desired_columns, result)
-
-#-------------------------------------------------------------------
-# write 
-out.dataroot<-"C:/iLand/2023/plot_bottoms_up/gis/init/"    # use the same place
-
-# write.table(desired_columns, file=paste(out.dataroot,"_init.txt",sep=";"), append = FALSE, quote = FALSE, sep = "\t" means sep by space,
-#             eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=TRUE)
-
-write.table(final_data, file = paste(out.dataroot, "L6_21_init.txt", sep = ""),
-            append = FALSE, quote = FALSE, sep = ";", eol = "\n", na = "NA",
-            dec = ".", row.names = FALSE, col.names = TRUE)
-
-
-#-------------------------------------------------------------------------------
-#                                       END
-#
-#-------------------------------------------------------------------------------
