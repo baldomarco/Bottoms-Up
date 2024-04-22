@@ -871,9 +871,9 @@ library(readxl)
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_15.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_17.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_19.xlsx")
-# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
+data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
 
-data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_14.xlsx")
+#data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_44.xlsx")
 
 #------------------------------------------------------------------------------------
 # Species present in the plot 
@@ -889,6 +889,7 @@ plotdescdata_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up
 
 # Create a vector with useful information!
 forest_cat <- plotdescdata_CZ %>% dplyr::select(plotID, catego, fortyp, habtyp)
+forest_cat
 
 # View(forest_cat)
 
@@ -971,29 +972,14 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
  # Formula behind
  # x2 = x1 + d * cos(theta)
  # y2 = y1 + d * sin(theta)
-
- 
- 
- 
- 
- stop!
- 
- 
- 
- 
- 
- 
- 
- 
- 
  
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #                             Write out the RU and Stand grids
 #------------------------------------------------------------------------------- 
  # This script is making RUgrid 100x100 and Standgrid for artifical landscape
- library(raster)
- library(fields)
+ #library(raster)
+ #library(fields)
  
  out.dataroot<-"C:/iLand/2023/plot_bottoms_up/gis/env_grid/"  # where I am working and put the data
  
@@ -1001,108 +987,6 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
  x.coord.corner<- as.integer(corner1[1])
  y.coord.corner<- as.integer(corner1[2])
  
- 
- 
- # RU GRID----------------------------------------------------------------------
- # SIZE OF THE AREA THAT I WANT TO COVER
- # 1 x 1   100m -> 1x1
- 
- xn<-1
- yn<-1
- 
- # HERE THE STANDGRID HAS THE SAME RESOLUTION AS THE RESOURCE UNITS
- 
- # Define which values will be the IDs (environment) of resource units and stands. 
- # I define here only one resource unit:
- 
- RU.values<-rep(110, xn*yn)           # but can be a sequence with this e.g.: seq(1000,length.out = xn*yn, by=1)
- RUindex.values<-c(0:(xn*yn-1))  # this is RU index, always starts from 0, iLand is generating this during the simulation runs.
- 
- # Order them into a matrix:
- RU.grid<-matrix(RU.values,ncol=xn)
- RUindex.grid<-matrix(RUindex.values,ncol=xn)
- 
- #------------------------------------------------------------------------------------------------------------
- # PLOT GRID
- # SIZE OF THE AREA THAT I WANT TO COVER
- # 1 x 1   100m -> 1x1
- 
- xn_<-10
- yn_<-10
- 
- # For stands I usually put here IDs referring to the Site index (init) for which we will populate the trees. To a unified structure I just put here one SI, SI=26
- Stand.values<-rep(110, xn_*yn_) # Here I should change this number based on the climate and plot number related
- 
- # Order them into a matrix:
- Stand.grid<-matrix(Stand.values,ncol=xn_)
- 
- #-------------------------------------------------------------------------------
- # plot them:
- set.panel(2,2)
- par(mar=c(2,4,2,4))
- image.plot(RU.grid,main=paste0("RU grid: ",xn,"x",yn),legend.width = 1.2)
- image.plot(RU.grid,main=paste0("Plot grid: ",xn_,"x",yn_),legend.width = 1.2)
- image.plot(Stand.grid, main="Stand grid")
- image.plot(RUindex.grid, main="RU index grid")
- dev.off()
-
-#---------------------------------------ENVIRONMENT-------------------------------------
-RU.grid.file<-paste0(out.dataroot,"environment_grid_plot_L2_09.asc")
-
-write.table(paste("NCOLS",	xn, sep="\t"), file = RU.grid.file, append = FALSE, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("NROWS",	yn, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("XLLCORNER",	x.coord.corner, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("YLLCORNER" ,y.coord.corner, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("CELLSIZE",	"100", sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",        
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("NODATA_value"	,"-9999", sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(RU.grid, file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "-9999", dec = ".", row.names = FALSE, col.names=FALSE)
-
-#---------------------------------------- STAND------------------
-
-S.grid.file<-paste0(out.dataroot,"plot_L6_21.asc")
-
-# READ IN AN EXAMPLE PLOT GRID HEADER
-write.table(paste("NCOLS",	xn_, sep="\t"), file = S.grid.file, append = FALSE, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("NROWS",	yn_, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("XLLCORNER",	x.coord.corner, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("YLLCORNER" ,y.coord.corner, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("CELLSIZE",	"10", sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",             ######*****if cellsize changes change here
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(paste("NODATA_value"	,"-9999", sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
-
-write.table(Stand.grid, file = S.grid.file, append = T, quote = FALSE, sep = "\t",
-            eol = "\n", na = "-9999", dec = ".", row.names = FALSE, col.names=FALSE)
-
-
-
-#------------------------------- MOST IMPORTANT PART ---------------------------
-#                           CREATE THE TABLE FOR THE TREES
-#-------------------------------------------------------------------------------
-
-
 
 
 
@@ -1179,6 +1063,7 @@ min_y <- min_y - 20
 min_x <- x.coord.corner
 min_y <- y.coord.corner
 
+
 # Make coordinates in the way to be zero (you should use the corner maybe)
 new_coordinate_x <- min_x
 desired_columns$x <- desired_columns$x - new_coordinate_x
@@ -1236,6 +1121,11 @@ trees_above_threshold <- trees_above_threshold %>%
   mutate(x = sampled_points$x,
          y = sampled_points$y)
 
+# Now, try the mutate() function again
+trees_above_threshold <- trees_above_threshold %>%
+  mutate(x = sampled_points$V1,
+         y = sampled_points$V2)
+
 desired_columns <- bind_rows(trees_above_threshold, trees_below_threshold) %>%
   arrange(tree_id)
 
@@ -1273,7 +1163,7 @@ out.dataroot<-"C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/ini
 # write.table(desired_columns, file=paste(out.dataroot,"_init.txt",sep=";"), append = FALSE, quote = FALSE, sep = "\t" means sep by space,
 #             eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=TRUE)
 
-write.table(final_data, file = paste(out.dataroot, "L2_14_init.txt", sep = ""),
+write.table(final_data, file = paste(out.dataroot, "L6_21_init.txt", sep = ""),
             append = FALSE, quote = FALSE, sep = ";", eol = "\n", na = "NA",
             dec = ".", row.names = FALSE, col.names = TRUE)
 
@@ -1282,6 +1172,107 @@ write.table(final_data, file = paste(out.dataroot, "L2_14_init.txt", sep = ""),
 #                                       END
 #
 #-------------------------------------------------------------------------------
+
+
+# RU GRID----------------------------------------------------------------------
+# SIZE OF THE AREA THAT I WANT TO COVER
+# 1 x 1   100m -> 1x1
+
+xn<-1
+yn<-1
+
+# HERE THE STANDGRID HAS THE SAME RESOLUTION AS THE RESOURCE UNITS
+
+# Define which values will be the IDs (environment) of resource units and stands. 
+# I define here only one resource unit:
+
+RU.values<-rep(110, xn*yn)           # but can be a sequence with this e.g.: seq(1000,length.out = xn*yn, by=1)
+RUindex.values<-c(0:(xn*yn-1))  # this is RU index, always starts from 0, iLand is generating this during the simulation runs.
+
+# Order them into a matrix:
+RU.grid<-matrix(RU.values,ncol=xn)
+RUindex.grid<-matrix(RUindex.values,ncol=xn)
+
+#------------------------------------------------------------------------------------------------------------
+# PLOT GRID
+# SIZE OF THE AREA THAT I WANT TO COVER
+# 1 x 1   100m -> 1x1
+
+xn_<-10
+yn_<-10
+
+# For stands I usually put here IDs referring to the Site index (init) for which we will populate the trees. To a unified structure I just put here one SI, SI=26
+Stand.values<-rep(110, xn_*yn_) # Here I should change this number based on the climate and plot number related
+
+# Order them into a matrix:
+Stand.grid<-matrix(Stand.values,ncol=xn_)
+
+#-------------------------------------------------------------------------------
+# plot them:
+set.panel(2,2)
+par(mar=c(2,4,2,4))
+image.plot(RU.grid,main=paste0("RU grid: ",xn,"x",yn),legend.width = 1.2)
+image.plot(RU.grid,main=paste0("Plot grid: ",xn_,"x",yn_),legend.width = 1.2)
+image.plot(Stand.grid, main="Stand grid")
+image.plot(RUindex.grid, main="RU index grid")
+dev.off()
+
+#---------------------------------------ENVIRONMENT-------------------------------------
+RU.grid.file<-paste0(out.dataroot,"environment_grid_plot_L2_09.asc")
+
+write.table(paste("NCOLS",	xn, sep="\t"), file = RU.grid.file, append = FALSE, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("NROWS",	yn, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("XLLCORNER",	x.coord.corner, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("YLLCORNER" ,y.coord.corner, sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("CELLSIZE",	"100", sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",        
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("NODATA_value"	,"-9999", sep="\t"), file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(RU.grid, file = RU.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "-9999", dec = ".", row.names = FALSE, col.names=FALSE)
+
+#---------------------------------------- STAND------------------
+
+S.grid.file<-paste0(out.dataroot,"plot_L6_21.asc")
+
+# READ IN AN EXAMPLE PLOT GRID HEADER
+write.table(paste("NCOLS",	xn_, sep="\t"), file = S.grid.file, append = FALSE, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("NROWS",	yn_, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("XLLCORNER",	x.coord.corner, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("YLLCORNER" ,y.coord.corner, sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("CELLSIZE",	"10", sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",             ######*****if cellsize changes change here
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(paste("NODATA_value"	,"-9999", sep="\t"), file = S.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=FALSE)
+
+write.table(Stand.grid, file = S.grid.file, append = T, quote = FALSE, sep = "\t",
+            eol = "\n", na = "-9999", dec = ".", row.names = FALSE, col.names=FALSE)
+
+
+
+#------------------------------- MOST IMPORTANT PART ---------------------------
+#                           CREATE THE TABLE FOR THE TREES
+#-------------------------------------------------------------------------------
+
 
 --------------------------------------------------------------------------------
 
