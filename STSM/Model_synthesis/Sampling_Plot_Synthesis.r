@@ -852,7 +852,7 @@ library(readxl)
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_19.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_21.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_25.xlsx")
-# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_28.xlsx")
+ data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_28.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_32.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_33.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L5_37.xlsx")
@@ -871,7 +871,7 @@ library(readxl)
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_15.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_17.xlsx")
 # data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_19.xlsx")
-data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
+# data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L6_21.xlsx")
 
 #data <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/clean_plot/plot_L2_44.xlsx")
 
@@ -987,25 +987,12 @@ data$distance <- distGeo(as.matrix(data[, c("coordx", "coordy")])) # * 1000
  x.coord.corner<- as.integer(corner1[1])
  y.coord.corner<- as.integer(corner1[2])
  
-
-
-
-
-
-
-
-
-
-
-
-
-
 # SELECT THE COLUMNS
 desired_columns <- dplyr::select(data, x, y, species, treedb, treeht)      # Select the dataset
 colnames(desired_columns)<-c("x","y","species","dbh","height")      # CHANGE THE NAME OF THE COLUMNS
 
 {desired_columns <- mutate(desired_columns, species = if_else(species == "abies", "piab", species))
-  # desired_columns <- mutate(desired_columns, species = if_else(species == "alba", "abal", species))
+  #desired_columns <- mutate(desired_columns, species = if_else(species == "alba", "abal", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "decidua", "lade", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "sylvestris", "pisy", species))
   desired_columns <- mutate(desired_columns, species = if_else(species == "sylvatica", "fasy", species))
@@ -1134,6 +1121,17 @@ desired_columns <- dplyr::select(desired_columns, -tree_id)
 # Print the modified data frame
 print(desired_columns)
 
+{
+desired_columns <- desired_columns %>%
+            mutate(x = ifelse(x > 50, 50, x))
+desired_columns <- desired_columns %>%
+            mutate(y = ifelse(y > 50, 50, y))
+desired_columns <- desired_columns %>%
+  mutate(x = ifelse(x < 0, 0, x))
+desired_columns <- desired_columns %>%
+  mutate(y = ifelse(y < 0, 0, y))
+}
+
 #--------------------------------------------------------------------------------
 # Replicate the same forest structure to cover the 100x100m from the source data at 50x50
 
@@ -1156,6 +1154,24 @@ print(desired_columns)
   final_data <- rbind(desired_columns, desired_columns2, desired_columns3, desired_columns4)}
 
 
+
+#----------ALternative way to replicate values-----------------------------
+{# FIRST WAY WITH THE LOOP - GOOD BUT IS OVERWRITING THE DATAFRAME (any cycle repeat the coordinates(rows=trees) of the previous new data frame that is the double of the previous one, in this case i1=122x2, i2=244x2, i3=488x2)
+# Replicate the same forest structure to cover the 100x100m from the data at 50x50
+
+replicated_columns <- desired_columns[c("x", "y")]
+shifts <- data.frame(
+  x_shift = c(50, 50, 0),
+  y_shift = c(0, 50, 50)
+)
+for (i in 1:3) {
+  replicated_columns_shifted <- replicated_columns + as.numeric(shifts[i, ])
+  colnames(replicated_columns_shifted) <- colnames(replicated_columns)
+  desired_columns_shifted <- cbind(replicated_columns_shifted, 
+                                   desired_columns[, c("bhdfrom", "treeheight", "species")])
+  desired_columns <- rbind(desired_columns, desired_columns_shifted)
+}
+}
 #---------------------INIT INPUT TABLE -----------------------------------------
 # write 
 out.dataroot<-"C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/init/"    # use the same place
@@ -1163,12 +1179,13 @@ out.dataroot<-"C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/ini
 # write.table(desired_columns, file=paste(out.dataroot,"_init.txt",sep=";"), append = FALSE, quote = FALSE, sep = "\t" means sep by space,
 #             eol = "\n", na = "NA", dec = ".", row.names = FALSE, col.names=TRUE)
 
-write.table(final_data, file = paste(out.dataroot, "L6_21_init.txt", sep = ""),
+write.table(final_data, file = paste(out.dataroot, "L5_28_init.txt", sep = ""),
             append = FALSE, quote = FALSE, sep = ";", eol = "\n", na = "NA",
             dec = ".", row.names = FALSE, col.names = TRUE)
 
 
 #-------------------------------------------------------------------------------
+#
 #                                       END
 #
 #-------------------------------------------------------------------------------
@@ -1272,48 +1289,3 @@ write.table(Stand.grid, file = S.grid.file, append = T, quote = FALSE, sep = "\t
 #------------------------------- MOST IMPORTANT PART ---------------------------
 #                           CREATE THE TABLE FOR THE TREES
 #-------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
-
-
-
-
-
-#----------ALternative way to replicate values-----------------------------
-# FIRST WAY WITH THE LOOP - GOOD BUT IS OVERWRITING THE DATAFRAME (any cycle repeat the coordinates(rows=trees) of the previous new data frame that is the double of the previous one, in this case i1=122x2, i2=244x2, i3=488x2)
-# Replicate the same forest structure to cover the 100x100m from the data at 50x50
-
-replicated_columns <- desired_columns[c("x", "y")]
-shifts <- data.frame(
-  x_shift = c(50, 50, 0),
-  y_shift = c(0, 50, 50)
-)
-for (i in 1:3) {
-  replicated_columns_shifted <- replicated_columns + as.numeric(shifts[i, ])
-  colnames(replicated_columns_shifted) <- colnames(replicated_columns)
-  desired_columns_shifted <- cbind(replicated_columns_shifted, 
-                                   desired_columns[, c("bhdfrom", "treeheight", "species")])
-  desired_columns <- rbind(desired_columns, desired_columns_shifted)
-}
-
-________________________________________________________________________________
-# SECOND WAY
-# Replicate the same forest structure to cover the 100x100m from the data at 50x50
-
-# Create shifts matrix
-shifts <- matrix(c(50, 0, 0, 50,
-                   50, 50, 0, 0,
-                   0, 50, 50, 50), ncol = 2, byrow = TRUE)
-
-# Create a list of data frames with shifted coordinates
-shifted_trees <- lapply(1:3, function(i) {
-  replicated_columns <- desired_columns[c("x", "y")]
-  replicated_columns <- replicated_columns + shifts[i, ]
-  cbind(replicated_columns, desired_columns[, -c(1, 2)])
-})
-
-# Combine the list of data frames into a single data frame
-result <- do.call(rbind, shifted_trees)
-
-desired_columns <- rbind(desired_columns, result)
