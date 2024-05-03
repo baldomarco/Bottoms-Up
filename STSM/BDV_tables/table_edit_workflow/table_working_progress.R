@@ -231,7 +231,7 @@ clean_deadwood_iland <- clean_deadwood_iland %>%
   rename(Decay_class = decsta,
          GenusGlobal = treesp)
 
-# Create the C density varibale/column
+# Create the C density variable/column
 decstag <- decstag %>% 
   mutate(C_density_kgm3 = Density_kgm3 * C_fraction/100)
 

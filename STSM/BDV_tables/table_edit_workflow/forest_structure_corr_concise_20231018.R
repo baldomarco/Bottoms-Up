@@ -8,10 +8,11 @@ library(fields)
 #install.packages("readxl")
 library(readxl)
 
-# tab2 <- read_xlsx("C:/iLand/2023/plot_bottoms_up/Jenik/Bdv_predictors_clean_correlation.xlsx") 
-# tab1 <-read.csv("C:/iLand/2022/20220604_final_test/DB_final/variables.all_20220708.csv")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_clean_correlation.xlsx") 
 
-tab2 <- read_xlsx("I:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
+tab_brow <-read.csv("I:/iLand/2022/20220604_browsing_first/variables.DB_20220728.csv")
+
+tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
 
 #head(tab1)
 head(tab2)
@@ -52,7 +53,7 @@ library(vegan)
 
 # Calculate the basal area per every tree based on their dbh
 
-raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
+raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
 
 excel_sheets(raw_data)
 
@@ -232,14 +233,14 @@ write.csv(merged_df, "C:/iLand/2023/plot_bottoms_up/Jenik/Bdv_predictors_table_f
 #-------------------------------------------------------------------------------
 # Create the proportion for the species seed background probability 
 
-tab1 <- read_xlsx("I:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
+tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
 
 #head(tab1)
 head(tab1)
 
 # import the tree data
 
-raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
+raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
 
 excel_sheets(raw_data)
 
@@ -273,7 +274,7 @@ site_species_proportions <- site_species_counts %>%
   mutate(SpeciesProportion = TreeCount / sum(TreeCount))
 
 print(site_species_proportions)
-view(site_species_proportions)
+show(site_species_proportions)
 
 # Filter the data for the specific site 'L1'
 site_L1_proportions <- subset(site_species_proportions, Site == 'L1')

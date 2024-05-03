@@ -148,7 +148,7 @@
 	</grass>
 	<browsing>
 	  <enabled>true</enabled>
-	  <browsingPressure>0.6</browsingPressure> <!-- Scaling factor modifying the base probability (1=100% of the species specific parameter)-->
+	  <browsingPressure>0.8</browsingPressure> <!-- Scaling factor modifying the base probability (1=100% of the species specific parameter)-->
 	</browsing>
 		
     </settings>
@@ -492,7 +492,7 @@ height.mean, height.sd, height.p5, height.p25, height.p75, height.p95,age.mean,a
   </modules>
   <user> <!-- user defined settings (which can be accessed via Javascript) -->
       <salvage>
-      <remove>0.20</remove>
+      <remove>0.70</remove>
       <trap>0</trap>
     </salvage>
 	<windspeed_factor>1</windspeed_factor>

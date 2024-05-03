@@ -167,7 +167,7 @@ unique_sp <- unique(beech_forest_6_VP$genspe)
 length(unique_sp)
 
 #-------------------------------------------------------------------------------
-# Mutate NA values in column 'treevol' into 0 to make the sum of volumes per species. The missing values or the zero volume are related to trees with a dbh minor of 7 cm. Only in rare cases they are associated also to trees with a dbh major than 7 cm and the maximum case is a Tilia cordata of 11.25 cm
+# Mutate NA values in column 'treevol' into 0 to make the sum of volumes per species. The missing values or the zero volume are related to trees with a dbh minor of 5 cm. Only in rare cases they are associated also to trees with a dbh major than 5 cm and the maximum case is a Tilia cordata of 11.25 cm
 
 library(dplyr)
 

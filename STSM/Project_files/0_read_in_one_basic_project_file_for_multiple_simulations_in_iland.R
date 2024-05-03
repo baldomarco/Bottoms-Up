@@ -17,7 +17,7 @@ library(methods)
 
 
 # READ IN A BASIC PROJECT FILE
-basic<-"C:/Users/baldo/Documents/GitHub/Bottoms-Up/STSM/Project_files/Basic_to_use_to_produce_prfiles.xml"
+basic<-"C:/_R/R_tables/Project_files/Basic_to_use_to_produce_prfiles.xml"
 data<- read_xml(basic)
 d<-as_list(data)
 
