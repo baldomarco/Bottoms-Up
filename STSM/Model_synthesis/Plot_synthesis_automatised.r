@@ -19,7 +19,7 @@ library(writexl)
 library(dplyr)
 
 # Load the data
-load("C:/iland/20230901_Bottoms_Up/plot_init/R/stsm_roma/alldata (1).RData")
+load("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/alldata (1).RData") # Bottoms-Up data
 
 # Create a function to process and save a site
 process_site <- function(site_data, output_dir) {

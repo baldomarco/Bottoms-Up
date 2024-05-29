@@ -4,7 +4,7 @@
 library(dplyr)
 
 tree_data <- data %>%
-  mutate(Site = sub("_[0-9]+", "", plotID),
+    mutate(Site = sub("_[0-9]+", "", plotID),
          Plot = sub("([A-Z]+)[0-9]+_[0-9]+", "\\1\\2", plotID))
 
 head(tree_data)
@@ -140,7 +140,7 @@ print(plot_species_proportions_vol)
 show(plot_species_proportions_vol)
 
 # Filter the data for the specific plot 'L1_33'
-plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L1_38')
+plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L2_16')
 plot_L1_33_proportions_vol
 
 # Extract the species proportions for 'L1_33'

@@ -5,10 +5,10 @@ library(RSQLite)
 library(vegan)
 library(fields)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L1_38/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L1_38/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -517,7 +517,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   landscape_removed_scen_natmor <- rbind(landscape_removed_scen_natmor, landscape_removed_natmor)
   
   # CREATE THE VARIABLES NEEDED IN THE BDV STUDY
-  plot_L1_34_df_simul <-(plot_L1_10_df_simul %>% mutate(run=case))
+  plot_L1_33_df_simul <-(plot_L1_10_df_simul %>% mutate(run=case))
   plot_variables_all <- rbind(plot_variables_all, plot_L1_33_df_simul)
   
 }
@@ -534,8 +534,8 @@ library(ggplot2)
 library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L1_38/"
-pdf(paste0(dataroot, "Plot_L1_38.pdf"), height=8, width=12)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/"
+pdf(paste0(dataroot, "Plot_L2_14.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
