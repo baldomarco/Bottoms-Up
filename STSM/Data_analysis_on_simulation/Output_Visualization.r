@@ -22,11 +22,12 @@ library(tidyr)
 library(dplyr)
 library(RSQLite)
 library(vegan)
+library(fields)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240509/All plot test1/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240509/All plot test1/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -88,7 +89,7 @@ database_files <- list.files(dataroot, ".sqlite")
 
 for (i in (1:length(database_files)))  {    # We read in the files in the loop. The "i" is for the x from 1 to i lenght of the dataset of files 
   
-  
+  #i<-1
   # i<-1 # to test but remember to don't run also the }
   
   
@@ -133,15 +134,30 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   #-----------------------------------------------------------------------------
   # CREATE SHANNON VARIABLE
   
-  annual.data<-landscape %>% group_by(year) %>% filter(year>0) %>% summarize(VOL.tot=sum(volume_m3), BA.tot=sum(basal_area_m2), count.tot=sum(count_ha))
-  annual.spec.data<-landscape %>% group_by(year, species) %>%  filter(year>0) %>% summarize(VOL=(volume_m3), BA=(basal_area_m2), count=sum(count_ha))
+  # CREATE A TABLE FOR THE ANNUAL VOL,BA,COUNT DATA
+  annual.data<-landscape %>% 
+    group_by(year) %>% 
+    filter(year>0) %>% 
+    summarize(VOL.tot=sum(volume_m3), BA.tot=sum(basal_area_m2), count.tot=sum(count_ha))
   
-  print(head(annual.data))
-  print(head(annual.spec.data))
+  # SAME BUT PER SPECIES
+  annual.spec.data<-landscape %>% 
+    group_by(year, species) %>%  
+    filter(year>0) %>% 
+    summarize(VOL=(volume_m3), BA=(basal_area_m2), count=sum(count_ha))
   
-  S<-landscape %>% group_by(year) %>% filter(volume_m3>0 & year>0) %>% summarise(n=n())   # number of species in each year  (added the filter to count non-zero volumes, now it is okay)
-  print(S$n)
+  # print(head(annual.data))
+  # print(head(annual.spec.data))
   
+  S<-landscape %>% 
+    group_by(year) %>%                        # BECARFUL THE NUMBERS OF VALUES CAN BE LESS THEN THE NUMBER OF YEARS IN YOUNG STANDS.
+    filter(volume_m3>0 & year>0) %>% 
+    summarise(n=n())   
+  
+  # number of species in each year  (added the filter to count non-zero volumes, now it is okay)
+    
+  #print(S$n)
+  #length(S$n)
   
   t<-annual.spec.data %>% right_join(annual.data, by="year")  %>% 
     mutate(prop.VOL=VOL/VOL.tot, prop.BA=BA/BA.tot, prop.count=count/count.tot) %>% 
@@ -153,9 +169,46 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Shannon diversity index (SDI): this is already Shannon.... that extra step by dividing the by S$n is making equitability index based on the link above.
   # so maybe we can make shannon based on BA, VOL and number of trees.... (? can discuss or save all 3 and will see...)
   
-  H.BA<-t %>% group_by(year) %>% summarize(H=-1*sum(prop.BA*log(prop.BA)))
-  H.VOL<-t %>% group_by(year) %>% summarize(H=-1*sum(prop.VOL*log(prop.VOL)))
-  H.count<-t %>% group_by(year) %>% summarize(H=-1*sum(prop.count*log(prop.count)))   # here I just put the proportion of number of trees
+  # Calculate H.BA
+  H.BA <- t %>%
+    group_by(year) %>%
+    summarize(H = -1 * sum(prop.BA * log(prop.BA)))
+  
+  # Calculate H.VOL
+  H.VOL <- t %>%
+    group_by(year) %>%
+    summarize(H = -1 * sum(prop.VOL * log(prop.VOL)))
+  
+  # Calculate H.count
+  H.count <- t %>%
+    group_by(year) %>%
+    summarize(H = -1 * sum(prop.count * log(prop.count)))
+  
+  # Find the maximum year across all dataframes
+  max_year <- max(
+    max(H.BA$year, na.rm = TRUE),
+    max(H.VOL$year, na.rm = TRUE),
+    max(H.count$year, na.rm = TRUE)
+  )
+  
+  # Create a reference dataframe with all years from 1 to the maximum year
+  reference_df <- tibble(year = 1:max(H.BA$year, H.VOL$year, H.count$year))
+  
+  
+  # Left join each dataframe with the reference dataframe and replace NA with 0
+  H.BA <- reference_df %>%
+    left_join(H.BA, by = "year") %>%
+    replace(is.na(.), 0)
+  
+  H.VOL <- reference_df %>%
+    left_join(H.VOL, by = "year") %>%
+    replace(is.na(.), 0)
+  
+  H.count <- reference_df %>%
+    left_join(H.count, by = "year") %>%
+    replace(is.na(.), 0)
+  # here I just put the proportion of number of trees
+  
   set.panel(3,1)
   plot(H.BA)
   plot(H.VOL)
@@ -170,26 +223,35 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   SEI<-H.BA$H/log(S$n)
   SEI[which(is.na(SEI)==T)]<-0
   
+  
   # Pioneer species proportion based on BA
   
   earlyspecs<-c("lade","acps","frex","cabe","bepe","alin","algl","acca","acpl","soau","soar","coav","alvi","potr","poni","ulgl","saca","rops")
   
   early.spec.prop<-t %>% filter(species %in% earlyspecs) %>% summarize(BA=sum(prop.BA))
   
-  esp<-data.frame(year=c(1:max(landscape$year)))
+  esp<-data.frame(year=c(1:max(landscape$year))) # FILL THE MISSING YEARS WITH ZERO
   esp<-esp %>% left_join(early.spec.prop, by="year")
   esp$BA[which(is.na(esp$BA)==T)]<-0
   
   #-----------------------------------------------------------------------------
-  # Create Shannon on BA heterogeneity
+  # Create Shannon on BA heterogeneity with VEGAN
   
   # Calculate the Shannon diversity index
-  H_BA_heterogenity <- tree %>%
-    group_by(year, species) %>%
-    summarize(shannon_ba_heterog = diversity(basalArea, base = exp(1)))
+  H_BA_heterogenity <- t %>%
+    group_by(year) %>%
+    summarize(shannon_ba_heterog = diversity(prop.BA, base = exp(1)))
   
   # Print the resulting dataframe
   print(H_BA_heterogenity)
+  
+  # PLOT THE EARLY SPECIES PROPORTION AND THE SHANNON EQUITABILITY INDEX
+  set.panel(3,1)
+  plot(SEI)
+  plot(esp$year,esp$BA)
+  plot(H_BA_heterogenity$year, H_BA_heterogenity$shannon_ba_heterog)
+  
+  
   
   #-----------------------------------------------------------------------------
   # CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
@@ -213,7 +275,24 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
                           summarise(tot_volume=sum(volume_m3),living_c=sum(total_carbon_kg), count_ha=sum(count_ha), tot_ba=sum(basal_area_m2),npp=sum(NPP_kg), LAI=sum(LAI), sapling=sum(cohort_count_ha),growth_m3=sum(gwl_m3)))
   
   
-  dynamicstand_1 <-dynamicstand %>% filter(year>0)                            # THIS IS NEEDED FOR MAKE THE DATA FRAME dynamicstand OF THE SAME SIZE OF THE carbon AND carbonflow. WE DID THE SAME FOR THE SELECTED VARIABLES IN LANDSCAPE
+  # THIS IS NEEDED FOR MAKE THE DATA FRAME dynamicstand OF THE SAME SIZE OF THE carbon AND carbonflow. WE DID THE SAME FOR THE SELECTED VARIABLES IN LANDSCAPE
+
+  
+  dynamicstand_1 <- tibble(
+    year = setdiff(1:max(dynamicstand$year), dynamicstand$year),
+    height_mean = 0,
+    dbh_mean = 0,
+    age_mean = 0
+  ) %>%
+    bind_rows(dynamicstand) %>%
+    arrange(year) %>%
+    mutate(
+      height_mean = replace(height_mean, is.na(height_mean), 0),
+      dbh_mean = replace(dbh_mean, is.na(dbh_mean), 0),
+      age_mean = replace(age_mean, is.na(age_mean), 0)
+    ) %>%
+    filter(year > 0) %>%
+    select(year, height_mean, dbh_mean, age_mean)
   
   # CREATE THE NEW DATA FRAME FOR VARIABLES 
   
@@ -236,14 +315,31 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   variables = inner_join(variables, ab.lnd.v, by="year")
   variables = inner_join(variables, ab.tot.c, by="year")
-  
+  # variables = inner_join(ab.lnd.v, ab.tot.c, by="year")
   # variables[which(is.na(damage$wind)==TRUE)] <-0                              # FOR MAKE THE na = 0 !!!! "
   
   head(variables)
   
 #-------------------------------------------------------------------------------
 # Create tables for all variables of plot bdv predictors
-# Create the LAI time series
+  
+  tree_df <- tibble(
+    year = setdiff(0:max(tree$year), tree$year),
+    dbh = 0,
+    basalArea = 0,
+    leafArea_m2 =0
+  ) %>%
+    bind_rows(tree) %>%
+    arrange(year) %>%
+    mutate(
+      species = replace(species, is.na(species), 0),
+      dbh = replace(dbh, is.na(dbh), 0),
+      basalArea = replace(basalArea, is.na(basalArea), 0),
+      leafArea_m2 = replace(leafArea_m2, is.na(leafArea_m2), 0)
+    ) %>%
+    select(year, species, dbh, basalArea, leafArea_m2)
+  
+  # Create the LAI time series
   
   LAI <- landscape %>% 
     group_by(year) %>%
@@ -260,15 +356,17 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   dbh_max <- 40
   
   # Calculate the number of trees in each year with DBH between 10 and 40 cm
-  tree_10_40 <- tree %>%
+  tree_10_40 <- tree_df %>%
     filter(dbh >= dbh_min, dbh <= dbh_max) %>%
     group_by(year) %>%
-    summarise(tree_10_40 = n())
+    summarise(tree_10_40 = n()) %>%
+    complete(year = full_seq(year, 1)) %>%
+    replace(is.na(.), 0)
   
   
   #-------------------------------------------------------------------------------
   # To define the species to be removed
-  unique_sp <- unique(landscape$species)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
+  unique_sp <- unique(tree_df$species)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])
 
   
   species_to_remove <- c("piab", "pisy", "abal",
@@ -288,7 +386,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Calculate the basal area only of the broadleave with a dbh > 40cm
   
   # Create a data frame with all unique years
-  all_years <- data.frame(year = unique(tree$year))
+  all_years <- data.frame(year = unique(tree_df$year))
   
   # Perform left join with the summarization result
   broadl_40 <- all_years %>%
@@ -305,11 +403,14 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   #-------------------------------------------------------------------------------
   # Age - comes from the avarage age
   
-  stand_age <- tree %>%
-    group_by(year) %>%
-    summarize(age = mean(age))
-  stand_age <- round(stand_age)
+  #stand_age <- tree %>%
+   # group_by(year) %>%
+    #summarize(age = mean(age))
+  #stand_age <- round(stand_age)
   
+  stand_age <- abeStand %>%
+    group_by(year) %>%
+    select(age)
   
   #-------------------------------------------------------------------------------
   # DW volume - USE snags_c divided by 4 and converted into volume 
@@ -320,16 +421,19 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   totalC_kgha_iland <- data.frame(carbon %>% 
                                     group_by(year) %>% 
+                                    #filter(year>0) %>%
                                     summarise(totalC_kgha_iland=sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, regeneration_c, snags_c, snagsOther_c, downedWood_c, litter_c, soil_c)))
   
   # DW carbon total
   total_DW_C_kgha <- data.frame(carbon %>% 
-                                    group_by(year) %>% 
+                                    group_by(year) %>%
+                                    #filter(year>0) %>%
                                     summarise(total_DW_C_kgha=sum(snags_c, snagsOther_c, downedWood_c)))
   
   # Good one
   standing_DW_C <- data.frame(carbon %>% 
-                                       group_by(year) %>% 
+                                       group_by(year) %>%
+                                       #filter(year>0) %>%
                                        summarise(standing_DW_C = sum(snags_c))) 
   
   # Create a new row with manually specified values
@@ -342,6 +446,9 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   total_DW_C_kgha <- rbind(new_row_2, total_DW_C_kgha)
   standing_DW_C <- rbind(new_row_1, standing_DW_C)
   
+  new_row_age <- data.frame(year =0, age = 90)
+  
+  stand_age <- rbind(new_row_age, stand_age)
   
   #-------------------------------------------------------------------------------
   # Merge the data frames Plot L1_10

@@ -6,11 +6,85 @@ rm(list=ls())
 #install.packages("xml2")
 #install.packages("methods")
 
+library(RSQLite)
 library(dplyr)
 library(xml2)
 library(methods)
 
+
+# Import the climate database)
+#-------------------------------------------------------------------------
+# Connect to the SQLite database
+con <- dbConnect(SQLite(), dbname = "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/database/db_clim_cz_plot.sqlite")
+
+# Get the list of tables in the database
+tables <- dbListTables(con)
+
+# Create an empty dataframe to store the results
+results <- data.frame(dataset = character(),
+                      avg_precip_spring = numeric(),
+                      avg_precip_summer = numeric(),
+                      avg_precip_autumn = numeric(),
+                      avg_precip_winter = numeric(),
+                      avg_temp_spring = numeric(),
+                      avg_temp_summer = numeric(),
+                      avg_temp_autumn = numeric(),
+                      avg_temp_winter = numeric())
+
+# Loop through each table and import the dataset
+for (table_name in tables) {
+  # Construct the SQL query to select all data from the current table
+  query <- paste("SELECT * FROM", table_name)
+  
+  # Read the data from the database into a data frame
+  data <- dbGetQuery(con, query)
+  
+  # Filter the data for the time period 1961-1990
+  data_period <- data[data$year >= 1961 & data$year <= 1990, ]
+  
+  # Calculate the sum of seasonal precipitation
+  precip_spring <- sum(data_period$prec[data_period$month %in% c(3, 4, 5)]) / length(unique(data_period$year))
+  precip_summer <- sum(data_period$prec[data_period$month %in% c(6, 7, 8)]) / length(unique(data_period$year))
+  precip_autumn <- sum(data_period$prec[data_period$month %in% c(9, 10, 11)]) / length(unique(data_period$year))
+  precip_winter <- sum(data_period$prec[data_period$month %in% c(12, 1, 2)]) / length(unique(data_period$year))
+  
+  # Calculate the average temperature per season
+  temp_spring <- mean((data$min_temp[data$month %in% c(3, 4, 5)] + data$max_temp[data$month %in% c(3, 4, 5)])/2)
+  temp_summer <- mean((data$min_temp[data$month %in% c(6, 7, 8)] + data$max_temp[data$month %in% c(6, 7, 8)])/2)
+  temp_autumn <- mean((data$min_temp[data$month %in% c(9, 10, 11)] + data$max_temp[data$month %in% c(9, 10, 11)])/2)
+  temp_winter <- mean((data$min_temp[data$month %in% c(12, 1, 2)] + data$max_temp[data$month %in% c(12, 1, 2)])/2)
+  
+  # Add the results to the dataframe
+  results <- rbind(results, data.frame(dataset = table_name,
+                                       avg_precip_spring = precip_spring,
+                                       avg_precip_summer = precip_summer,
+                                       avg_precip_autumn = precip_autumn,
+                                       avg_precip_winter = precip_winter,
+                                       avg_temp_spring = temp_spring,
+                                       avg_temp_summer = temp_summer,
+                                       avg_temp_autumn = temp_autumn,
+                                       avg_temp_winter = temp_winter))
+}
+
+# Reset row names
+row.names(results) <- NULL
+
+# Close the database connection
+dbDisconnect(con)
+
+
+# Specify the file path for the CSV file
+csv_file <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/database/climate_data_synthesis.csv"
+
+# Write the results dataframe to a CSV file
+write.csv(results, file = csv_file, row.names = FALSE)
+
+# Print a message indicating that the CSV file has been saved
+cat("CSV file saved:", csv_file, "\n")
+
+#------------------------------------------------------------------------------
 # Import the deadwood pools
+#--------------------------
 DWP<- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/CZ_JH1_C_pools_99_plots.xlsx")
 
 DWP <- DWP %>% rename(swdC = swdC_kgha,
@@ -59,7 +133,7 @@ plot <- c("CZ_JH1_L1XL1_03", "CZ_JH1_L1XL1_07" ,
 
 
 # READ IN A BASIC PROJECT FILE
-basic<-"C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/2022_Artifical_bottom_L1_10.xml"
+basic<-"C:/Users/baldo/Documents/GitHub/Bottoms-Up/STSM/Project_files/2022_Artifical_bottom_L1_10.xml"
 data<- read_xml(basic)
 d<-as_list(data)
 
@@ -105,7 +179,7 @@ spec.root<-paste0(ROOT,"database/")
       env.grid<-paste0("gis/environment_grid_plot.asc")
       #env.file<-paste0("gis/Environment_110.txt") 
       
-      outputfoldername<-paste0(homeroot,"output")
+      outputfoldername<-paste0("output")
       
       # Get list of simulation folders
       # simulation_folders <- list.files("gis/", pattern = "^[0-9]+$", full.names = TRUE)
@@ -125,7 +199,7 @@ spec.root<-paste0(ROOT,"database/")
                                  spec.file=spec.file,
                                  home.root=homeroot,
                                  output.foldername=outputfoldername,
-                                 init_file=init_name,
+                                 init_file=paste0("init_with_ages/",init_name),
                                  swdC = DWP$swdC,
                                  youngRefractoryC = DWP$youngRefractoryC,
                                  swdCount = DWP$swdCount,
@@ -227,12 +301,13 @@ for (i in 1:n) {
   
   # CO2
     d$project$model$species$CO2Response$compensationPoint[[1]] <- 80
-    d$project$model$species$CO2Response$beta0[[1]] <- 0.3
+    d$project$model$species$CO2Response$beta0[[1]] <- 0.15
     
   # species parameter file
   d$project$system$database$`in`[[1]]<-"species_param_kostelec_allometry_20220603_CZ.sqlite"
   
-  # gis
+  # gis tables
+  
   # enviroment file and grid
   d$project$model$world$environmentGrid[[1]]<-case$env.grid
   d$project$model$world$environmentFile[[1]]<-case$env.file
@@ -240,7 +315,10 @@ for (i in 1:n) {
   # stand grid
   d$project$model$world$standGrid$fileName[[1]]<-case$stand.grid
   
-  # init input tables
+  # Init trees input table with age
+  d$project$model$initialization$file[[1]]<-case$init_file
+  
+  # init C input tables
   d$project$model$site$youngRefractoryC[[1]]<-case$youngRefractoryC
   
   # Deadwood pools
@@ -266,14 +344,14 @@ for (i in 1:n) {
   
   # Barkbeetle module
    d$project$modules$barkbeetle$enabled[[1]]<-"true"
-   d$project$modules$barkbeetle$backgroundInfestationProbability[[1]]<-case$background
+   d$project$modules$barkbeetle$backgroundInfestationProbability[[1]]<- "0.000685"
    d$project$modules$barkbeetle$stormInfestationProbability[[1]]<-"0.05"
    d$project$modules$barkbeetle$baseWinterMortality[[1]]<-"0.4"
    d$project$modules$barkbeetle$cohortsPerGeneration[[1]]<-"20"
    d$project$modules$barkbeetle$cohortsPerSisterbrood[[1]]<-"30"
-   d$project$modules$barkbeetle$deadTreeSelectivity[[1]]<-"0.85*x+0.15"
-   d$project$modules$barkbeetle$initialInfestationProbability[[1]]<-case$background   
-   d$project$modules$barkbeetle$referenceClimate$tableName[[1]]<- plot
+   d$project$modules$barkbeetle$deadTreeSelectivity[[1]]<-"1"
+   d$project$modules$barkbeetle$initialInfestationProbability[[1]]<- "0.000015"  
+   d$project$modules$barkbeetle$referenceClimate$tableName[[1]]<- case$plot
   #   
   
   # SALVAGE

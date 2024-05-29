@@ -180,7 +180,7 @@ quartiles
 # Run it always otherwise you will lose the consistency between clean_deadwood_iland and decstag
 # Change the tree species names for the tables merging 
 
-{clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Picea abies", "Picea", treesp))
+  clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Picea abies", "Picea", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Abies alba", "Abies", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Larix decidua", "coniferous", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Pinus sylvestris", "Pinus", treesp))
@@ -225,7 +225,7 @@ quartiles
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Sambucus nigra", "deciduous", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Crataegus", "deciduous", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Rhamnus cathartica", "deciduous", treesp))
-  clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Pyrus communis", "deciduous", treesp))}
+  clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Pyrus communis", "deciduous", treesp))
 
 # Create consistency on the tables column names
 clean_deadwood_iland <- clean_deadwood_iland %>% 

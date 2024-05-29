@@ -12,7 +12,7 @@
     </path>
     <database>
       <in>species_param_kostelec_allometry_20220603_CZ.sqlite</in>
-      <out>Test_6_L1_10.sqlite</out> <!-- _$date$ --> <!--test.sqlite-->
+      <out>Snag_function_L1_10.sqlite</out> <!-- _$date$ --> <!--test.sqlite-->
       <climate>db_clim_cz_plot.sqlite</climate>
     </database>
 	<logging>
@@ -115,7 +115,7 @@
 		  <!-- <externalSeedSpecies>abal, piab, lade, pisy, fasy, quro, acps, frex, cabe, bepe, qupe, tico</externalSeedSpecies> -->
 		  <externalSeedSpecies>abal, acpl, acps, bepe, fasy, frex, lade, piab, pisy, potr, quro, soau, tico, ulgl</externalSeedSpecies>
 		  <externalSeedBuffer></externalSeedBuffer> <!-- This specifies a species-specific special "buffer", i.e. it defines the distance between the external seed input and the edge of the simulation area. Unit is "seed pixels", i.e. currently 20m. Specify as a comma-separated list of alternately species name and buffer-width (e.g. "Psme, 2, Abmi, 1" -> 40m for Psme, 20m for Abmi). No special buffer is used for species not in the list. Note: the remaining seed source must be >1px due to an implementation detail of the dispersal routine. -->
-                  <externalSeedBackgroundInput>abal 0.002445842 acpl 0.00524109 acps 0.09503843 bepe 0.007337526 fasy 0.1743536 frex 0.07477289 lade 0.137666 piab 0.4709993 pisy 0.004542278 potr 0.001348218 quro 0.001048218 soau 0.00174703 tico 0.01327743 ulgl 0.00802812</externalSeedBackgroundInput>		  
+                  <externalSeedBackgroundInput>abal 0.0024458421 acpl 0.0052410901 acps 0.09538784 bepe 0.0073375262 fasy 0.1743535989 frex 0.0747728861 lade 0.1376659679 piab 0.4709993012 pisy 0.0045422781 potr 0.001397624 quro 0.001048218 soau 0.00349406 tico 0.0132774284 ulgl 0.008036338</externalSeedBackgroundInput>		  
 				 <recruitmentDimensionVariation>0.1</recruitmentDimensionVariation>  <!-- defines the range of variation (r) for recruited trees. tree_dbh = cohort_dbh * rnd(1-r, 1+r), tree_h = cohort_h * rnd(1-r, 1+r) (e.g: r=0.2 -> random number from 0.8 to 1.2)-->
 		  <longDistanceDispersal>
 		    <rings>5</rings>
@@ -264,10 +264,10 @@
 	  <saplingFile>sap_init.txt</saplingFile> <!-- sap_init.txt or empty_saplings.csv -->
 	  <snags>
 		  <!-- SWD C, SWD count, SWD CN, Ast/Wurzel C, Ast/Wurzel CN, ksw, hl -->
-		  <swdC>49794</swdC>
+		  <swdC>749</swdC>
 		  <swdCN>417.9</swdCN>
-		  <swdCount>136</swdCount>
-		  <otherC>225</otherC>
+		  <swdCount>544</swdCount> <!--136*4-->
+		  <otherC>450</otherC> <!-- 225*2 -->
 		  <otherCN>22.95</otherCN> <!-- cnFoliage and cnFineroot? -->
                   <otherAbovegroundFraction>0.3</otherAbovegroundFraction>
 		  <swdDecompRate>0.036</swdDecompRate>
@@ -363,7 +363,7 @@
       <rufilter/>
       <comment/>
       <treefilter/>
-      <by_species>false</by_species>
+      <by_species>true</by_species>
       <by_ru>false</by_ru>
       <columns>
 if(dbh&gt;=20 and dbh&lt;40,volume,0).sum, if(dbh&gt;=40 and dbh&lt;60,volume,0).sum, if(dbh&gt;=60,1,0).sum,
@@ -481,11 +481,11 @@ height.mean, height.sd, height.p5, height.p25, height.p75, height.p95,age.mean,a
 		<outbreakDurationMin>5</outbreakDurationMin>
 		<outbreakDurationMax>6</outbreakDurationMax>
 		<outbreakDurationMortalityFormula>polygon(t, 0.5,0, 1,1)</outbreakDurationMortalityFormula>
-		<initialInfestationProbability>0.00001</initialInfestationProbability> <!-- 0.001 p that a potential host pixel is infested at startup (as a result of pre-simulation dynamics) -->		
+		<initialInfestationProbability>0.000015</initialInfestationProbability> <!-- 0.001 p that a potential host pixel is infested at startup (as a result of pre-simulation dynamics) -->		
 		<referenceClimate>
 			<tableName>CZ_JH1_L1XL1_10</tableName>
-			<seasonalPrecipSum>156.06, 243.12, 133.8, 114.43</seasonalPrecipSum>  <!-- for table climate1 in ARPEGE table, years 1950-2010 -->
-			<seasonalTemperatureAverage>8.4, 17.67, 8.74, -0.99</seasonalTemperatureAverage> <!-- for table climate1 in ARPEGE table, years 1950-2010 -->
+			<seasonalPrecipSum>156.06, 243.12, 133.8, 114.43</seasonalPrecipSum>  <!-- for table climate1 in ARPEGE table, years 1950-2010 (it should be changed accordly)-->
+			<seasonalTemperatureAverage>8.4, 17.67, 8.74, -0.99</seasonalTemperatureAverage> <!-- for table climate1 in ARPEGE table, years 1950-2010 (it should be changed accordly)-->
 		</referenceClimate>
 		<onAfterBarkbeetle></onAfterBarkbeetle> <!-- afterBB() -->
 	</barkbeetle>
