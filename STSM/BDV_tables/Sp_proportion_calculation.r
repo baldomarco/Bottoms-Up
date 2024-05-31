@@ -1,3 +1,7 @@
+# Source data
+
+data <- subset(treedata, file == "Raw_data_structure20200515_CZ_JH1.xlsx")
+
 #------------------------------------------------------------------------------- site
 # Crete the species proportion per site
 
@@ -140,7 +144,7 @@ print(plot_species_proportions_vol)
 show(plot_species_proportions_vol)
 
 # Filter the data for the specific plot 'L1_33'
-plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L2_16')
+plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L6_21')
 plot_L1_33_proportions_vol
 
 # Extract the species proportions for 'L1_33'

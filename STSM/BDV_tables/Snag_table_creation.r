@@ -4,11 +4,15 @@ library(dplyr)
 library(RSQLite)
 library(vegan)
 library(fields)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(gridExtra) # To arrange the graphs in a grid
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -246,7 +250,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   # THIS IS NEEDED FOR MAKE THE DATA FRAME dynamicstand OF THE SAME SIZE OF THE carbon AND carbonflow. WE DID THE SAME FOR THE SELECTED VARIABLES IN LANDSCAPE
   dynamicstand_1 <- dynamicstand %>%
-    select(year, height_mean, dbh_mean, age_mean)
+    dplyr::select(year, height_mean, dbh_mean, age_mean)
   
   dynamicstand_1 <- tibble(
     year = setdiff(1:max(dynamicstand_1$year), dynamicstand_1$year),
@@ -312,10 +316,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   tree_10_40 <- tree %>%
     filter(dbh >= dbh_min, dbh <= dbh_max) %>%
     group_by(year) %>%
-    summarise(tree_10_40 = n()) %>%
-    complete(year = full_seq(year, 1)) %>%
-    replace(is.na(.), 0)
-  
+    summarise(tree_10_40 = n(), .groups = 'drop') %>%
+    complete(year = 0:max(year), fill = list(tree_10_40 = 0))
   
   #-------------------------------------------------------------------------------
   # To define the species to be removed
@@ -522,20 +524,15 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
 }
 
-library(ggplot2)
-library(GGally)
-library(corrplot)
-
-
+#-------------------------------------------------------------------------------
 # Start with plots
+#-------------------------------------------------------------------------------
 
-#_______________________________________________
-library(ggplot2)
-library(gridExtra) # To arrange the graphs in a grid
+
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L2_14_test/"
-pdf(paste0(dataroot, "Plot_L2_14.pdf"), height=8, width=12)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/"
+pdf(paste0(dataroot, "Plot_L6_21.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -547,8 +544,8 @@ species.we.have<-unique(lnd_scen$species)                                       
 # LIST OF ALL POSSIBLE SPECIES
 
 cols.all=c( "rops"="#e0e0e0", "acpl"="#A9A9A9",   "alin"="#696969", "alvi"="#2e2e2e",
-            "bepe"="#fadfad", 
-            "casa"="#7eeadf", "coav"="#20c6b6",  
+            "bepe"="#fadfad", "acca"="#FF4600",
+            "casa"="#7eeadf", "coav"="#20c6b6",
             "tipl"="#645394", "ulgl"="#311432" ,
             "saca"="#D8BFD8",  "soar"="#DDA0DD", "soau"="#BA55D3",
             "pice"="#D27D2D", "pini"="#a81c07",
