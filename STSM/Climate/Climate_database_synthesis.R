@@ -20,7 +20,7 @@ dataroot <- "your path"
 # DATAFRAME needed for the Climate request
 
 # CLIMATE REQUEST DATAFRAME
-datasoil_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/datasoil_CZ.rds")
+datasoil_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/datasoil_CZ.rds")
 
 CLIM_DATA_REQUEST <- datasoil_CZ[,1:6]
 
@@ -30,7 +30,7 @@ write.csv(CLIM_DATA_REQUEST, path)
 
 
 # Specify the file path
-file_path <- "C:/Users/baldo/Desktop/Climate/OUTPUT_ALL_ELEM_2.xlsx"  # Replace with the actual file path
+file_path <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/OUTPUT_ALL_ELEM_2.xlsx"  # Replace with the actual file path
 
 # Read all sheets into a list of data frames
 sheet_names <- excel_sheets(file_path)  # Get the names of all sheets
@@ -66,7 +66,7 @@ library(readxl)
 library(dplyr)
 
 # Specify the file path of the Excel file
-excel_file <- "C:/Users/baldo/Desktop/Climate/OUTPUT_ALL_ELEM_2.xlsx" # Replace with the actual file path if different
+excel_file <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/OUTPUT_ALL_ELEM_2.xlsx" # Replace with the actual file path if different
 
 # Get the directory path of the Excel file
 excel_dir <- dirname(excel_file)
