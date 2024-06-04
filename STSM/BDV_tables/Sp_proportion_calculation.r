@@ -100,6 +100,10 @@ site_species_proportions_vol <- site_species_volumes %>%
   group_by(Site) %>%
   mutate(SpeciesProportion = TotalVolume / sum(TotalVolume))
 
+# Create a % value column
+site_species_proportions_vol <- site_species_proportions_vol %>%
+  mutate(sp_per=SpeciesProportion*100)
+
 print(site_species_proportions_vol)
 show(site_species_proportions_vol)
 
@@ -144,7 +148,7 @@ print(plot_species_proportions_vol)
 show(plot_species_proportions_vol)
 
 # Filter the data for the specific plot 'L1_33'
-plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L6_21')
+plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L1_27')
 plot_L1_33_proportions_vol
 
 # Extract the species proportions for 'L1_33'
@@ -174,3 +178,51 @@ write_xlsx(site_species_proportions_vol, file.path(dataroot, "sp_prop_site_vol.x
 write_xlsx(plot_species_proportions_vol, file.path(dataroot, "sp_prop_plot_vol.xlsx"))
 
 
+#-------------------------------------------------------------------------------
+# Species proportion visualization
+
+species.we.have <- unique(plot_species_proportions_vol$treesp)
+
+
+# Color palette for spiecies
+cols.all=c( "Robinia pseudoacacia"="#e0e0e0", "Acer platanoides"="#A9A9A9",   "Alnus incana"="#696969", "Alnus vivirdis"="#2e2e2e",
+            "Betula pendula"="#fadfad", "Acer campestre"="#FF4600",
+            "Pinus strobus"="#7eeadf", "Corilus avellana"="#20c6b6",
+            "Sambucus nigra"="#645394", "Ulmus glabra"="#311432" ,
+            "Salix caprea"="#D8BFD8",  "Sorbus torminalis"="#DDA0DD", "Sorbus aucuparia"="#BA55D3",
+            "Sambucus racemosa"="#D27D2D", "Pinus nigra"="#a81c07",
+            "Ulmus minor"="#2ECBE9","Tilia cordata"="#128FC8",  "Populus tremula"="#00468B","Populus alba"="#5BAEB7",
+            "Fraxinus excelsior"="#fe9cb5","Carpinus betulus"="#fe6181","Acer pseudoplatanus"="#fe223e",
+            "Larix decidua"="#FFFE71","Abies alba"="#FFD800", "Pinus sylvestris"="#A4DE02",
+            "Fagus sylvatica"="#76BA1B", "Picea abies"="#006600",
+            "Quercus robur"="#FF7F00", "Quercus petraea"="#FF9900", "Quercus rubra"="#CC9900" 
+)
+
+
+new_order_gg.all=c("Robinia pseudoacacia", "Corilus avellana", "Alnus incana", "Alnus vivirdis",
+                   "Acer platanoides", "Acer campestre", "Acer pseudoplatanus","Fraxinus excelsior",
+                   "Betula pendula", "Carpinus betulus","Ulmus glabra", "Ulmus minor",
+                   "Tilia cordata","Sambucus nigra","Sorbus torminalis", "Sorbus aucuparia", "Sambucus racemosa",
+                   "Salix caprea","Populus tremula","Populus alba",
+                   "Quercus robur", "Quercus petraea", "Quercus rubra",
+                   "Pinus strobus","Pinus nigra","Pinus sylvestris",
+                   "Larix decidua","Abies alba",
+                   "Fagus sylvatica", "Picea abies")
+
+
+# This will show at the end only the species we really have on the landscape. 
+
+cols<-cols.all[names(cols.all) %in% species.we.have]
+new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
+
+# Plot
+x7wb <- ggplot(site_species_proportions_vol, aes(x="", y=SpeciesProportion, fill=factor(treesp, levels=new_order_gg))) +
+  geom_bar(stat="identity", width=1, show.legend = T) +
+  scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
+  facet_wrap(~Site, ncol=3)+
+  coord_polar("y", start=0) +
+  geom_text(aes(label = paste0( round(sp_per, 1)  )),  position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL, fill = NULL)+
+  ggtitle("Species proportions [%] based on site volume [m3/ha]")+
+  theme_bw()
+x7wb + theme(plot.title = element_text(hjust = 0.5))

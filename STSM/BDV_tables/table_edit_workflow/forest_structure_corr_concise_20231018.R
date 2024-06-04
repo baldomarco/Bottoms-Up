@@ -14,7 +14,7 @@ tab_brow <-read.csv("I:/iLand/2022/20220604_browsing_first/variables.DB_20220728
 
 tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
 
-tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20240528.xlsx")
+tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20240528_managed.xlsx")
 
 #head(tab1)
 head(tab2)
