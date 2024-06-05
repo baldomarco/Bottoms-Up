@@ -8,21 +8,21 @@
 # To set a smaller value for cellsize, you can modify the cellsize argument in the rasterize() function. For example, to set cellsize to 0.1, you can use the following 
 
 # Load the database
-load("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/alldata (1).RData")     # Bottoms-Up data
+load("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/alldata (1).RData")     # Bottoms-Up data
 
-speciesrichnessdata_95_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
-C_stock_total_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/C_stock_total_CZ.rds")
-dataBIRD_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataBIRD_CZ.rds")
-dataBRYO_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataBRYO_CZ.rds")
-dataFU_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataFU_CZ.rds")
-dataLI_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataLI_CZ.rds")
-dataSB_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataSB_CZ.rds")
-dataVP_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/dataVP_CZ.rds")
-deadwood_unit_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/deadwood_unit_CZ.rds")
-plotdescdata_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/plotdescdata_CZ.rds")
-standtrees_unit_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/standtrees_unit_CZ.rds")
-chelsa_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/chelsa_CZ.rds")
-datasoil_CZ <- readRDS("C:/Users/baldo/Desktop/Bottoms_Up/stsm_roma/official/datasoil_CZ.rds")
+speciesrichnessdata_95_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
+C_stock_total_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/C_stock_total_CZ.rds")
+dataBIRD_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataBIRD_CZ.rds")
+dataBRYO_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataBRYO_CZ.rds")
+dataFU_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataFU_CZ.rds")
+dataLI_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataLI_CZ.rds")
+dataSB_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataSB_CZ.rds")
+dataVP_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/dataVP_CZ.rds")
+deadwood_unit_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/deadwood_unit_CZ.rds")
+plotdescdata_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/plotdescdata_CZ.rds")
+standtrees_unit_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/standtrees_unit_CZ.rds")
+chelsa_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/chelsa_CZ.rds")
+datasoil_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/datasoil_CZ.rds")
 
 #-------------------------------------------------------------------------------
 # Create the framework for make the plot list from the central DB
@@ -687,7 +687,7 @@ p_(pm)
 # DATAFRAME WITH DEADWOOD AND CARBON POOLS see lines 229 - 236
 
 # OBSERVED RICHNESS
-df_sr_c <- data.frame(Cz_Birds_sr_c[,2], 
+df_sr_c <- data.frame(Cz_Birds_sr_c[,3], 
                       Cz_Birds_sr_c[,4], 
                       Cz_Beetles_sr_c[,4], 
                       Cz_Fungi_sr_c[,4],
@@ -698,6 +698,8 @@ df_sr_c <- data.frame(Cz_Birds_sr_c[,2],
                       C_stock_total_CZ[,4])
 
 names(df_sr_c) <- c("siteID","Birds","Beetles","Fungi","Lichens","Tracheophyta","CSSA","CSLD","CSSD")
+
+#write.csv(df_sr_c, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/df_sr_c.csv")
 
 # SCALED RICHNESS
 df_sr_scaled_c <- data.frame(Cz_Birds_sr_c[,2], 
