@@ -8,14 +8,15 @@ library(fields)
 #install.packages("readxl")
 library(readxl)
 
+#-------------------------------------------------------------------------------
+# import tables
 tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_clean_correlation.xlsx") 
 
 tab_brow <-read.csv("I:/iLand/2022/20220604_browsing_first/variables.DB_20220728.csv")
 
 tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
 
-tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20240528_managed.xlsx")
-
+#-------------------------------------------------------------------------------
 #head(tab1)
 head(tab2)
 
@@ -334,7 +335,7 @@ k_esp<-a_esp %>% group_by(case) %>% mutate(s.dbh=rollmean(dbh,11,align = "left",
 data<-data.frame(x=k_esp$s.dbh,y=k_esp$s.esp_BA_prob,z=k_esp$s.tot_carbon, case=k_esp$case)
 plot_ly(data, x = ~x, y = ~y, z = ~z, split=~case, type = 'scatter3d', mode = 'lines')
 
-#+ stat_smooth()
+# stat_smooth()
 
 # 3D plot second table with Conifer proportion
 
@@ -359,3 +360,129 @@ a
 
 pdf(a)
 
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# NEW DATAFRAME 2024 06 05 MANAGEMENT AND SPECIES RICHNESS VS FOREST STRUCTURES
+
+tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
+
+tab_sp <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/df_sr_c.csv")
+
+tab2_mng <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20240528_managed.xlsx")
+
+#-------------------------------------------------------------------------------
+# Manipulate and merge tables of species richness and forest structures
+print(tab2_mng)
+print(tab_sp)
+
+# Using gsub to remove multiple substrings
+tab_sp$plotID <- gsub("CZ_JH1_L1X|CZ_JH1_L2X|CZ_JH1_L3X|CZ_JH1_L4X|CZ_JH1_L5X|CZ_JH1_L6X", "", tab_sp$plotID)
+print(tab_sp)
+print(tab2_mng)
+
+# First catch the mismatching 
+# Print mismatching names
+diff <- setdiff(tab_sp$plotID, tab2_mng$plotID)
+diff
+
+diff <- setdiff(tab2_mng$plotID, tab_sp$plotID)
+diff
+
+#"L1_22" "L1_24" "L1_26" "L1_27" "L2_27" "L2_30" "L2_33" "L2_34" "L3_06" "L3_09" "L3_10" "L3_16" "L4_06" "L4_09"
+#"L4_31" "L4_33" "L6_05" "L6_08" "L6_10"
+
+# Remove rows in taxon species richness in plots where are not present carbon stocks outputs
+tab_sp_mng <- tab_sp %>% 
+  filter(! (plotID %in% c("L1_22", "L1_24", "L1_26", "L1_27", "L2_27", "L2_30", "L2_33", "L2_34", "L3_06", "L3_09", "L3_10", "L3_16", "L4_06", "L4_09", "L4_31", "L4_33", "L6_05", "L6_08", "L6_10")))
+
+#"L1_10" "L1_43" "L5_25" "L5_28" "L5_37" "L6_11" "L6_17"
+tab2_mng <- tab2_mng %>% 
+  filter(! (plotID %in% c("L1_10", "L1_43", "L5_25", "L5_28", "L5_37", "L6_11", "L6_17")))
+
+str(tab_sp_mng)
+str(tab2_mng)
+
+# Create the new data frame for needed variables
+BDV_CORR_MNG <- data.frame(
+  tab_sp_mng,
+  age = tab2_mng$age,
+  volume_dw = tab2_mng$volume_dw,
+  ba = tab2_mng$ba,
+  lai_sim = tab2_mng$lai_sim,
+  lai_emp = tab2_mng$lai_emp,
+  sh_tree = tab2_mng$sh,
+  ba_bl = tab2_mng$ba_bl,
+  max_dbh = tab2_mng$max_dbh,
+  `tree<=40` = tab2_mng$`tree<=40`,
+  `conf>40` = tab2_mng$`conf>40`,
+  `bl>40` = tab2_mng$`bl>40`,
+  `ba_bl>40` = tab2_mng$`ba_bl>40`,
+  tot_dw_c = tab2_mng$tot_dw_c,
+  snag_c = tab2_mng$snag_c,
+  Age_MeanGAM = tab2_mng$Age_MeanGAM
+)
+
+# Remove the prefix 'tab_sp_mng.' from the column names
+colnames(BDV_CORR_MNG) <- sub("tab_sp_mng\\.", "", colnames(BDV_CORR_MNG))
+
+# Print the updated data frame to check the new column names
+print(colnames(BDV_CORR_MNG))
+print(BDV_CORR_MNG)
+
+str(BDV_CORR_MNG)
+head(BDV_CORR_MNG)
+# SAVE THE DATAFRAME IN JENIK/TABLE_IMP
+#write.csv(BDV_CORR_MNG, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/BDV_CORR_MNG.csv")
+# MAKE CONSISTENCY WITH THE SECOND PART OF THE CODE SO CALL THE DF TAB2
+BDV_CORR_MNG
+
+#-------------------------------------------------------------------------------
+a.num<-tab2[,2:25]
+
+
+# Look them all:
+par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
+corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+
+#---------------------------------- just do the correlation plot with the selected variables
+
+ggpairs(a.num)
+
+
+
+
+#-------------------------------------------------------------------------------
+# small function to display plots only if it is interactive
+p_ <- GGally::print_if_interactive
+
+pm <- ggpairs(df_sr_c, columns = 2:9, ggplot2::aes(colour = siteID))
+p_(pm)
+
+ggpairs(df_sr_c) # Use it to plot also box plots
+
+# Create a scatter plot matrix
+ggpairs(df_sr_c, aes(colour = siteID)) # the same of above but with colors
+
+#-------------------------------------------------------------------------------
+# small function to display plots only if it is interactive
+p_ <- GGally::print_if_interactive
+
+pm <- ggpairs(df_sr_scaled_c, columns = 2:9, ggplot2::aes(colour = siteID))
+p_(pm)
+
+ggpairs(df_sr_scaled_c) # Use it to plot also box plots
+
+# Create a scatter plot matrix
+ggpairs(df_sr_scaled_c, aes(colour = siteID)) # the same of above but with colors

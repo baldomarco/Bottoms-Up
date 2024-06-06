@@ -699,8 +699,6 @@ df_sr_c <- data.frame(Cz_Birds_sr_c[,3],
 
 names(df_sr_c) <- c("siteID","Birds","Beetles","Fungi","Lichens","Tracheophyta","CSSA","CSLD","CSSD")
 
-#write.csv(df_sr_c, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/df_sr_c.csv")
-
 # SCALED RICHNESS
 df_sr_scaled_c <- data.frame(Cz_Birds_sr_c[,2], 
                              Cz_Birds_sr_c[,6], 
@@ -792,7 +790,8 @@ Cz_Bryophytes_sr_c_br <- Cz_Bryophytes_sr %>%
 # Make the new df for bryophytes matching
 
 # OBSERVED RICHNESS
-df_sr_c_br <- data.frame(Cz_Birds_sr_c_br[,2], 
+df_sr_c_br <- data.frame(Cz_Birds_sr_c_br[,2],
+                         Cz_Birds_sr_c_br[,3],
                       Cz_Birds_sr_c_br[,4], 
                       Cz_Beetles_sr_c_br[,4], 
                       Cz_Fungi_sr_c_br[,4],
@@ -803,7 +802,9 @@ df_sr_c_br <- data.frame(Cz_Birds_sr_c_br[,2],
                       C_stock_total_CZ_br[,3],
                       C_stock_total_CZ_br[,4])
 
-names(df_sr_c_br) <- c("siteID","Birds","Beetles","Fungi","Lichens","Bryophytes","Tracheophyta","CSSA","CSLD","CSSD")
+names(df_sr_c_br) <- c("siteID", "plotID","Birds","Beetles","Fungi","Lichens","Bryophytes","Tracheophyta","CSSA","CSLD","CSSD")
+
+#write.csv(df_sr_c_br, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/df_sr_c.csv")
 
 # SCALED RICHNESS
 df_sr_scaled_c_br <- data.frame(Cz_Birds_sr_c_br[,2], 
