@@ -449,7 +449,7 @@ head(BDV_CORR_MNG)
 BDV_CORR_MNG
 
 #-------------------------------------------------------------------------------
-a.num<-tab2[,2:25]
+a.num<-BDV_CORR_MNG[,3:26]
 
 
 # Look them all:
@@ -462,6 +462,20 @@ ggpairs(a.num)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# Here the is a section for create also the subset per site of the ggpair plot
 
 #-------------------------------------------------------------------------------
 # small function to display plots only if it is interactive

@@ -8,12 +8,18 @@ library(ggplot2)
 library(GGally)
 library(corrplot)
 library(gridExtra) # To arrange the graphs in a grid
+library(writexl)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/")
+# This was the directory to plot one by one the plots with seed background based on plot and based on sites
+#setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/"
+#dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/"
 
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot/")
+
+
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot/"
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
 
@@ -640,27 +646,34 @@ ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
 # close the plots
 dev.off()
 
-#-------------------------------
+#-------------------------------------------------------------------------------
+# Merge the carbon_scen with the abeStand_scen
+snag_age <- data.frame(carbon_scen=carbon_scen,
+                       volume=abeStand_scen$volume,
+                       age=abeStand_scen$age)
+
+
+#-------------------------------------------------------------------------------
 # Create the table of the snag values
 
 snag_c <- carbon_scen %>%
   # Filter the dataframe based on the specific value in the 'run' column
-  filter(run == "DB_CZ_JH1_L1XL1_38_plot.sqlite") %>%
+  filter(run == "DB_CZ_JH1_L6XL6_21_plot.sqlite") %>%
   group_by(year)%>%
   select(year,snags_c)
 
 # Select the values for the needed years
-selected_years <- snag_c %>% filter(year %in% c(204, 276, 396))
+selected_years <- snag_c %>% filter(year %in% c(160, 320, 480))
 
 # Ensure the selected years are sorted properly
 selected_years <- selected_years %>% arrange(year)
 
 # Create a new data frame with the required structure
 snags_fun <- data.frame(
-  plotID = "L1_38",  # Replace with actual plotID value or a sequence of plotIDs if available
-  first_rot = selected_years$snags_c[selected_years$year == 204],
-  second_rot = selected_years$snags_c[selected_years$year == 276],
-  third_rot = selected_years$snags_c[selected_years$year == 396]
+  plotID = "L6_21",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$snags_c[selected_years$year == 160],
+  second_rot = selected_years$snags_c[selected_years$year == 320],
+  third_rot = selected_years$snags_c[selected_years$year == 480]
 )
 
 # Add a new column for the average of the three rotations
@@ -674,9 +687,43 @@ print(snags_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L1_38.xlsx"))
+write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_21.xlsx"))
 
 #-------------------------------------------------------------------------------
+# Create the table of the snag values
+
+snag_c <- carbon_scen %>%
+  # Filter the dataframe based on the specific value in the 'run' column
+  filter(run == "DB_CZ_JH1_L6XL6_14_plot.sqlite") %>%
+  group_by(year)%>%
+  select(year,snags_c)
+
+# Select the values for the needed years
+selected_years <- snag_c %>% filter(year %in% c(120, 240, 360))
+
+# Ensure the selected years are sorted properly
+selected_years <- selected_years %>% arrange(year)
+
+# Create a new data frame with the required structure
+snags_fun <- data.frame(
+  plotID = "L6_14",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$snags_c[selected_years$year == 120],
+  second_rot = selected_years$snags_c[selected_years$year == 240],
+  third_rot = selected_years$snags_c[selected_years$year == 360]
+)
+
+# Add a new column for the average of the three rotations
+snags_fun <- snags_fun %>%
+  mutate(average = (first_rot + second_rot + third_rot) / 3)
+
+# Print the new data frame
+print(snags_fun)
+
+# Write the table
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/"
+
+# sp prop per site based on n. of trees
+write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_14.xlsx"))
 
 
 
