@@ -726,17 +726,33 @@ dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_ta
 write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_14.xlsx"))
 
 
+#-------------------------------------------------------------------------------
+library(readxl)
+library(dplyr)
 
+# Define the directory containing the Excel files
+directory <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/"
 
+# List all Excel files in the directory
+excel_files <- list.files(path = directory, pattern = "\\.xlsx$", full.names = TRUE)
 
+# Initialize an empty list to store the data frames
+list_of_dfs <- list()
 
+# Loop through each file and read it into a data frame, then store it in the list
+for (file in excel_files) {
+  df <- read_xlsx(file)
+  list_of_dfs <- append(list_of_dfs, list(df))
+}
 
+# Combine all data frames in the list into a single data frame
+snag_mng_df <- bind_rows(list_of_dfs)
 
+# Print the combined data frame to verify the result
+print(snag_mng_df)
 
-
-
-
-
+# snag vales for the bdv snag function creation
+write_xlsx(snag_mng_df, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/Snags_function_all.xlsx")
 
 
 #-------------------------------------------------------------------------------

@@ -376,11 +376,11 @@ pdf(a)
 #-------------------------------------------------------------------------------
 # NEW DATAFRAME 2024 06 05 MANAGEMENT AND SPECIES RICHNESS VS FOREST STRUCTURES
 
-tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
-
 tab_sp <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/df_sr_c.csv")
 
 tab2_mng <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20240528_managed.xlsx")
+
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/Snags_function_all.xlsx")
 
 #-------------------------------------------------------------------------------
 # Manipulate and merge tables of species richness and forest structures
@@ -400,19 +400,31 @@ diff
 diff <- setdiff(tab2_mng$plotID, tab_sp$plotID)
 diff
 
-#"L1_22" "L1_24" "L1_26" "L1_27" "L2_27" "L2_30" "L2_33" "L2_34" "L3_06" "L3_09" "L3_10" "L3_16" "L4_06" "L4_09"
-#"L4_31" "L4_33" "L6_05" "L6_08" "L6_10"
+diff <- setdiff(tab1$plotID, tab_sp$plotID)
+diff
+
+diff <- setdiff(tab_sp$plotID, tab1$plotID)
+diff
+
+diff <- setdiff(tab1$plotID, tab2_mng$plotID)
+diff
+
 
 # Remove rows in taxon species richness in plots where are not present carbon stocks outputs
 tab_sp_mng <- tab_sp %>% 
-  filter(! (plotID %in% c("L1_22", "L1_24", "L1_26", "L1_27", "L2_27", "L2_30", "L2_33", "L2_34", "L3_06", "L3_09", "L3_10", "L3_16", "L4_06", "L4_09", "L4_31", "L4_33", "L6_05", "L6_08", "L6_10")))
+  filter(! (plotID %in% c("L1_18", "L1_22", "L1_24", "L1_26", "L1_27", "L2_27", "L2_30", "L2_33", "L2_34", "L3_06", "L3_09", "L3_10", "L3_16", "L4_06", "L4_09", "L4_31", "L4_33", "L6_05", "L6_08", "L6_10")))
 
 #"L1_10" "L1_43" "L5_25" "L5_28" "L5_37" "L6_11" "L6_17"
 tab2_mng <- tab2_mng %>% 
-  filter(! (plotID %in% c("L1_10", "L1_43", "L5_25", "L5_28", "L5_37", "L6_11", "L6_17")))
+  filter(! (plotID %in% c("L1_10", "L1_18", "L1_43", "L5_25", "L5_28", "L5_37", "L6_11", "L6_17")))
 
+tab1 <- tab1 %>% 
+  filter(! (plotID %in% c("L1_10", "L1_27","L1_43", "L2_33", "L5_25", "L5_28", "L5_37", "L6_11", "L6_17", "L1_18", "L1_22", "L1_24", "L1_26", "L2_27", "L2_30", "L2_34", "L3_06", "L3_09", "L3_10", "L3_16", "L4_06", "L4_09", "L4_31", "L4_33", "L6_05", "L6_08", "L6_10")))
+
+# Check the df str
 str(tab_sp_mng)
 str(tab2_mng)
+str(tab1)
 
 # Create the new data frame for needed variables
 BDV_CORR_MNG <- data.frame(
@@ -431,6 +443,7 @@ BDV_CORR_MNG <- data.frame(
   `ba_bl>40` = tab2_mng$`ba_bl>40`,
   tot_dw_c = tab2_mng$tot_dw_c,
   snag_c = tab2_mng$snag_c,
+  snag_c_sim = tab1$average,
   Age_MeanGAM = tab2_mng$Age_MeanGAM
 )
 
@@ -449,7 +462,7 @@ head(BDV_CORR_MNG)
 BDV_CORR_MNG
 
 #-------------------------------------------------------------------------------
-a.num<-BDV_CORR_MNG[,3:26]
+a.num<-BDV_CORR_MNG[,3:27]
 
 
 # Look them all:
@@ -459,13 +472,6 @@ corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,
 #---------------------------------- just do the correlation plot with the selected variables
 
 ggpairs(a.num)
-
-
-
-
-
-
-
 
 
 
