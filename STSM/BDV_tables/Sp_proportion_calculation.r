@@ -1,4 +1,5 @@
 # Source data
+load("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/alldata (1).RData")     # Bottoms-Up data
 
 data <- subset(treedata, file == "Raw_data_structure20200515_CZ_JH1.xlsx")
 

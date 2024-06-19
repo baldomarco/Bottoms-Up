@@ -140,7 +140,7 @@ ggplot() +
   theme(legend.position = "right")
 
 # Define the color ramp palette
-cl <- colorRampPalette(c("darkorchid3", "light blue", "lightpink4"))(100)
+cl <- colorRampPalette(c("darkorchid3", "lightblue", "lightpink4"))(100)
 
 cl <- colorRampPalette(c("lightpink", "#FFEDA0", "darkgreen"))(100)
 
@@ -148,18 +148,28 @@ col <- rev(terrain.colors(255))
 
 #scale_fill_distiller(palette = "plasma")
 
-# Plotting code with labels and custom color ramp
+# BEST - Plotting code with labels and custom color ramp
 ggplot() +
   geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer with custom color scale
   scale_fill_gradientn(colors = col, na.value = NA) +  # Use custom color ramp for elevation
   #geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
-  geom_text(data = bdv_plot_sf, aes(label = site, x = st_coordinates(geometry)[, "X"], y = st_coordinates(geometry)[, "Y"]), size = 3, nudge_y = 0.002) +  # Add labels for sites
-  geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots without specifying colors
+  #geom_text(data = bdv_plot_sf, aes(label = site, x = st_coordinates(geometry)[, "X"], y = st_coordinates(geometry)[, "Y"]), size = 3, nudge_y = 0.002) +  # Add labels for sites
+  geom_sf(data = bdv_plot_sf, aes(color = "black"), size = 2) +  # Plot the BDV plots without specifying colors
   theme_minimal() +
   labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
   theme(legend.position = "right")
 
-#
+# Plotting code with black points and custom color ramp
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer with custom color scale
+  scale_fill_gradientn(colors = col, na.value = NA) +  # Use custom color ramp for elevation
+  geom_sf(data = bdv_plot_sf, color = "black", size = 2) +  # Plot the BDV plots in black
+  theme_minimal() +
+  labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Plots", fill = "Elevation") +
+  theme(legend.position = "right")
+
+
+# Using viridis elevation gradient
 ggplot() +
   geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer
   scale_fill_viridis_d(na.value = NA) +  # Default color scale for raster images
