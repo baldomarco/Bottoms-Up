@@ -372,7 +372,7 @@ pdf(a)
 
 
 
-
+# library(readxl) 
 #-------------------------------------------------------------------------------
 # NEW DATAFRAME 2024 06 05 MANAGEMENT AND SPECIES RICHNESS VS FOREST STRUCTURES
 

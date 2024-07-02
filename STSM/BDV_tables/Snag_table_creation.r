@@ -393,22 +393,27 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   #-----------------------------------------------------------------------------
   # CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
   
+  # Total Carbon
   totalC_kgha_iland <- data.frame(carbon %>% 
                                     group_by(year) %>% 
                                     summarise(totalC_kgha_iland=sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, regeneration_c, snags_c, snagsOther_c, downedWood_c, litter_c, soil_c)))
   
-  # DW carbon total
+  # Total DW Carbon
   total_DW_C_kgha <- data.frame(carbon %>% 
                                   group_by(year) %>% 
                                   summarise(total_DW_C_kgha=sum(snags_c, snagsOther_c, downedWood_c)))
+  # Total Aboveground DW Carbon
+  #total_DW_C_kgha <- data.frame(carbon %>% 
+  #                                group_by(year) %>% 
+  #                                summarise(total_DW_C_kgha=sum(snags_c, snagsOther_c))) SnagsOther_c is formed also by branches and coarse roots of standing dead trees, carbon kg/ha 
   
-  # Good one
+  # Snag Carbon
   standing_DW_C <- data.frame(carbon %>% 
                                 group_by(year) %>% 
                                 summarise(standing_DW_C = sum(snags_c))) 
   
   # Create a new row with manually specified values
-  new_row_1 <- c(0, 16909)  # Add your values accordingly
+  new_row_1 <- c(0, 1690)  # Add your values accordingly
   new_row_2 <- c(0, 3966.662)  # Add your values accordingly : original 749+233+225
   new_row_3 <- c(0, 283716.5)  # Add your values accordingly
   
@@ -647,6 +652,8 @@ ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
 dev.off()
 
 #-------------------------------------------------------------------------------
+# SNAG CARBON FUNCTION SIMULATION vs FIELDWORK SAMPLES
+#-------------------------------------------------------------------------------
 # Merge the carbon_scen with the abeStand_scen
 snag_age <- data.frame(carbon_scen=carbon_scen,
                        volume=abeStand_scen$volume,
@@ -684,7 +691,7 @@ snags_fun <- snags_fun %>%
 print(snags_fun)
 
 # Write the table
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
 write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_21.xlsx"))
@@ -720,7 +727,7 @@ snags_fun <- snags_fun %>%
 print(snags_fun)
 
 # Write the table
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
 write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_14.xlsx"))
@@ -753,14 +760,212 @@ print(snag_mng_df)
 
 # snag vales for the bdv snag function creation
 write_xlsx(snag_mng_df, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/snags_fun/Snags_function_all.xlsx")
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# TOTAL DEADWOOD CARBON FUNCTION SIMULATION vs FIELDWORK SAMPLES
+
+#-------------------------------------------------------------------------------
+# Merge the carbon_scen with the abeStand_scen
+deadwood_age <- data.frame(carbon_scen=carbon_scen,
+                       volume=abeStand_scen$volume,
+                       age=abeStand_scen$age)
+
+
+#-------------------------------------------------------------------------------
+# Create the table of the deadwood values
+
+deadwood_c <- plot_variables_all %>%
+  # Filter the dataframe based on the specific value in the 'run' column
+  filter(run == "DB_CZ_JH1_L2XL2_33_plot.sqlite") %>%
+  group_by(year)%>%
+  select(year, totalC_kgha_iland, total_DW_C_kgha)
+
+# Select the values for the needed years
+selected_years <- deadwood_c %>% filter(year %in% c(160, 320, 480))
+
+# Ensure the selected years are sorted properly
+selected_years <- selected_years %>% arrange(year)
+
+# Create a new data frame using the equivalent rotation time of the starting stand age at simulation year 0.
+deadwood_fun <- data.frame(
+  plotID = "L2_33",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$total_DW_C_kgha[selected_years$year == 160],
+  second_rot = selected_years$total_DW_C_kgha[selected_years$year == 320],
+  third_rot = selected_years$total_DW_C_kgha[selected_years$year == 480]
+)
+
+# Add a new column for the average of the three rotations
+deadwood_fun <- deadwood_fun %>%
+  mutate(average = (first_rot + second_rot + third_rot) / 3)
+
+# Print the new data frame
+print(deadwood_fun)
+
+# Write the table
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
+
+# sp prop per site based on n. of trees
+write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L2_33.xlsx"))
+#-------------------------------------------------------------------------------
+
+# TOTAL CARBON
+total_carbon_fun <- data.frame(
+  plotID = "L2_33",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$totalC_kgha_iland[selected_years$year == 160],
+  second_rot = selected_years$totalC_kgha_iland[selected_years$year == 320],
+  third_rot = selected_years$totalC_kgha_iland[selected_years$year == 480]
+)
+
+# Add a new column for the average of the three rotations
+total_carbon_fun <- total_carbon_fun %>%
+  mutate(average = (first_rot + second_rot + third_rot) / 3)
+
+# Print the new data frame
+print(total_carbon_fun)
+
+# Write the table
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/"
+
+# sp prop per site based on n. of trees
+write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L2_33.xlsx"))
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# Create the table of the deadwood values X coniferous stands dominated
+#-------------------------------------------------------------------------------
+deadwood_c <- plot_variables_all %>%
+  # Filter the dataframe based on the specific value in the 'run' column
+  filter(run == "DB_CZ_JH1_L2XL2_44_plot.sqlite") %>%
+  group_by(year)%>%
+  select(year,totalC_kgha_iland, total_DW_C_kgha)
+
+# Select the values for the needed years
+selected_years <- deadwood_c %>% filter(year %in% c(120, 240, 360))
+
+# Ensure the selected years are sorted properly
+selected_years <- selected_years %>% arrange(year)
+
+# Create a new data frame with the required structure
+deadwood_fun <- data.frame(
+  plotID = "L2_44",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$total_DW_C_kgha[selected_years$year == 120],
+  second_rot = selected_years$total_DW_C_kgha[selected_years$year == 240],
+  third_rot = selected_years$total_DW_C_kgha[selected_years$year == 360]
+)
+
+# Add a new column for the average of the three rotations
+deadwood_fun <- deadwood_fun %>%
+  mutate(average = (first_rot + second_rot + third_rot) / 3)
+
+# Print the new data frame
+print(deadwood_fun)
+
+# Write the table
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
+
+# sp prop per site based on n. of trees
+write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L2_44.xlsx"))
+#-------------------------------------------------------------------------------
+
+# TOTAL CARBON FUNCTION 
+total_carbon_fun <- data.frame(
+  plotID = "L2_44",  # Replace with actual plotID value or a sequence of plotIDs if available
+  first_rot = selected_years$totalC_kgha_iland[selected_years$year == 120],
+  second_rot = selected_years$totalC_kgha_iland[selected_years$year == 240],
+  third_rot = selected_years$totalC_kgha_iland[selected_years$year == 360]
+)
+
+# Add a new column for the average of the three rotations
+total_carbon_fun <- total_carbon_fun %>%
+  mutate(average = (first_rot + second_rot + third_rot) / 3)
+
+# Print the new data frame
+print(total_carbon_fun)
+
+# Write the table
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/"
+
+# sp prop per site based on n. of trees
+write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L2_44.xlsx"))
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# LOOP TRHOUGH ALL THE EXCEL FILES FOR DEADWOOD CARBON POOL TO CREATE UNIQUE TABLES
+#-------------------------------------------------------------------------------
+library(readxl)
+library(dplyr)
+
+# Define the directory containing the Excel files
+directory <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
+
+# List all Excel files in the directory
+excel_files <- list.files(path = directory, pattern = "\\.xlsx$", full.names = TRUE)
+
+# Initialize an empty list to store the data frames
+list_of_dfs <- list()
+
+# Loop through each file and read it into a data frame, then store it in the list
+for (file in excel_files) {
+  df <- read_xlsx(file)
+  list_of_dfs <- append(list_of_dfs, list(df))
+}
+
+# Combine all data frames in the list into a single data frame
+deadwood_mng_df <- bind_rows(list_of_dfs)
+
+# Print the combined data frame to verify the result
+print(deadwood_mng_df)
+
+# Total deadwood carbon vales for the bdv total deadwood carbon function creation
+write_xlsx(deadwood_mng_df, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/Deadwood_function_all.xlsx")
+
+#-------------------------------------------------------------------------------
+# DO THE SAME FOR TOTAL CARBON
+#-------------------------------------------------------------------------------
+library(readxl)
+library(dplyr)
+
+# Define the directory containing the Excel files
+directory <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/"
+
+# List all Excel files in the directory
+excel_files <- list.files(path = directory, pattern = "\\.xlsx$", full.names = TRUE)
+
+# Initialize an empty list to store the data frames
+list_of_dfs <- list()
+
+# Loop through each file and read it into a data frame, then store it in the list
+for (file in excel_files) {
+  df <- read_xlsx(file)
+  list_of_dfs <- append(list_of_dfs, list(df))
+}
+
+# Combine all data frames in the list into a single data frame
+total_carbon_mng_df <- bind_rows(list_of_dfs)
+
+# Print the combined data frame to verify the result
+print(total_carbon_mng_df)
+
+# Total carbon vales for the bdv total carbon function creation
+write_xlsx(total_carbon_mng_df, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/total_carbon_function_all.xlsx")
 
 
 #-------------------------------------------------------------------------------
 # Create the excel for Tomas
-
+#----------------------------
 plot_L1_27_df_simul <- plot_L1_10_df_simul%>%
   group_by(year)%>%
   select(age,snag_c,total_DW_C_kgha)
 
 # sp prop per site based on n. of trees
 write_xlsx(plot_L1_27_df_simul, file.path(dataroot, "plot_L1_27_df_simul.xlsx"))
+
+#----------------------------
+# END 
