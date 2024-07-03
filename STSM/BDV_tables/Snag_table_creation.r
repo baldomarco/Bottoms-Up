@@ -777,7 +777,7 @@ deadwood_age <- data.frame(carbon_scen=carbon_scen,
 
 deadwood_c <- plot_variables_all %>%
   # Filter the dataframe based on the specific value in the 'run' column
-  filter(run == "DB_CZ_JH1_L2XL2_33_plot.sqlite") %>%
+  filter(run == "DB_CZ_JH1_L6XL6_21_plot.sqlite") %>%
   group_by(year)%>%
   select(year, totalC_kgha_iland, total_DW_C_kgha)
 
@@ -789,7 +789,7 @@ selected_years <- selected_years %>% arrange(year)
 
 # Create a new data frame using the equivalent rotation time of the starting stand age at simulation year 0.
 deadwood_fun <- data.frame(
-  plotID = "L2_33",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L6_21",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$total_DW_C_kgha[selected_years$year == 160],
   second_rot = selected_years$total_DW_C_kgha[selected_years$year == 320],
   third_rot = selected_years$total_DW_C_kgha[selected_years$year == 480]
@@ -806,12 +806,12 @@ print(deadwood_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L2_33.xlsx"))
+write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L6_21.xlsx"))
 #-------------------------------------------------------------------------------
 
 # TOTAL CARBON
 total_carbon_fun <- data.frame(
-  plotID = "L2_33",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L6_21",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$totalC_kgha_iland[selected_years$year == 160],
   second_rot = selected_years$totalC_kgha_iland[selected_years$year == 320],
   third_rot = selected_years$totalC_kgha_iland[selected_years$year == 480]
@@ -828,10 +828,7 @@ print(total_carbon_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L2_33.xlsx"))
-
-
-
+write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L6_21.xlsx"))
 
 
 #-------------------------------------------------------------------------------
@@ -839,7 +836,7 @@ write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L2
 #-------------------------------------------------------------------------------
 deadwood_c <- plot_variables_all %>%
   # Filter the dataframe based on the specific value in the 'run' column
-  filter(run == "DB_CZ_JH1_L2XL2_44_plot.sqlite") %>%
+  filter(run == "DB_CZ_JH1_L1XL1_27_plot.sqlite") %>%
   group_by(year)%>%
   select(year,totalC_kgha_iland, total_DW_C_kgha)
 
@@ -851,7 +848,7 @@ selected_years <- selected_years %>% arrange(year)
 
 # Create a new data frame with the required structure
 deadwood_fun <- data.frame(
-  plotID = "L2_44",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L1_27",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$total_DW_C_kgha[selected_years$year == 120],
   second_rot = selected_years$total_DW_C_kgha[selected_years$year == 240],
   third_rot = selected_years$total_DW_C_kgha[selected_years$year == 360]
@@ -868,12 +865,12 @@ print(deadwood_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L2_44.xlsx"))
+write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L1_27.xlsx"))
 #-------------------------------------------------------------------------------
 
 # TOTAL CARBON FUNCTION 
 total_carbon_fun <- data.frame(
-  plotID = "L2_44",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L1_27",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$totalC_kgha_iland[selected_years$year == 120],
   second_rot = selected_years$totalC_kgha_iland[selected_years$year == 240],
   third_rot = selected_years$totalC_kgha_iland[selected_years$year == 360]
@@ -890,9 +887,7 @@ print(total_carbon_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/total_carbon_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L2_44.xlsx"))
-
-
+write_xlsx(total_carbon_fun, file.path(dataroot, "total_carbon_fun_table_plot_L1_27.xlsx"))
 
 
 

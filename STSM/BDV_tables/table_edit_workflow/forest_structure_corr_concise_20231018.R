@@ -476,10 +476,6 @@ ggpairs(a.num)
 
 
 
-
-
-
-
 #-------------------------------------------------------------------------------
 # Here the is a section for create also the subset per site of the ggpair plot
 
@@ -506,3 +502,34 @@ ggpairs(df_sr_scaled_c) # Use it to plot also box plots
 
 # Create a scatter plot matrix
 ggpairs(df_sr_scaled_c, aes(colour = siteID)) # the same of above but with colors
+
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+# NEW WAY WITH THE BDV STAT TABLE
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_not_unevenaged.xlsx")
+
+#-------------------------------------------------------------------------------
+# Manipulate and merge tables of species richness and forest structures
+print(tab1)
+str(tab1)
+
+
+#-------------------------------------------------------------------------------
+a.num<-tab1[,4:24]
+
+
+# Look them all:
+par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
+corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+
+#---------------------------------- just do the correlation plot with the selected variables
+
+ggpairs(a.num)
+
+
