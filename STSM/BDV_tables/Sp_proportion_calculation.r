@@ -149,7 +149,7 @@ print(plot_species_proportions_vol)
 show(plot_species_proportions_vol)
 
 # Filter the data for the specific plot 'L1_33'
-plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L3_06')
+plot_L1_33_proportions_vol <- subset(plot_species_proportions_vol, Plot == 'L3_09')
 plot_L1_33_proportions_vol
 
 # Extract the species proportions for 'L1_33'

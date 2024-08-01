@@ -783,15 +783,13 @@ write_xlsx(snag_mng_df, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Je
 #-------------------------------------------------------------------------------
 # TOTAL DEADWOOD CARBON FUNCTION SIMULATION vs FIELDWORK SAMPLES
 #-------------------------------------------------------------------------------
+
 #-------------------------------------------------------------------------------
 # Merge the carbon_scen with the abeStand_scen
 deadwood_age <- data.frame(carbon_scen=carbon_scen,
                        volume=abeStand_scen$volume,
                        age=abeStand_scen$age)
-
-
 #-------------------------------------------------------------------------------
-
 
 
 # Create the table of the C pools values for Broadleaf dominated stands

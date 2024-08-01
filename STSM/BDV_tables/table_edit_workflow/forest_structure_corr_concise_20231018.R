@@ -474,46 +474,10 @@ corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,
 ggpairs(a.num)
 
 
-
-
 #-------------------------------------------------------------------------------
-# Here the is a section for create also the subset per site of the ggpair plot
-
-#-------------------------------------------------------------------------------
-# small function to display plots only if it is interactive
-p_ <- GGally::print_if_interactive
-
-pm <- ggpairs(df_sr_c, columns = 2:9, ggplot2::aes(colour = siteID))
-p_(pm)
-
-ggpairs(df_sr_c) # Use it to plot also box plots
-
-# Create a scatter plot matrix
-ggpairs(df_sr_c, aes(colour = siteID)) # the same of above but with colors
-
-#-------------------------------------------------------------------------------
-# small function to display plots only if it is interactive
-p_ <- GGally::print_if_interactive
-
-pm <- ggpairs(df_sr_scaled_c, columns = 2:9, ggplot2::aes(colour = siteID))
-p_(pm)
-
-ggpairs(df_sr_scaled_c) # Use it to plot also box plots
-
-# Create a scatter plot matrix
-ggpairs(df_sr_scaled_c, aes(colour = siteID)) # the same of above but with colors
-
-#-------------------------------------------------------------------------------
-
-
-
-
-
-
-#-------------------------------------------------------------------------------
-# NEW WAY WITH THE BDV STAT TABLE
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_not_unevenaged.xlsx")
-
+# NEW WAY WITH THE BDV STAT TABLE FOR MANAGED STANDS
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/04_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_not_unevenaged.xlsx")
+                                                                                                                                                            
 #-------------------------------------------------------------------------------
 # Manipulate and merge tables of species richness and forest structures
 print(tab1)
@@ -532,4 +496,60 @@ corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,
 
 ggpairs(a.num)
 
+
+
+#-------------------------------------------------------------------------------
+# NEW WAY WITH THE BDV STAT TABLE FOR THE WHOLE DATASET INCLUDING CARBON POOLS
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/08_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_and_prio.xlsx")
+
+#-------------------------------------------------------------------------------
+# Manipulate and merge tables of species richness and forest structures
+print(tab1)
+str(tab1)
+
+
+#-------------------------------------------------------------------------------
+a.num<-tab1[,3:25]
+
+
+# Look them all:
+par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
+corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+
+#---------------------------------- just do the correlation plot with the selected variables
+
+ggpairs(a.num)
+
+
+#-------------------------------------------------------------------------------
+# Here the is a section for create also the subset per site of the ggpair plot
+#-------------------------------------------------------------------------------
+# small function to display plots only if it is interactive
+p_ <- GGally::print_if_interactive
+
+pm <- ggpairs(tab1, columns = 2:25, ggplot2::aes(colour = management_type))
+p_(pm)
+
+ggpairs(tab1) # Use it to plot also box plots
+
+# Create a scatter plot matrix
+ggpairs(tab1, aes(colour = siteID)) # the same of above but with colors
+
+#-------------------------------------------------------------------------------
+# MANAGED - UNMANAGED
+# small function to display plots only if it is interactive
+
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/09_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_mng_categ.xlsx")
+
+p_ <- GGally::print_if_interactive
+
+pm <- ggpairs(tab1, columns = 2:23, ggplot2::aes(colour = management_type))
+p_(pm)
+
+ggpairs(tab1) # Use it to plot also box plots
+
+# Create a scatter plot matrix
+ggpairs(tab1, aes(colour = management_type)) # the same of above but with colors
+
+#-------------------------------------------------------------------------------
 
