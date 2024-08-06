@@ -500,8 +500,8 @@ ggpairs(a.num)
 
 #-------------------------------------------------------------------------------
 # NEW WAY WITH THE BDV STAT TABLE FOR THE WHOLE DATASET INCLUDING CARBON POOLS
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/08_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_and_prio.xlsx")
-
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/11_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood - Copy.xlsx")
+                   
 #-------------------------------------------------------------------------------
 # Manipulate and merge tables of species richness and forest structures
 print(tab1)
@@ -509,7 +509,7 @@ str(tab1)
 
 
 #-------------------------------------------------------------------------------
-a.num<-tab1[,3:25]
+a.num<-tab1[,5:21]
 
 
 # Look them all:
@@ -539,17 +539,69 @@ ggpairs(tab1, aes(colour = siteID)) # the same of above but with colors
 # MANAGED - UNMANAGED
 # small function to display plots only if it is interactive
 
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/09_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_mng_categ.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/11_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood - Copy.xlsx")
 
 p_ <- GGally::print_if_interactive
 
-pm <- ggpairs(tab1, columns = 2:23, ggplot2::aes(colour = management_type))
+pm <- ggpairs(tab1, columns = 3:21, ggplot2::aes(colour = Managed))
 p_(pm)
 
 ggpairs(tab1) # Use it to plot also box plots
 
 # Create a scatter plot matrix
-ggpairs(tab1, aes(colour = management_type)) # the same of above but with colors
+ggpairs(tab1, aes(colour = Managed)) # the same of above but with colors
+
+
+
+
+
+
+
+
+
+
 
 #-------------------------------------------------------------------------------
+# Let's create a box plot for the deadwood pools in unmanaged stands
+library(ggplot2)
+library(broom)
+library(tidyr)
+library(dplyr)
+
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/08_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_and_prio.xlsx")
+
+tab1_unmng <- tab1%>%
+  filter(Managed == "0")
+
+# Melt the data frame for ggplot
+
+tab1_unmng_melt <- tab1_unmng %>%
+  select(SNAG_sim , AG_DW_C_sim ) %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "value")
+
+#----------------------------
+# Create the boxplot
+p <- ggplot(tab1_unmng_melt, aes(x = variable, y = value, fill = variable)) +
+  geom_boxplot() +
+  theme_minimal(base_size = 15) +
+  theme(panel.background = element_rect(fill = "white", color = "black")) +
+  labs(title = "Boxplot of SNAG_sim and AG_DW_C_sim", x = "Variable", y = "Deadwood Carbon [kg/ha]")
+
+print(p)
+
+#----------------------------
+# Perform linear regression
+lm_model <- lm(`Macrofungi (2.118)` ~ AG_DW_C_sim, data = tab1)
+
+# Get regression summary
+lm_summary <- summary(lm_model)
+lm_text <- paste("R-squared:", round(lm_summary$r.squared, 2), 
+                 "\nIntercept:", round(lm_summary$coefficients[1, 1], 2), 
+                 "\np-value:", format.pval(lm_summary$coefficients[2, 4]))
+
+# Add regression results to the plot
+p <- p + annotate("text", x = 1.5, y = max(tab1_unmng_melt$value), label = lm_text, hjust = 0.5, size = 4, color = "black")
+
+print(p)
+
 

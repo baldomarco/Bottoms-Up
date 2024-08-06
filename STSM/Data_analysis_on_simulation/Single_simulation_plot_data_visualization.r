@@ -6,10 +6,10 @@ library(RSQLite)
 library(vegan)
 library(fields)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_dw_carbon_pools/20240707/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/20240729/all_output/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/20240729/L1_output/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/20240729/all_output/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -593,8 +593,8 @@ library(ggplot2)
 library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_dw_carbon_pools/20240707/"
-pdf(paste0(dataroot, "Test_wind_unmanaged_dw_carbon_pools_L3_06_L4_09.pdf"), height=8, width=12)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/20240729/"
+pdf(paste0(dataroot, "Test_wind_unmanaged_dw_carbon_pools_ALL.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   ylim(0,1200)+
@@ -722,7 +722,7 @@ g3 <- ggplot(lnd_scen, aes(year, basal_area_m2, fill=factor(species, levels=new_
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Basal Area")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Basal Area [m2/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -799,7 +799,7 @@ g5 <- ggplot(lnd_scen, aes(x=year, y=count_ha, fill=factor(species, levels=new_o
   geom_area(size=1.2)+
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("N. individual stems by species") +
-  facet_wrap(~run, ncol=1)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Individual Stems", fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -809,7 +809,7 @@ ggplot(lnd_scen, aes(x = year, y = count_ha, fill = factor(species, levels = new
   geom_bar(stat = "identity") +  # Change from geom_area to geom_bar
   scale_fill_manual(values = cols[new_order_gg], guide = guide_legend(reverse = TRUE)) +
   ggtitle("N. individual stems by species") +
-  facet_wrap(~run, ncol = 1) +
+  facet_wrap(~run, ncol = 2) +
   labs(x = "Year", y = "Individual Stems", fill = "Species") +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_bw()
@@ -858,7 +858,7 @@ g8 <- ggplot(lnd_scen, aes(year, total_carbon_kg, fill=factor(species, levels=ne
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Carbon in Living Biomass")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="[kg/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -870,7 +870,7 @@ g9 <- ggplot(lnd_scen, aes(year, LAI, fill=factor(species, levels=new_order_gg))
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("LAI index by species")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="LAI index",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -964,7 +964,7 @@ H.BA <- ggplot(variables.all, aes(x=year, y=H.BA))+
 # TOTAL CARBON IN THE PLOT (LIVING + DEADWOOD + LITTER + SOIL)
 totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland))+
   geom_line() +
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Plot Carbon [living trees - deadwood - litter - soil]")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -973,7 +973,7 @@ totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland)
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS + DOWNED DEADWOOD)
 total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
   labs(x = "Year",y="Deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -982,7 +982,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -991,7 +991,7 @@ standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
 # TOTAL LIVING CARBON
 total_alive_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_alive_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total alive Carbon simulation")+
   labs(x = "Year",y="total_alive_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1000,7 +1000,7 @@ total_alive_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_alive_C_sim)
 # TOTAL ABOVEGROUND DEADWOOD CARBON
 total_stem_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_stem_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Stem Carbon simulation")+
   labs(x = "Year",y="total_stem_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1009,7 +1009,7 @@ total_stem_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_stem_C_sim))+
 # TOTAL STEMS CARBON
 total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Aboveground Deadwood Carbon simulation")+
   labs(x = "Year",y="total_AG_DW_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1027,8 +1027,8 @@ plot_variables_long <- plot_variables_all %>%
 # Plot all variables in a single plot
 all_variables_plot <- ggplot(plot_variables_long, aes(x = year, y = value, color = variable, linetype = variable)) +
   geom_line() +
-  geom_line(size = 1) +
-  facet_wrap(~run, ncol=3) +
+  geom_line(size = 0.5) +
+  facet_wrap(~run, ncol=4) +
   ggtitle("Comparison of Different Carbon Metrics Over Time") +
   labs(x = "Year", y = "Value [kg/ha]", color = "Variable", linetype = "Variable") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -1052,9 +1052,9 @@ age_scaling_factor <- max(plot_variables_long$value) / max(abeStand_scen$age)
 
 # Plot all variables and the scaled age in a single plot
 all_variables_plot <- ggplot(plot_variables_long, aes(x = year, y = value, color = variable)) +
-  geom_line(size = 1) +
-  geom_line(data = abeStand_scen, aes(x = year, y = age * age_scaling_factor), color = "black", size = 1, linetype = "dashed") +
-  facet_wrap(~run, ncol = 3) +
+  geom_line(size = 0.5) +
+  #geom_line(data = abeStand_scen, aes(x = year, y = age * age_scaling_factor), color = "black", size = 1, linetype = "dashed") +
+  facet_wrap(~run, ncol = 4) +
   ggtitle("Comparison of Different Carbon Metrics Over Time") +
   labs(x = "Year", y = "Value [kg/ha]", color = "Variable", linetype = "Variable") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -1076,13 +1076,13 @@ plot_variables_long <- plot_variables_all %>%
 # Calculate scaling factor to match the secondary y-axis
 age_scaling_factor <- max(plot_variables_long$value) / max(abeStand_scen$age)
 
-# Plot for L3 runs
-all_variables_plot_L3 <- ggplot(subset(plot_variables_long, grepl("L3", run)), aes(x = year, y = value, color = variable)) +
+# Plot for L1 runs - the read control line is for avg living carbon (upper) and standing deadwood (lower)
+all_variables_plot_L1 <- ggplot(subset(plot_variables_long, grepl("L6", run)), aes(x = year, y = value, color = variable)) +
   geom_line(size = 1) +
-  geom_line(data = subset(abeStand_scen, grepl("L3", run)), aes(x = year, y = age * age_scaling_factor), color = "black", size = 1, linetype = "dashed") +
+  #geom_line(data = subset(abeStand_scen, grepl("L1", run)), aes(x = year, y = age * age_scaling_factor), color = "black", size = 1, linetype = "dashed") +
   geom_hline(yintercept = 278000, color = "red", linetype = "dashed") +
-  geom_hline(yintercept = mean(subset(plot_variables_long, grepl("L3", run) & variable == "standing_DW_C")$value), color = "red", linetype = "dashed") +
-  ggtitle("Comparison of Different Carbon Metrics Over Time for L3 Runs") +
+  geom_hline(yintercept = mean(subset(plot_variables_long, grepl("L6", run) & variable == "standing_DW_C")$value), color = "red", linetype = "dashed") +
+  ggtitle("Comparison of Different Carbon Metrics Over Time for L1 Runs") +
   labs(x = "Year", y = "Value [kg/ha]", color = "Variable") +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_bw() +
@@ -1103,7 +1103,7 @@ all_variables_plot_L4 <- ggplot(subset(plot_variables_long, grepl("L4", run)), a
   scale_y_continuous(sec.axis = sec_axis(~ . / age_scaling_factor, name = "Age [years]"))
 
 # Display the plots
-print(all_variables_plot_L3)
+print(all_variables_plot_L1)
 print(all_variables_plot_L4)
 
 #------------------------------------------------------------------------------
@@ -1112,15 +1112,15 @@ print(all_variables_plot_L4)
 g7 <- ggplot(dys_scen, aes(x=year, y=age_mean))+
   geom_line() +
   ggtitle("Avarage Tree Age")+
-  facet_wrap(~run, ncol=1)+
+  facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Age mean [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 ggplot(plot_variables_all, aes(x=year, y=age))+
   geom_line() +
-  ggtitle("Stand Age")+
-  facet_wrap(~run, ncol=1)+
+  ggtitle("Mean Trees Age")+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Age mean [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1128,8 +1128,8 @@ ggplot(plot_variables_all, aes(x=year, y=age))+
 ggplot(abeStand_scen, aes(x=year, y=age))+
   geom_line() +
   ggtitle("Stand Age")+
-  facet_wrap(~run, ncol=1)+
-  labs(x = "Year",y="Age mean [years]")+
+  facet_wrap(~run, ncol=4)+
+  labs(x = "Year",y="Age [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -1138,7 +1138,7 @@ ggplot(abeStand_scen, aes(x=year, y=age))+
 ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
   geom_line() +
   ggtitle("BA BROADLEAVE SP")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="BA BROADLEAVE SP [m2]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1149,7 +1149,7 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
   geom_line() +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="No Trees with dbh from 10cm to 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1159,7 +1159,7 @@ trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
 broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
   geom_line() +
   ggtitle("NUMBER OF BROADLEAVE TREES WITH DBH > 40cm")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="No broadleave trees with dbh > 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1168,7 +1168,7 @@ broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
 
 P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbon, color=species )) +
   geom_line(size = 0.6) +
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Cumulative Natural Mortality in Carbon") +
   ylab("Total Carbon in Nat. Mortality [kg/ha]") +
   xlab("Year") +
