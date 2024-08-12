@@ -509,7 +509,7 @@ str(tab1)
 
 
 #-------------------------------------------------------------------------------
-a.num<-tab1[,5:21]
+a.num<-tab1[,3:18]
 
 
 # Look them all:
@@ -527,7 +527,7 @@ ggpairs(a.num)
 # small function to display plots only if it is interactive
 p_ <- GGally::print_if_interactive
 
-pm <- ggpairs(tab1, columns = 2:25, ggplot2::aes(colour = management_type))
+pm <- ggpairs(tab1, columns = 2:18, ggplot2::aes(colour = management_type))
 p_(pm)
 
 ggpairs(tab1) # Use it to plot also box plots
@@ -543,7 +543,7 @@ tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/fi
 
 p_ <- GGally::print_if_interactive
 
-pm <- ggpairs(tab1, columns = 3:21, ggplot2::aes(colour = Managed))
+pm <- ggpairs(tab1, columns = 2:18, ggplot2::aes(colour = Managed))
 p_(pm)
 
 ggpairs(tab1) # Use it to plot also box plots
