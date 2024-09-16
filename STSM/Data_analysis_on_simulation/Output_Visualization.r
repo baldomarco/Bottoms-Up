@@ -24,10 +24,10 @@ library(RSQLite)
 library(vegan)
 library(fields)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240509/All plot test1/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240509/All plot test1/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -633,7 +633,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
-pdf(paste0(dataroot, "20231130_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20240907_tests_dist_managed_iland_C_pools.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -675,8 +675,8 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 # COLUMN DIAGRAM PLOT ON THE HARVEST
 
 ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
-  geom_bar(position="stack", stat="identity")+
-  facet_wrap(~run, ncol=2)+
+  geom_bar(position="stack", stat="identity", size=5)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
   scale_fill_manual(values=c("#4897D8","#FFDB5C","#FA6E59","#B3C100"))+               #"#B7B8B6","#34675C","#B3C100" grey and greens
   theme_bw()
@@ -689,10 +689,10 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1000)+
+  ylim(0,900)+
   theme_bw()
 
 
@@ -702,7 +702,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
 
 g2 <- ggplot(abeUnit_scen, aes(year,realizedHarvest, color='red'))+
   geom_col(size=1, show.legend = F)+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Realized Harvest Transitional Period")+
   theme(plot.title = element_text(hjust = 0.5))+
   ylab("Realized harvest [m3/ha]")+
@@ -761,7 +761,7 @@ g3 <- ggplot(lnd_scen, aes(year, basal_area_m2, fill=factor(species, levels=new_
 b2 <- ggplot(data=dys_scen, aes(x=year, y=basalarea_sum/landscape.area, color = "red")) + 
   geom_line(size=1, show.legend = F)+
   ggtitle("Avarege Basal area") +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ylab("Basal area [m2/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -827,7 +827,7 @@ g5 <- ggplot(lnd_scen, aes(x=year, y=count_ha, fill=factor(species, levels=new_o
   geom_area(size=1.2)+
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("N. individual stems by species") +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Individual Stems", fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -940,7 +940,7 @@ P1
 
 snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Snags_C [iLand snags_C fun]")+
   labs(x = "Year",y="snags_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -971,7 +971,7 @@ H.VOL <- ggplot(variables.all, aes(x=year, y=H.VOL))+
 
 H.BA <- ggplot(variables.all, aes(x=year, y=H.BA))+
   geom_line() +
-  facet_wrap(~case, ncol=2)+
+  facet_wrap(~case, ncol=6)+
   ggtitle("Shannon Index on basal area per species")+
   labs(x = "Year",y="Shannon Index")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -983,7 +983,7 @@ H.BA <- ggplot(variables.all, aes(x=year, y=H.BA))+
 # TOTAL CARBON IN THE PLOT (LIVING + DEADWOOD + LITTER + SOIL)
 totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Total Plot Carbon [living trees - deadwood - litter - soil]")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -992,7 +992,7 @@ totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland)
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS + DOWNED DEADWOOD)
 total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
   labs(x = "Year",y="Deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1001,7 +1001,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1013,7 +1013,7 @@ standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
 g7 <- ggplot(dys_scen, aes(x=year, y=age_mean))+
   geom_line() +
   ggtitle("Avarage Tree Age")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Age mean [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1025,7 +1025,7 @@ g7 <- ggplot(dys_scen, aes(x=year, y=age_mean))+
 ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
   geom_line() +
   ggtitle("BA BROADLEAVE SP")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="BA BROADLEAVE SP [m2]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1036,7 +1036,7 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
   geom_line() +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="No Trees with dbh from 10cm to 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1046,7 +1046,7 @@ trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
 broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
   geom_line() +
   ggtitle("NUMBER OF BROADLEAVE TREES WITH DBH > 40cm")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="No broadleave trees with dbh > 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1055,7 +1055,7 @@ broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
 
 P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbon, color=species )) +
   geom_line(size = 0.6) +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Cumulative Natural Mortality in Carbon") +
   ylab("Total Carbon in Nat. Mortality [kg/ha]") +
   xlab("Year") +
