@@ -14,10 +14,10 @@ dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_w
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/"
 
 {# Create an empty list to store data frames
   dfs <- list() # not working for several subset, only one
@@ -599,7 +599,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
-pdf(paste0(dataroot, "20240918_tests_deadwood_L1_10_clim_hist.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20240917_tests_deadwood_managed_unmanaged_spruce.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -637,16 +637,6 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 
 # STARTING PLOTS
 
-#-------------------------------------------------------------------------------
-# COLUMN DIAGRAM PLOT ON THE HARVEST
-
-ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
-  geom_bar(position="stack", stat="identity")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
-  scale_fill_manual(values=c("#4897D8","#FFDB5C","#FA6E59","#B3C100"))+               #"#B7B8B6","#34675C","#B3C100" grey and greens
-  theme_bw()
-
 # Make a plot with ggplot, volume, colored by species for the transitional period for Clear cut management system
 #-------------------------------------------------------------------------------
 # PLOT LANDSCAPE VOLUME PLOT FOR CASES (GEOM AREA)
@@ -658,7 +648,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1500)+
+  ylim(0,1100)+
   theme_bw()
 
 
@@ -674,103 +664,17 @@ ggplot(lnd_scen, aes(x = year, y = volume_m3, fill = factor(species, levels = ne
   theme_bw()
 
 #-------------------------------------------------------------------------------
-# (SHOULD BE REALIZED) PLOT 2 "Y" AXIS WITH relationship between realized harvest and volume increasing in the landscape
-# Total realized harvest at landscape level in average per ha
-
-g2 <- ggplot(abeUnit_scen, aes(year,realizedHarvest, color='red'))+
-  geom_col(size=1, show.legend = F)+
-  facet_wrap(~run, ncol=6)+
-  ggtitle("Realized Harvest Transitional Period")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  ylab("Realized harvest [m3/ha]")+
-  theme_bw()
-
-
-#-------------------------------------------------------------------------------
-
-# SPECIES specificaly BA:
-
-#species.to.keep<-c("piab","pisy", "fasy","qupe")
-
-#lnd2 <- lnd %>% filter(species %in% species.to.keep)
-
-#ggplot(data=lnd2, aes(x=year, y=basal_area_m2, colour=species)) + 
-#  geom_line(size=1.2)+
-#  scale_colour_manual(values = c("#76BA1B","#006600", "#A4DE02", "orange"))+
-#  ggtitle("Clearcut management in brow pressure 0") +
-#  theme(plot.title = element_text(hjust = 0.5))+
-#  ylab("Basal area [m2/ha]")+
-#  theme_bw()
-
-#-------------------------------------------------------------------------------
-# PLOT BASAL AREA GEOM_LINE AT LANDSCAPE LEVEL BY SPECIES SELECTED
-
-# SPECIES specificaly BA:
-
-species.to.keep<-c("piab", "fasy","bepe", "pisy", "abal")
-
-
-lnd_scen2 <- lnd_scen %>% filter(species %in% species.to.keep)
-
-b1 <- ggplot(data=lnd_scen2, aes(x=year, y=basal_area_m2, color=species)) + 
-  geom_line(size=1.2)+
-  ggtitle("Basal area by species") +
-  facet_wrap(~run, ncol=2)+
-  theme(plot.title = element_text(hjust = 0.5))+
-  ylab("Basal area [m2/ha]")+  
-  theme_bw()
-
-#-------------------------------------------------------------------------------
 # PLOT TOTAL AVG BASAL AREA AT LANDSCAPE LEVEL BY SPECIES
 
 g3 <- ggplot(lnd_scen, aes(year, basal_area_m2, fill=factor(species, levels=new_order_gg)))+
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Basal Area")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Basal Area [m2/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
-#-------------------------------------------------------------------------------
-# PLOT SUM BASAL AREA AT LANDSCAPE
-
-b2 <- ggplot(data=dys_scen, aes(x=year, y=basalarea_sum/landscape.area, color = "red")) + 
-  geom_line(size=1, show.legend = F)+
-  ggtitle("Avarege Basal area") +
-  facet_wrap(~run, ncol=2)+
-  ylab("Basal area [m2/ha]")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw()
-
-#-------------------------------------------------------------------------------
-# PLOT DBH GEOM_LINE AT LANDSCAPE LEVEL BY SPECIES
-
-species.to.keep<-c("piab", "fasy","qupe", "pisy")
-
-
-lnd_scen2 <- lnd_scen %>% filter(species %in% species.to.keep)
-
-b3 <- ggplot(data=lnd_scen2, aes(x=year, y=dbh_avg_cm, color=species)) + 
-  geom_line(size=1.2)+
-  ggtitle("Avarage DBH by species") +
-  facet_wrap(~run, ncol=2)+
-  theme(plot.title = element_text(hjust = 0.5))+
-  ylab("DBH [cm]")+  
-  theme_bw()
-
-
-#-------------------------------------------------------------------------------
-# PLOT DBH GEOM_AREA AT LANDSCAPE LEVEL AVARAGE ALL SP TOGETHER
-
-g4 <- ggplot(data=dys_scen, aes(x=year, y=dbh_mean)) + 
-  geom_area(size=1.2)+
-  scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
-  ggtitle("Avarage DBH by species") +
-  facet_wrap(~run, ncol=2)+
-  theme(plot.title = element_text(hjust = 0.5))+
-  ylab("DBH [cm]")+  
-  theme_bw()
 
 # SD DBH / try with violin plots
 
@@ -863,33 +767,8 @@ g8 <- ggplot(lnd_scen, aes(year, total_carbon_kg, fill=factor(species, levels=ne
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Carbon in Living Biomass")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="[kg/ha]",fill = "Species")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw()
-
-#-------------------------------------------------------------------------------
-# PLOT LAI AT LANDSCAPE LEVEL BY SPECIES
-
-g9 <- ggplot(lnd_scen, aes(year, LAI, fill=factor(species, levels=new_order_gg)))+
-  geom_area() +
-  scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
-  ggtitle("LAI index by species")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="LAI index",fill = "Species")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw()
-
-
-#-------------------------------------------------------------------------------
-# PLOT NPP AT LANDSCAPE LEVEL BY SPECIES
-
-g10 <- ggplot(lnd_scen, aes(year, NPP_kg, fill=factor(species, levels=new_order_gg)))+
-  geom_area() +
-  scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
-  ggtitle("Net Primary Productivity")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="NPP [kg/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -897,10 +776,6 @@ g10 <- ggplot(lnd_scen, aes(year, NPP_kg, fill=factor(species, levels=new_order_
 #grid.arrange(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10, ncol=10)
 
 #grid.arrange(b1,b2,b3,b4,b5,ncol=5)
-
-grid.arrange(g1,g5,g6, ncol=3)
-
-grid.arrange(g1,g5,g4, ncol=3)
 
 
 
@@ -929,17 +804,6 @@ snag_C <- ggplot(carbon_scen, aes(x=year, y=snags_c))+
   facet_wrap(~run, ncol=6)+
   ggtitle("Snags_C [iLand snags_C fun]")+
   labs(x = "Year",y="snags_C [kg/ha]")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw()
-
-
-# Shannon
-
-H.count <- ggplot(variables.all, aes(x=year, y=H.count))+
-  geom_line() +
-  facet_wrap(~case, ncol=1)+
-  ggtitle("Shannon Index on numbers of individuals per species")+
-  labs(x = "Year",y="Shannon Index")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
@@ -1014,24 +878,24 @@ total_stem_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_stem_C_sim))+
 # TOTAL ABOVEGROUND DEADWOOD CARBON
 total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Total Aboveground Deadwood Carbon simulation")+
   labs(x = "Year",y="total_AG_DW_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
-
+# BOX PLOT 
 total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(y=total_AG_DW_C_sim))+
   geom_boxplot() +
   facet_wrap(~run, ncol=2)+
   ggtitle("Total Aboveground Deadwood Carbon simulation")+
-  labs(x = "Year",y="total_AG_DW_C_sim [kg/ha]")+
+  labs(y="total_AG_DW_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 
-plot_variables_all %>% group_by(run) %>% summarise(median = median(total_AG_DW_C_sim, na.rm = TRUE))
-plot_variables_all %>% group_by(run) %>% summarise(mean = mean(total_AG_DW_C_sim, na.rm = TRUE))
+med <- plot_variables_all %>% group_by(run) %>% summarise(median = median(total_AG_DW_C_sim, na.rm = TRUE))
+avg <- plot_variables_all %>% group_by(run) %>% summarise(mean = mean(total_AG_DW_C_sim, na.rm = TRUE))
 
 #-----------------------------------------
 # PLOT ALL THE VARIABLES IN THE SAME GRAPH
@@ -1046,7 +910,7 @@ plot_variables_long <- plot_variables_all %>%
 all_variables_plot <- ggplot(plot_variables_long, aes(x = year, y = value, color = variable, linetype = variable)) +
   geom_line() +
   geom_line(size = 0.5) +
-  facet_wrap(~run, ncol=2) +
+  facet_wrap(~run, ncol=6) +
   ggtitle("Comparison of Different Carbon Metrics Over Time") +
   labs(x = "Year", y = "Value [kg/ha]", color = "Variable", linetype = "Variable") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -1072,7 +936,7 @@ age_scaling_factor <- max(plot_variables_long$value) / max(abeStand_scen$age)
 all_variables_plot <- ggplot(plot_variables_long, aes(x = year, y = value, color = variable)) +
   geom_line(size = 0.5) +
   #geom_line(data = abeStand_scen, aes(x = year, y = age * age_scaling_factor), color = "black", size = 1, linetype = "dashed") +
-  facet_wrap(~run, ncol = 2) +
+  facet_wrap(~run, ncol = 6) +
   ggtitle("Comparison of Different Carbon Metrics Over Time") +
   labs(x = "Year", y = "Value [kg/ha]", color = "Variable", linetype = "Variable") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -1176,7 +1040,7 @@ ggplot(plot_variables_all, aes(x=year, y=age))+
 ggplot(abeStand_scen, aes(x=year, y=age))+
   geom_line() +
   ggtitle("Stand Age")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Age [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1186,7 +1050,7 @@ ggplot(abeStand_scen, aes(x=year, y=age))+
 ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
   geom_line() +
   ggtitle("BA BROADLEAVE SP")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="BA BROADLEAVE SP [m2]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1197,7 +1061,7 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
   geom_line() +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="No Trees with dbh from 10cm to 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1207,7 +1071,7 @@ trees_10_40 <- ggplot(plot_variables_all, aes(x=year, y=trees_10_40))+
 broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
   geom_line() +
   ggtitle("NUMBER OF BROADLEAVE TREES WITH DBH > 40cm")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="No broadleave trees with dbh > 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1226,33 +1090,6 @@ P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbo
     axis.title.y = element_text(size = rel(1.8), angle = 90),
     axis.title.x = element_text(size = rel(1.8), angle = 0)
   )
-
-# Display the plot
-P1
-
-# Shannon entropy of single species basal area (heterogeneity of individuals dimensions)
-
-{H_BA_sp <- ggplot(H_BA_heterogenity_scen, aes(x=year, y=shannon_ba_heterog))+
-    geom_line() +
-    ggtitle("Shannon entropy of single species basal area (heterogeneity of individuals dimensions)")+
-    facet_wrap(~run, ncol=2)+
-    labs(x = "Year",y="Shannon entropy per sp on individuals BA")+
-    theme(plot.title = element_text(hjust = 0.5))+
-    theme_bw()}
-
-
-species.to.keep<-c("piab", "fasy","qupe", "pisy")
-
-
-H_BA_heterogenity_scen2 <- H_BA_heterogenity_scen %>% filter(species %in% species.to.keep)
-
-ggplot(data=H_BA_heterogenity_scen2, aes(x=year, y=shannon_ba_heterog, color=species)) + 
-  geom_line(size=0.6)+
-  ggtitle("Shannon entropy of single species basal area (heterogeneity of individuals dimensions)") +
-  facet_wrap(~run, ncol=2)+
-  theme(plot.title = element_text(hjust = 0.5))+
-  ylab("Shannon entropy per sp on individuals BA")+  
-  theme_bw()
 
 ########################################################## CLOSE EVERY PLOTs
 
