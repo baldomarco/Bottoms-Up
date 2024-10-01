@@ -599,7 +599,8 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
-pdf(paste0(dataroot, "20240917_tests_deadwood_managed_unmanaged_spruce.pdf"), height=8, width=12)
+#pdf(paste0(dataroot, "20240917_tests_deadwood_managed_unmanaged_spruce.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241001_oldest_trees_time_series.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -1094,3 +1095,64 @@ P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbo
 ########################################################## CLOSE EVERY PLOTs
 
 dev.off()
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# Calculate the metrics for every year and every run
+age_oldest <- tree_scen %>%
+  group_by(year, run) %>%
+  summarize(
+    oldest_tree_age = max(age, na.rm = TRUE),
+    mean_10_percent_oldest = mean(age[age >= quantile(age, 0.90, na.rm = TRUE)], na.rm = TRUE),
+    mean_25_percent_oldest = mean(age[age >= quantile(age, 0.75, na.rm = TRUE)], na.rm = TRUE),
+    .groups = 'drop'  # Ungroup after summarizing
+  )
+
+# Print the results
+print(age_oldest)
+
+#-----------------------------------------
+##########################################
+# PLOT THE TIME SERIES OF THE OLDEST TREES
+##########################################
+
+ggplot(age_oldest, aes(year, oldest_tree_age, color="red" )) +
+  geom_line(size = 0.6) +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Age Oldest Tree") +
+  ylab("Age Oldest Tree [year]") +
+  xlab("Simulation Year") +
+  theme_bw() +
+  theme(
+    plot.title = element_text(hjust = 0.5, lineheight = 3, face = "bold", color = "black", size = 20),
+    axis.title.y = element_text(size = rel(1.8), angle = 90),
+    axis.title.x = element_text(size = rel(1.8), angle = 0)
+  )
+
+#-------------
+ggplot(age_oldest, aes(year, mean_10_percent_oldest , color="red" )) +
+  geom_line(size = 0.6) +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Mean Age 10% Oldest Trees") +
+  ylab("Age 10% Oldest Trees [year]") +
+  xlab("Simulation Year") +
+  theme_bw() +
+  theme(
+    plot.title = element_text(hjust = 0.5, lineheight = 3, face = "bold", color = "black", size = 20),
+    axis.title.y = element_text(size = rel(1.8), angle = 90),
+    axis.title.x = element_text(size = rel(1.8), angle = 0)
+  )
+
+#---------------
+ggplot(age_oldest, aes(year, mean_25_percent_oldest, color="red" )) +
+  geom_line(size = 0.6) +
+  facet_wrap(~run, ncol=2)+
+  ggtitle("Mean Age 25% Oldest Trees") +
+  ylab("Age 25% Oldest Trees [year]") +
+  xlab("Simulation Year") +
+  theme_bw() +
+  theme(
+    plot.title = element_text(hjust = 0.5, lineheight = 3, face = "bold", color = "black", size = 20),
+    axis.title.y = element_text(size = rel(1.8), angle = 90),
+    axis.title.x = element_text(size = rel(1.8), angle = 0)
+  )

@@ -476,7 +476,7 @@ ggpairs(a.num)
 
 #-------------------------------------------------------------------------------
 # NEW WAY WITH THE BDV STAT TABLE FOR MANAGED STANDS
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/14_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/15_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
                                                                                                                                                             
 #-------------------------------------------------------------------------------
 # Manipulate and merge tables of species richness and forest structures
@@ -485,7 +485,7 @@ str(tab1)
 
 
 #-------------------------------------------------------------------------------
-a.num<-tab1[,3:22]
+a.num<-tab1[,3:25]
 
 
 # Look them all:
@@ -562,7 +562,7 @@ library(RColorBrewer)
 
 #-------------------------------------------------------------------------------
 # Load the dataset
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/14_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/15_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
 
 #-------------------------------------------------------------------------------
 # Manipulate and inspect the table
@@ -571,12 +571,12 @@ str(tab1)
 
 #-------------------------------------------------------------------------------
 # Subset the relevant columns for correlation (adjust indices or use column names as necessary)
-a.num <- tab1[,3:22]
+a.num <- tab1[,3:26]
 
 #install.packages("ggcorrplot")
 library(ggcorrplot) # http://www.sthda.com/english/articles/32-r-graphics-essentials/130-plot-multivariate-continuous-data/#correlation-analysis
 # Compute a correlation matrix
- my_data <- a.num[, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)]
+ my_data <- a.num[, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23)]
  corr <- round(cor(my_data), 1)
 
  # Visualize
