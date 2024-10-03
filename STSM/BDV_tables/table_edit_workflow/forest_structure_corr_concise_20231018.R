@@ -552,6 +552,76 @@ ggpairs(tab1) # Use it to plot also box plots
 ggpairs(tab1, aes(colour = Managed)) # the same of above but with colors
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Load necessary libraries
@@ -562,7 +632,7 @@ library(RColorBrewer)
 
 #-------------------------------------------------------------------------------
 # Load the dataset
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/15_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/18_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
 
 #-------------------------------------------------------------------------------
 # Manipulate and inspect the table
@@ -571,27 +641,162 @@ str(tab1)
 
 #-------------------------------------------------------------------------------
 # Subset the relevant columns for correlation (adjust indices or use column names as necessary)
-a.num <- tab1[,3:26]
+a.num <- tab1[,3:27]
 
+# Look them all:
+par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
+corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+
+col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F", "cyan", "#007FFF", "blue", "#00007F"))
+
+#---------------------------------- just do the correlation plot with the selected variables
+
+ggpairs(a.num)
+
+
+# METHOD 4
 #install.packages("ggcorrplot")
 library(ggcorrplot) # http://www.sthda.com/english/articles/32-r-graphics-essentials/130-plot-multivariate-continuous-data/#correlation-analysis
 # Compute a correlation matrix
  my_data <- a.num[, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23)]
  corr <- round(cor(my_data), 1)
 
- # Visualize
-{
- ggcorrplot(corr, p.mat = cor_pmat(my_data),
-           hc.order = TRUE, type = "lower",
-           color = c("#FC4E07", "white", "#00AFBB"),
-           outline.col = "white", lab = TRUE)
- }
-
-
+# Visualize
 ggcorrplot(corr, p.mat = cor_pmat(my_data),
            hc.order = FALSE, type = "lower",
            color = c("#FC4E07", "white", "#00AFBB"),
            outline.col = "white", lab = TRUE)
+
+# METHOD 5
+summary(a.num)
+range(a.num)
+a.num <- cor(a.num)
+corrplot(a.num, type = "lower")
+# METHOD 6
+corrplot(a.num, type="upper", order="hclust", tl.col="black", tl.srt=45)
+# METHOD 6
+corrplot(a.num, type="upper", order="hclust")
+
+# METHOD 7
+# Create the corrplot with the desired settings
+corrplot(
+  a.num,                          # Your correlation matrix
+  method = "color",               # Use squared layout
+  type = "lower",                  # Keep the upper part of the matrix
+  #order = "hclust",                # Clustered ordering
+  addCoef.col = "black",           # Display coefficients inside the squares with black color
+  #tl.srt = 90,                     # Rotate the text labels by 90 degrees
+  tl.col = "red",                # Set the color of the text labels
+  #col = colorRampPalette(c("blue", "white", "red"))(200),  # Color palette for correlation values
+  cl.pos = "b"                     # Position the color legend to the right
+)
+
+# METHOD 8
+# mat : matrice de donnée
+# ... : Arguments supplémentaire à passer à la fonction cor.test
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+
+# Matrice de p-value de la corrélation
+p.mat <- cor.mtest(a.num)
+head(p.mat[, 1:5])
+
+# Method 8
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(a.num, method="color", col=col(200),  
+         type="upper", order="hclust", 
+         addCoef.col = "black", # Ajout du coefficient de corrélation
+         tl.col="black", tl.srt=45, #Rotation des étiquettes de textes
+         # Combiner avec le niveau de significativité
+         p.mat = p.mat, sig.level = 0.01, insig = "blank", 
+         # Cacher les coefficients de corrélation sur la diagonale
+         diag=FALSE 
+)
+
+#-------------------------------------------------------------------------------
+# Scatter plots
+
+plot()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

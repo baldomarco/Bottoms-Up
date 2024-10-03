@@ -5,11 +5,10 @@ library(dplyr)
 library(RSQLite)
 library(vegan)
 library(fields)
-
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/")
-
-# Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(gridExtra) # To arrange the graphs in a grid
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -585,12 +584,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
 }                                                                               # CLOSE THE WHOLE FOR CYCLE
 
-
-library(ggplot2)
-library(GGally)
-library(corrplot)
-
-
 # Start with plots
 
 #_______________________________________________
@@ -600,7 +593,7 @@ library(gridExtra) # To arrange the graphs in a grid
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
 #pdf(paste0(dataroot, "20240917_tests_deadwood_managed_unmanaged_spruce.pdf"), height=8, width=12)
-pdf(paste0(dataroot, "20241001_oldest_trees_time_series.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241003_oldest_trees_time_series.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -1045,6 +1038,16 @@ ggplot(abeStand_scen, aes(x=year, y=age))+
   labs(x = "Year",y="Age [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
+
+# LAI
+LAI <- ggplot(plot_variables_all, aes(x=year, y=lai_sim))+
+  geom_line() +
+  ggtitle("LAI")+
+  facet_wrap(~run, ncol=6)+
+  labs(x = "Year",y="LAI [m2/m2]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
 
 # BA BROADLEAVE SP
 
