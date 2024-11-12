@@ -8,7 +8,7 @@ library(writexl)
 
 
 # Import the tree age table derived from the age allometric function Katka created
-Katka_age_table <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Katka/CZ_JH1_EstimatedTreeAgeFromYielTables05042024.xlsx", sheet = 2)
+Katka_age_table <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Katka/CZ_JH1_EstimatedTreeAgeFromYielTablesBasedOnMeanStem04102024.xlsx", sheet = 2)
 
 # Transform the tree age decimal values in integers
 Katka_age_table$age <- round(Katka_age_table$age)
@@ -27,6 +27,7 @@ process_text_file <- function(file_path) {
   # Extract plot ID from file name
   plotID <- strsplit(basename(file_path), "_init\\.txt$")
   plotID <- unlist(plotID)[1]  # Extract the first element of the list
+  # Extract the first element of the list
   print("Extracted plot ID from file name:")
   print(plotID)
   
@@ -70,7 +71,7 @@ process_text_file <- function(file_path) {
   
   # Write the updated data to a new file
   write.table(init_data, 
-              file = paste0(directory, plotID, "_init_age_CORR.txt"),
+              file = paste0(directory, plotID, "_init_age_CORR_GAM.txt"),
               append = FALSE, 
               quote = FALSE, 
               sep = " ", 

@@ -2,6 +2,8 @@
 #                                       Dr. Marco Baldo, MSc
 # 
 #                                11/10/2023  CZU and Sapienza - University of Rome 
+#                                08/10/2024 this version was modified due a change of directory names to keep the original version go to hard disk SanDisk/2023/20230901_Bottoms_Up_old_folder
+#                                some folder don't have the excel tables, this is because in the script are filtered and not selected the siteID without plotId, coordinates or other important parameters...
 
 
 #            This script will read and manipulate the Bottoms Up database of multi-taxonomic samples divided into plots
@@ -42,7 +44,7 @@ process_site <- function(site_data, output_dir) {
 }
 
 # Create a directory to store the plots
-plot_dir <- "C:/iLand/20230901_Bottoms_Up/plot_init/plots/New folder/"
+plot_dir <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/plots/New folder/"
 if (!dir.exists(plot_dir)) {
   dir.create(plot_dir)
 }
@@ -69,7 +71,7 @@ library(raster)
 library(fields)
 
 # Define the directory path where your Excel files are located
-directory_path <- "C:/iLand/20230901_Bottoms_Up/plot_init/plots/clean_plot/"
+directory_path <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/plots/clean_plot/"
 
 # List all Excel files in the directory
 file_paths <- list.files(directory_path, pattern = "\\.xlsx$", full.names = TRUE)
@@ -102,7 +104,7 @@ process_excel_file <- function(file_path) {
   
   #----------------------------------------------------------------
   # Write out the RU and Stand grids
-  out.dataroot <- "C:/iLand/20230901_Bottoms_Up/plot_init/gis/"
+  out.dataroot <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/gis/"
   
   # WHERE ARE WE?
   x.coord.corner <- as.integer(corner1[1])
@@ -288,7 +290,7 @@ process_excel_file <- function(file_path) {
   
   #-------------------------------------------------------------------
   # write 
-  out.dataroot<-"C:/iLand/20230901_Bottoms_Up/plot_init/gis/init/"    # use the same place
+  out.dataroot<-"C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/gis/init/"    # use the same place
   
   # Write out the plot input tables
   Plot.grid.file <- paste0(out.dataroot, "Plot_init_", plot_id, ".txt")
@@ -311,3 +313,4 @@ processed_data_list <- lapply(file_paths, process_excel_file)
 #                                       END
 #
 #-------------------------------------------------------------------------------
+

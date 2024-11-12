@@ -24,10 +24,10 @@ library(RSQLite)
 library(vegan)
 library(fields)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/abe_script_new_mng_test/20241004/output/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/abe_script_new_mng_test/20241004/output/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -633,7 +633,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
-pdf(paste0(dataroot, "20240907_tests_dist_managed_iland_C_pools.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "New_management_test_deadwood.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -1000,6 +1000,15 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
+  geom_line() +
+  facet_wrap(~run, ncol=6)+
+  ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
+  labs(x = "Year",y="snag_C [kg/ha]")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme_bw()
+
+# TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
+Other_DW_C <- ggplot(carbon_scen, aes(x=year, y=litter_c))+
   geom_line() +
   facet_wrap(~run, ncol=6)+
   ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+

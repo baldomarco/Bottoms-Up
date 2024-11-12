@@ -1,4 +1,5 @@
-# Marco Baldo 14-12-2023
+# Marco Baldo 14-12-2023 
+# To replicate the code be sure to use the same data, right directory and clean the R environment before to start
 # Create iLand simulation results from the Bottoms-Up model plots to analyze the multi-taxa biodiversity indicators in the forest ecosystems of Czechia
 # Refer the results and visualization to the pdf within this same GitHub folder: OK_final_20231214_BDV_mng_plot_L1_10_300.pdf
 # Computer path -> C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/OK_final_20231214_BDV_mng_plot_L1_10_300.pdf
@@ -20,7 +21,7 @@ excel_sheets(t2)
 
 
 # BDV predictors by Jenik
-BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC.xlsx")
+BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/03_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC.xlsx")
 
 
 # Load required libraries
@@ -1049,7 +1050,7 @@ grid.arrange(g1,g5,g4, ncol=3)
 
 
 
-# Natural mortality 1st scenario browsing 1
+# Natural mortality 1st scenario browsing 1 - do not work if mortality is off
 
 landscape_removed_scen_natmor <- landscape_removed_scen %>%
   filter(reason == "N")
@@ -1063,9 +1064,6 @@ nm1 <- ggplot(landscape_removed_scen_natmor, aes(year,volume_m3, fill=factor(spe
   xlab("Year") + theme(axis.title.x = element_text(size = rel(1.8), angle = 00)) +
   theme(plot.title = element_text(hjust = 0.5))
 
-
-# CUMULATIVE NATURAL MORTALITY
-P1
 
 # CARBON 
 
@@ -1317,7 +1315,7 @@ ggplot(data=H_BA_heterogenity_scen2, aes(x=year, y=shannon_ba_heterog, color=spe
 
 
 # Plot grid arrange
-grid.arrange(avara,trees_10_40,broadl_40, ncol=1)
+grid.arrange(g7,trees_10_40,broadl_40, ncol=1)
 dev.off()
 
 ########################################################## CLOSE EVERY PLOTs
@@ -1872,7 +1870,7 @@ plot(BDV_predictors$`Epiphytic / epixilic bryophytes (0.212)`, BDV_predictors$vo
 
 par(mfrow = c(1,2))
 
-plot(Bayesian_BDV_model_bryophytes_V1$MACROFUNGI_PRED_RICH_50, Bayesian_BDV_model_bryophytes_V1$volume_DW, xlim = c(5,35))
+plot(Bayesian_BDV_model_bryophytes_V1$MACROFUNGI_PRED_RICH_50, Bayesian_BDV_model_bryophytes_V1$volume_DW, xlim = c(5,300))
 plot(BDV_predictors$`Epiphytic / epixilic bryophytes (0.212)`, BDV_predictors$volume_dw, xlim = c(5,35))
 
 
@@ -2324,3 +2322,4 @@ grid.arrange(L1,P1, ncol=1)
 
 
 #---------------------------------------------------------------------------------
+

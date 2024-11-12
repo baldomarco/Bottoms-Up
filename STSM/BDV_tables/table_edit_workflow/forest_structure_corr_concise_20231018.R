@@ -606,22 +606,6 @@ ggpairs(tab1, aes(colour = Managed)) # the same of above but with colors
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Load necessary libraries
@@ -629,36 +613,61 @@ library(readxl)
 library(corrplot)
 library(Hmisc)
 library(RColorBrewer)
+library(GGally)
 
 #-------------------------------------------------------------------------------
 # Load the dataset
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/18_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/19_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
 
 #-------------------------------------------------------------------------------
 # Manipulate and inspect the table
 print(tab1)
 str(tab1)
 
+set.panel(2,2)
+
+# Instogram of the ages
+
+hist(tab1$Age25percentClosestTreesToDs)
+hist(tab1$Age20percentOldestTrees)
+hist(tab1$MeanGAMAge)
+hist(tab1$MeanGAMAge_2)
+
+set.panel(1,2)
+hist(tab1$MeanGAMAge, breaks = 20)
+hist(tab1$MeanGAMAge_2, breaks = 20)
+
+
 #-------------------------------------------------------------------------------
 # Subset the relevant columns for correlation (adjust indices or use column names as necessary)
-a.num <- tab1[,3:27]
-
-# Look them all:
-par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
-corrplot.mixed(cor(a.num),upper.col = col4(10),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+a.num <- tab1[,4:19]
 
 col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F", "cyan", "#007FFF", "blue", "#00007F"))
 
+# Look them all:
+par(mfrow = c(1, 1), pty="m", mar=c(3,3,3,3), oma=c(0,0,0,0))
+corrplot.mixed(cor(a.num),upper.col = col4(1000),lower.col = "black", mar=c(0,0,0,0), tl.pos = "d")#, diag = "l")
+
+
 #---------------------------------- just do the correlation plot with the selected variables
 
-ggpairs(a.num)
+ggpairs(a.num) # https://www.r-bloggers.com/2021/06/ggpairs-in-r-a-brief-introduction-to-ggpairs/
+
+# To create boxplot interactive function
+p_ <- GGally::print_if_interactive
+
+# Not include management_type in the column list to not have a boxplot in the upper part otherwise include it if you want
+pm <- ggpairs(tab1, columns = 3:19, ggplot2::aes(colour = management_type))
+
+# To create boxplots in the upper part
+p_(pm)
 
 
 # METHOD 4
 #install.packages("ggcorrplot")
 library(ggcorrplot) # http://www.sthda.com/english/articles/32-r-graphics-essentials/130-plot-multivariate-continuous-data/#correlation-analysis
 # Compute a correlation matrix
- my_data <- a.num[, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23)]
+ my_data <- a.num[, c(1,2,3,4,5,6,7,8,9,10,11,12)]
  corr <- round(cor(my_data), 1)
 
 # Visualize
@@ -727,25 +736,305 @@ corrplot(a.num, method="color", col=col(200),
 
 #-------------------------------------------------------------------------------
 # Scatter plots
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(x = Age25percentClosestTreesToDs, y = age, color = "Age25percentClosestTreesToDs")) +
+  # Points for Age20percentOldestTrees
+  geom_point(aes(x = Age20percentOldestTrees, y = age, color = "Age20percentOldestTrees")) +
+  # Linear model fit for Age25percentClosestTreesToDs with dashed line
+  geom_smooth(aes(x = Age25percentClosestTreesToDs, y = age, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  # Linear model fit for Age20percentOldestTrees with dashed line
+  geom_smooth(aes(x = Age20percentOldestTrees, y = age, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous)
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "Tree Ages GAM models", y = "Observed Ages", title = "Observed Age vs. Tree Age Groups with LM Fit") +
+  # Minimal theme
+  theme_minimal()
 
-plot()
+#-------------------------------------------------------------------------------
+# Scatter plots
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(x = MeanGAMAge, y = age, color = "MeanGAMAge")) +
+  # Points for Age20percentOldestTrees
+  geom_point(aes(x = MeanGAMAge_2, y = age, color = "MeanGAMAge_2")) +
+  # Linear model fit for Age25percentClosestTreesToDs with dashed line
+  geom_smooth(aes(x = MeanGAMAge, y = age, color = "MeanGAMAge"),
+              method = "lm", linetype = "dashed") +
+  # Linear model fit for Age20percentOldestTrees with dashed line
+  geom_smooth(aes(x = MeanGAMAge_2, y = age, color = "MeanGAMAge_2"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous)
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "Tree MeanGAMAges GAM models", y = "Observed Ages", title = "Observed Age vs. Tree meanGAMAge Groups with LM Fit") +
+  # Minimal theme
+  theme_minimal()
+
+
+#-------------------------------------------------------------------------------
+# Scatter plots
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(age, MeanGAMAge, colour = management_type)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "Tree MeanGAMAges 1 [year]", y = "Observed Ages [year]", title = "Tree Mean Ages based on dbh-height proportion GAM model") +
+  # Minimal theme
+  theme_minimal()
+
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(age, MeanGAMAge_2, colour = management_type)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "Tree MeanGAMAges 2 [year]", y = "Observed Ages [year]", title = "Tree Mean Ages based on dbh-height weighted GAM model") +
+  # Minimal theme
+  theme_minimal()
+
+
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(age, Age20percentOldestTrees, colour = management_type)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "20% Oldest Tree Ages [year]", y = "Observed Ages [year]", title = "20% Oldest Tree Ages based on dbh-height weighted GAM model") +
+  # Minimal theme
+  theme_minimal()
+
+
+# Scatter plot using the original dataframe
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs
+  geom_point(aes(age, Age25percentClosestTreesToDs, colour = management_type)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  # Labels and title
+  labs(x = "25% Oldest Tree Ages [year]", y = "Observed Ages [year]", title = "25% Oldest Tree Ages based on dbh-height proportion GAM model") +
+  # Minimal theme
+  theme_minimal()
+
+
+#-------------------------------------------------------------------------------
+# Box plots
+ggplot(tab1) +
+  # Boxplot for observed_age
+  geom_boxplot(aes(x = "Observed Age", y = age), outlier.shape = 8, outlier.colour = "red") +  # Keep outliers
+  geom_jitter(aes(x = "Observed Age", y = age, color = management_type), shape = 16, size = 2, width = 0.2) +
+  
+  # Boxplot for Age25percentClosestTreesToDs
+  geom_boxplot(aes(x = "Age25percentClosestTreesToDs", y = Age25percentClosestTreesToDs), outlier.shape = 8, outlier.colour = "red") +
+  geom_jitter(aes(x = "Age25percentClosestTreesToDs", y = Age25percentClosestTreesToDs, color = management_type), shape = 16, size = 2, width = 0.2) +
+  
+  # Boxplot for Age20percentOldestTrees
+  geom_boxplot(aes(x = "Age20percentOldestTrees", y = Age20percentOldestTrees), outlier.shape = 8, outlier.colour = "red") +
+  geom_jitter(aes(x = "Age20percentOldestTrees", y = Age20percentOldestTrees, color = management_type), shape = 16, size = 2, width = 0.2) +
+  
+  # Labels and title
+  labs(x = "Age Group", y = "Age Value [year]", title = "Boxplot with Red Stars for Outliers and Managed Groups in Colors") +
+  theme_minimal() +
+  theme(panel.border = element_rect(color = "black", fill = NA, size = 0.5))  # Bold black border
+
+#-------------------------------------------------------------------------------
+# Scatter plot to compare the species richness - age
+
+ggplot(tab1) +
+  # Points for Age25percentClosestTreesToDs vs. species richness
+  geom_point(aes(x = Age25percentClosestTreesToDs, y = tab1$`Lichens (0.137)`, color = "Age25percentClosestTreesToDs")) +
+  
+  # Points for Age20percentOldestTrees vs. species richness
+  geom_point(aes(x = Age20percentOldestTrees, y = tab1$`Lichens (0.137)`, color = "Age20percentOldestTrees")) +
+  
+  # Linear model fit for Age25percentClosestTreesToDs vs. species richness with dashed line
+  geom_smooth(aes(x = Age25percentClosestTreesToDs, y = tab1$`Lichens (0.137)`, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  
+  # Linear model fit for Age20percentOldestTrees vs. species richness with dashed line
+  geom_smooth(aes(x = Age20percentOldestTrees, y = tab1$`Lichens (0.137)`, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  
+  # 1x1 line (continuous) - optional, if you want a comparison to the "1:1" relationship
+  geom_abline(slope = 0.05, intercept = 0, linetype = "solid", color = "black") +
+  
+  # Labels and title
+  labs(x = "Tree Ages (GAM Models)", y = "Species Richness (Lichens)", title = "Comparison of Tree Ages GAM Models vs. Species Richness") +
+  
+  # Minimal theme
+  theme_minimal() +
+  
+  # Adding color legend and titles for the two models
+  scale_color_manual(name = "GAM Models",
+                     values = c("Age25percentClosestTreesToDs" = "blue",
+                                "Age20percentOldestTrees" = "green"))
+
+#-------------------------------------------------------------------------------
+# AFTER NORMALIZATION
+#-------------------------------------------------------------------------------
+
+# Normalize function (min-max scaling)
+normalize <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+# Load necessary libraries
+library(ggplot2)
+library(gridExtra)
+
+# Function to normalize the data
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+# Apply normalization to the relevant columns in your dataframe
+tab1$Age25percentClosestTreesToDs_norm <- normalize(tab1$Age25percentClosestTreesToDs)
+tab1$Age20percentOldestTrees_norm <- normalize(tab1$Age20percentOldestTrees)
+tab1$obs_age_norm <- normalize(tab1$age)
+
+# BRYOPHYTES
+tab1$species_richness_bryophytes_norm <- normalize(tab1$`Epiphytic / epixilic bryophytes (0.212)`)
+bryophytes <- ggplot(tab1) +
+  geom_point(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_bryophytes_norm, color = "Age25percentClosestTreesToDs")) +
+  geom_point(aes(x = Age20percentOldestTrees_norm, y = species_richness_bryophytes_norm, color = "Age20percentOldestTrees")) +
+  geom_point(aes(x = obs_age_norm, y = species_richness_bryophytes_norm, color = "obs_age")) +
+  geom_smooth(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_bryophytes_norm, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = Age20percentOldestTrees_norm, y = species_richness_bryophytes_norm, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = obs_age_norm, y = species_richness_bryophytes_norm, color = "obs_age"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous) - optional, if you want a comparison to the "1:1" relationship
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  
+  labs(x = "Normalized Tree Ages (GAM Models and Observed)", y = "Normalized Species Richness (Bryophytes)", 
+       title = "Bryophytes") +
+  theme_minimal() +
+  scale_color_manual(name = "Age Models",
+                     values = c("Age25percentClosestTreesToDs" = "blue",
+                                "Age20percentOldestTrees" = "green",
+                                "obs_age" = "red"))
+
+# LICHENS
+tab1$species_richness_lichens_norm <- normalize(tab1$`Lichens (0.137)`)
+lichens <- ggplot(tab1) +
+  geom_point(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_lichens_norm, color = "Age25percentClosestTreesToDs")) +
+  geom_point(aes(x = Age20percentOldestTrees_norm, y = species_richness_lichens_norm, color = "Age20percentOldestTrees")) +
+  geom_point(aes(x = obs_age_norm, y = species_richness_lichens_norm, color = "obs_age")) +
+  geom_smooth(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_lichens_norm, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = Age20percentOldestTrees_norm, y = species_richness_lichens_norm, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = obs_age_norm, y = species_richness_lichens_norm, color = "obs_age"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous) - optional, if you want a comparison to the "1:1" relationship
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  
+  labs(x = "Normalized Tree Ages (GAM Models and Observed)", y = "Normalized Species Richness (Lichens)", 
+       title = "Lichens") +
+  theme_minimal() +
+  scale_color_manual(name = "Age Models",
+                     values = c("Age25percentClosestTreesToDs" = "blue",
+                                "Age20percentOldestTrees" = "green",
+                                "obs_age" = "red"))
+
+# MACROFUNGI
+tab1$species_richness_macrofungi_norm <- normalize(tab1$`Macrofungi (2.118)`)
+macrofungi <- ggplot(tab1) +
+  geom_point(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_macrofungi_norm, color = "Age25percentClosestTreesToDs")) +
+  geom_point(aes(x = Age20percentOldestTrees_norm, y = species_richness_macrofungi_norm, color = "Age20percentOldestTrees")) +
+  geom_point(aes(x = obs_age_norm, y = species_richness_macrofungi_norm, color = "obs_age")) +
+  geom_smooth(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_macrofungi_norm, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = Age20percentOldestTrees_norm, y = species_richness_macrofungi_norm, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = obs_age_norm, y = species_richness_macrofungi_norm, color = "obs_age"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous) - optional, if you want a comparison to the "1:1" relationship
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  
+  labs(x = "Normalized Tree Ages (GAM Models and Observed)", y = "Normalized Species Richness (Macrofungi)", 
+       title = "Macrofungi") +
+  theme_minimal() +
+  scale_color_manual(name = "Age Models",
+                     values = c("Age25percentClosestTreesToDs" = "blue",
+                                "Age20percentOldestTrees" = "green",
+                                "obs_age" = "red"))
+
+# BEETLES
+tab1$species_richness_beetles_norm <- normalize(tab1$`Non-flying beetles (0.053)`)
+beetles <- ggplot(tab1) +
+  geom_point(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_beetles_norm, color = "Age25percentClosestTreesToDs")) +
+  geom_point(aes(x = Age20percentOldestTrees_norm, y = species_richness_beetles_norm, color = "Age20percentOldestTrees")) +
+  geom_point(aes(x = obs_age_norm, y = species_richness_beetles_norm, color = "obs_age")) +
+  geom_smooth(aes(x = Age25percentClosestTreesToDs_norm, y = species_richness_beetles_norm, color = "Age25percentClosestTreesToDs"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = Age20percentOldestTrees_norm, y = species_richness_beetles_norm, color = "Age20percentOldestTrees"),
+              method = "lm", linetype = "dashed") +
+  geom_smooth(aes(x = obs_age_norm, y = species_richness_beetles_norm, color = "obs_age"),
+              method = "lm", linetype = "dashed") +
+  # 1x1 line (continuous) - optional, if you want a comparison to the "1:1" relationship
+  geom_abline(slope = 1, intercept = 0, linetype = "solid", color = "black") +
+  
+  labs(x = "Normalized Tree Ages (GAM Models and Observed)", y = "Normalized Species Richness (Beetles)", 
+       title = "Beetles") +
+  theme_minimal() +
+  scale_color_manual(name = "Age Models",
+                     values = c("Age25percentClosestTreesToDs" = "blue",
+                                "Age20percentOldestTrees" = "green",
+                                "obs_age" = "red"))
+
+# Arrange the plots in a 2x2 grid
+grid.arrange(bryophytes, lichens, macrofungi, beetles, ncol = 2, nrow = 2)
+
+
+
+
+#-------------------------------------------------------------------------------
+ggplot(tab1) +
+  
+  # Points for Age25percentClosestTreesToDs vs. species richness, colored by management_type
+  geom_point(aes(x = Age25percentClosestTreesToDs, y = tab1$`Lichens (0.137)`, color = management_type)) +
+  
+  # Points for Age20percentOldestTrees vs. species richness, colored by management_type
+  geom_point(aes(x = Age20percentOldestTrees, y = tab1$`Lichens (0.137)`, color = management_type)) +
+  
+  # Points for obs_age vs. species richness, colored by management_type
+  geom_point(aes(x = age, y = tab1$`Lichens (0.137)`, color = management_type)) +
+  
+  # Linear model fit for Age25percentClosestTreesToDs vs. species richness with dashed line
+  geom_smooth(aes(x = Age25percentClosestTreesToDs, y = tab1$`Lichens (0.137)`),
+              method = "gam", linetype = "dashed", color = "blue") +
+  
+  # Linear model fit for Age20percentOldestTrees vs. species richness with dashed line
+  geom_smooth(aes(x = Age20percentOldestTrees, y = tab1$`Lichens (0.137)`),
+              method = "gam", linetype = "dashed", color = "green") +
+  
+  # Linear model fit for obs_age vs. species richness with dashed line
+  geom_smooth(aes(x = age, y = tab1$`Lichens (0.137)`),
+              method = "gam", linetype = "dashed", color = "red") +
+  
+  # Labels and title
+  labs(x = "Tree Ages (GAM Models and Observed)", y = "Species Richness (Lichens)", 
+       title = "Comparison of Observed Age and Tree Ages (GAM Models) vs. Lichens Species Richness") +
+  
+  # Minimal theme
+  theme_minimal() +
+  
+  # Adding color legend for management_type
+  scale_color_discrete(name = "Management Type")
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+#
 
 
 

@@ -13,10 +13,10 @@ library(gridExtra) # To arrange the graphs in a grid
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20241010_age_dw_test/test/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20241010_age_dw_test/test/"
 
 {# Create an empty list to store data frames
   dfs <- list() # not working for several subset, only one
@@ -350,18 +350,28 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Create a data frame with all unique years
   all_years <- data.frame(year = unique(landscape$year))
   
-  # Perform left join with the summarization result
-  # Create the broadl_40 summary with continuous years and fill missing values with 0
+  # Calculate the basal area only of the broadleaf with a dbh > 40cm
   broadl_40 <- tree %>%
     filter(dbh > 40 & !species %in% species_to_remove) %>%
     group_by(year) %>%
-    summarise(broadl_40 = n()) %>%
-    complete(year = seq(min(year), max(year), by = 1), fill = list(broadl_40 = 0))
+    summarise(broadl_40 = n())
   
-  # Join with all_years and replace any NA values with 0
+  # Check if broadl_40 is empty
+  if (nrow(broadl_40) == 0) {
+    # If empty, create a dataframe with all years and 0 values
+    broadl_40 <- all_years %>%
+      mutate(broadl_40 = 0)
+  } else {
+    # If not empty, complete the years and fill NA with 0
+    broadl_40 <- broadl_40 %>%
+      complete(year = seq(min(year), max(year), by = 1), fill = list(broadl_40 = 0))
+  }
+  
+  # Join with all_years and replace any NA values with 0 (if needed)
   broadl_40 <- all_years %>%
     left_join(broadl_40, by = "year") %>%
     replace(is.na(.), 0)
+  
   
   #-------------------------------------------------------------------------------
   # Age - comes from the avarage age
@@ -591,9 +601,10 @@ library(ggplot2)
 library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
+#dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_wind_all_plots/2020903/output/"
 #pdf(paste0(dataroot, "20240917_tests_deadwood_managed_unmanaged_spruce.pdf"), height=8, width=12)
-pdf(paste0(dataroot, "20241003_oldest_trees_time_series.pdf"), height=8, width=12)
+#pdf(paste0(dataroot, "20241003_oldest_trees_time_series.pdf"), height=8, width=12)
+#pdf(paste0(dataroot, "20241003_tests_age_mng_unmng.pdf"), height=8, width=12)
 
 
 #-------------------------------------------------------------------------------
@@ -639,10 +650,10 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1100)+
+  ylim(0,900)+
   theme_bw()
 
 
@@ -827,7 +838,7 @@ H.BA <- ggplot(variables.all, aes(x=year, y=H.BA))+
 # TOTAL CARBON IN THE PLOT (LIVING + DEADWOOD + LITTER + SOIL)
 totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Plot Carbon [living trees - deadwood - litter - soil]")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -836,7 +847,7 @@ totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland)
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS + DOWNED DEADWOOD)
 total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
   labs(x = "Year",y="Deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -845,7 +856,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -854,7 +865,7 @@ standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
 # TOTAL LIVING CARBON
 total_alive_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_alive_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total alive Carbon simulation")+
   labs(x = "Year", y="total_alive [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -863,7 +874,7 @@ total_alive_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_alive_C_sim)
 # TOTAL STEMS CARBON
 total_stem_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_stem_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Stem Carbon simulation")+
   labs(x = "Year",y="total_stem_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -872,7 +883,7 @@ total_stem_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_stem_C_sim))+
 # TOTAL ABOVEGROUND DEADWOOD CARBON
 total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_sim))+
   geom_line() + geom_smooth(method = "loess")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Aboveground Deadwood Carbon simulation")+
   labs(x = "Year",y="total_AG_DW_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -881,7 +892,7 @@ total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_sim)
 # BOX PLOT 
 total_AG_DW_C_sim <- ggplot(plot_variables_all, aes(y=total_AG_DW_C_sim))+
   geom_boxplot() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Total Aboveground Deadwood Carbon simulation")+
   labs(y="total_AG_DW_C_sim [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1159,3 +1170,9 @@ ggplot(age_oldest, aes(year, mean_25_percent_oldest, color="red" )) +
     axis.title.y = element_text(size = rel(1.8), angle = 90),
     axis.title.x = element_text(size = rel(1.8), angle = 0)
   )
+
+
+
+
+# CLOSE ALL
+dev.off()
