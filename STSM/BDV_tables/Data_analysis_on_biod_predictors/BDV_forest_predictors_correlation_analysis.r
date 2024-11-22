@@ -16,7 +16,7 @@ library(readxl)
 # tab2 <- read_xlsx("C:/iLand/2023/plot_bottoms_up/Jenik/Bdv_predictors_clean_correlation.xlsx") 
 # tab1 <-read.csv("C:/iLand/2022/20220604_final_test/DB_final/variables.all_20220708.csv")
 
-tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
+tab2 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Bdv_predictors_table_final_20231002.xlsx")
 
 #head(tab1)
 head(tab2)
@@ -57,7 +57,7 @@ library(vegan)
 
 # Calculate the basal area per every tree based on their dbh
 
-raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/plot_init/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
+raw_data <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/Raw_data_structure_CZ_JH1_final.xlsx"
 
 excel_sheets(raw_data)
 
@@ -74,7 +74,7 @@ print(new_data)
 
 # Visualize the data in a single plot
 
-chosen_plot_id <- "L5_37"
+chosen_plot_id <- "L1_03"
 
 # Filter data for the chosen plot
 filtered_data <- new_data %>%
@@ -140,13 +140,13 @@ print(result)
 # In this modified script, we first generate a list of all unique plotID values and then use a left join to combine it with the summarized data. This ensures that even the plots with zero trees in the specified DBH range are included in the result. Finally, we replace any NA values with 0 to represent the plots with no matching trees in the given DBH range.
 
 # Save the result to a new Excel file
-write_xlsx(result, "result_file.xlsx")
+write_xlsx(result, "result_file.xlsx") # Here the data differs compering the original ones because we decided to maintain only trees between 10 and 40cm dbh instead then all the trees from 40cm and below of dbh as in the original.
 
 
 #-------------------------------------------------------------------------------
 # Calculate the basal area only of the broadleave with a dbh > 40cm
 # Define the conditions for filtering
-dbh_condition_2 <- new_data$treedb > 40
+dbh_condition_2 <- new_data$treedb > 40 # In the final data we didn't use the threshold 40cm + the broadl_ba differ slightly and it is due the fact we removed senescence trees considering them as dead
 
 # To define the species to be removed
 unique_sp <- unique(new_data$treesp)  # alternative unique_plots <- unique(CZ_JH1[,"plotID"])

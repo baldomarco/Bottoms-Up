@@ -21,12 +21,8 @@ excel_sheets(t2)
 
 
 # BDV predictors by Jenik
-BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/03_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC.xlsx")
 
-BDV_predictors <- BDV_predictors%>%
-  group_by(plotID)%>%
-  mutate(deadwood50 = (deadwood/4))
-  
 
 # Load required libraries
 library(tidyr)
@@ -81,8 +77,6 @@ abeStandRemoval_scen <- c()
 
 abeUnit_scen <- c()
 
-#bb_scen <- c()
-
 landscape_removed_scen <- c()
 
 tree_scen <- c()
@@ -91,27 +85,13 @@ stand_scen <- c()
 
 lnd_scen <-c()
 
-dys_scen <- c()
-
 carbon_scen <- c()
 
-carbonflow_scen <- c()
-
 removals <- c()
-
-#damage.all <- c()
 
 H_BA_heterogenity_scen <- c()
 
 landscape_removed_scen_natmor <- c()
-
-# damage.all<-c()
-
-# landscape_removed <- c()
-
-# management <- ()
-
-variables.all <- c()
 
 plot_variables_all <- c()
 
@@ -154,10 +134,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   abeStandDetail <- dbReadTable(db, "abeStandDetail")
   abeStandRemoval <- dbReadTable(db, "abeStandRemoval")
   abeUnit <- dbReadTable(db, "abeUnit")
-  #barkbeetle <- dbReadTable(db,"barkbeetle")
   carbon <- dbReadTable(db,"carbon")
-  carbonflow <- dbReadTable(db, "carbonflow")
-  dynamicstand <- dbReadTable(db, "dynamicstand")
   landscape <- dbReadTable(db,"landscape")
   landscape_removed <- dbReadTable(db,"landscape_removed")
   stand <- dbReadTable(db, "stand")
@@ -240,7 +217,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # CREATE A NEW DATA FRAME TO WORK ON THE SPECIFIC VARIABLES NEEDED 
   
   head(landscape)
-  head(dynamicstand)
   
   # TO UNDERSTAND THE OPERATORS %>% AND %IN% HAVE TO STUDY THEM IN DATACAMP AND IN DPLER CRAN PACKAGES
   
@@ -250,33 +226,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
                           summarise(tot_volume=sum(volume_m3),living_c=sum(total_carbon_kg), count_ha=sum(count_ha), tot_ba=sum(basal_area_m2),npp=sum(NPP_kg), LAI=sum(LAI), sapling=sum(cohort_count_ha),growth_m3=sum(gwl_m3)))
   
   
-  dynamicstand_1 <-dynamicstand %>% filter(year>0)                            # THIS IS NEEDED FOR MAKE THE DATA FRAME dynamicstand OF THE SAME SIZE OF THE carbon AND carbonflow. WE DID THE SAME FOR THE SELECTED VARIABLES IN LANDSCAPE
-  
-  # CREATE THE NEW DATA FRAME FOR VARIABLES 
-  
-  variables <- data.frame(case=case,
-                          year=dynamicstand_1$year,
-                          h=dynamicstand_1$height_mean,
-                          dbh=dynamicstand_1$dbh_mean,
-                          age_mean=dynamicstand_1$age_mean,
-                          Rh=carbonflow$Rh,
-                          NPP=carbonflow$NPP,
-                          GPP=carbonflow$GPP,
-                          NEP=carbonflow$NEP,
-                          H.count=H.count$H,
-                          H.VOL=H.VOL$H,
-                          H.BA=H.BA$H,
-                          SEI=SEI,
-                          esp_BA_prop=esp$BA)
-  
-  # ADD LANDSCAPE VARIABLES AT V DATA FRAME
-  
-  variables = inner_join(variables, ab.lnd.v, by="year")
-  variables = inner_join(variables, ab.tot.c, by="year")
-  
-  # variables[which(is.na(damage$wind)==TRUE)] <-0                              # FOR MAKE THE na = 0 !!!! "
-  
-  head(variables)
   
 #-------------------------------------------------------------------------------
 # Create tables for all variables of plot bdv predictors
@@ -405,12 +354,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # DW carbon total without others snags
   total_AGDW_C_kgha <- data.frame(carbon %>% 
                                     group_by(year) %>% 
-                                    summarise(total_AGDW_C_kgha=sum(snags_c, snagsOther_c_ag, downedWood_c_ag)))
+                                    summarise(total_AGDW_C_kgha=sum(snags_c, snagsOther_c_ag)))
   
-  # Good one
-  standing_DW_C <- data.frame(carbon %>% 
-                                       group_by(year) %>% 
-                                       summarise(standing_DW_C = sum(snags_c))) 
   
   # Create a new row with manually specified values
 #  new_row_1 <- c(0, 87975.51948)  # Add your values accordingly swdC
@@ -418,29 +363,23 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
 #  new_row_3 <- c(0, 489678.8983)     # Add your values accordingly to the year 1
 #  new_row_4 <- c(0, 114798.0941)
   # Create new rows with the values from the first row (year 1) of each data frame
-  new_row_1 <- c(0, standing_DW_C[1, 2])     # Year 0 row for standing_DW_C
-  new_row_2 <- c(0, total_DW_C_kgha[1, 2])   # Year 0 row for total_DW_C_kgha
-  new_row_3 <- c(0, totalC_kgha_iland[1, 2]) # Year 0 row for totalC_kgha_iland
+      # Year 0 row for standing_DW_C
+  
   new_row_4 <- c(0, total_AGDW_C_kgha[1, 2]) # Year 0 row for total_AGDW_C_kgha
   
   # Add the new rows at the beginning of each data frame
-  standing_DW_C <- rbind(new_row_1, standing_DW_C)
-  total_DW_C_kgha <- rbind(new_row_2, total_DW_C_kgha)
-  totalC_kgha_iland <- rbind(new_row_3, totalC_kgha_iland)
+  
+  
   total_AGDW_C_kgha <- rbind(new_row_4, total_AGDW_C_kgha)
   
   # Optional: View the modified data frames to confirm
-  print(standing_DW_C)
-  print(total_DW_C_kgha)
-  print(totalC_kgha_iland)
+  
+
   print(total_AGDW_C_kgha)
   
   #-------------------------------------------------------------------------------
   # Merge the data frames Plot L1_10
-  plot_L1_10_df_simul <- bind_cols(age, 
-                                   standing_DW_C = standing_DW_C$standing_DW_C,
-                                   totalC_kgha_iland = totalC_kgha_iland$totalC_kgha_iland,
-                                   total_DW_C_kgha = total_DW_C_kgha$total_DW_C_kgha,
+  plot_L1_10_df_simul <- bind_cols(age,
                                    total_AGDW_C_kgha = total_AGDW_C_kgha$total_AGDW_C_kgha,
                                    lai_sim = LAI$LAI,
                                    ba_broadl = ba_broadl$ba_broadl,
@@ -468,15 +407,15 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       tree_10_40_2,
       broadl_40,
       broadl_40_2)
-
+  
   # CREATE THE Y BDV VALUE PREDICTED
   # SELECT VARIABLES NEEDED
   Bayesian_BDV_model_V3 <- Bayesian_BDV_model_V3 %>%
     group_by(year) %>%
     mutate( 
-      BRYO_PRED_RICH_97.5 = 11.67784 + 0.02123*age + 0.00006*deadwood, # Updated with beta0 97.5%, beta[1] 97.5%, beta[2] 97.5%
-      BRYO_PRED_RICH_50 = 9.71337 + 0.01584*age + 0.00004*deadwood,    # Updated with beta0 50%, beta[1] 50%, beta[2] 50%
-      BRYO_PRED_RICH_2.5 = 7.49491 + 0.00269*age + 0.00001*deadwood,   # Updated with beta0 2.5%, beta[1] 2.5%, beta[2] 2.5%
+      BRYO_PRED_RICH_97.5 = 12.84475 + 0.00007*age + (-0.00284)*deadwood,
+      BRYO_PRED_RICH_50 = 11.55649 + 0.00005*age + (-0.08539)*deadwood,
+      BRYO_PRED_RICH_2.5 = 10.30503 + 0.00003*age + (-0.40080)*deadwood,
       LICHEN_PRED_RICH_97.5 = 14.39949 + 0.07614*age + (-0.37808)*lai_sim + 0.28592*broadl_40,
       LICHEN_PRED_RICH_50 = 9.82144 + 0.04723*age + (-1.64795)*lai_sim + 0.11608*broadl_40,
       LICHEN_PRED_RICH_2.5 = 5.17480 + 0.01805*age + (-2.98086)*lai_sim + 0.01149*broadl_40,
@@ -495,8 +434,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       MOTHS_RED_PRED_RICH_97.5 = 66.44195 + (-0.00005)*tree_10_40_2 + 0.94178*broadl_40,
       MOTHS_RED_PRED_RICH_50 = 62.49055 + (-0.00019)*tree_10_40_2 + 0.65890*broadl_40,
       MOTHS_RED_RICH_2.5 = 58.73980 + (-0.00035)*tree_10_40_2 + 0.38171*broadl_40,
-      BRYO_PRED_RICH_50_beta1 = 0.01584*age,                          # beta[1] 50% for age
-      BRYO_PRED_RICH_50_beta2 = 0.00004*deadwood,                      # beta[2] 50% for deadwood
+      BRYO_PRED_RICH_50_beta1 = 0.00005*age,
+      BRYO_PRED_RICH_50_beta2 = -0.08539*deadwood,
       LICHEN_PRED_RICH_50_beta1 = 0.04723*age,
       LICHEN_PRED_RICH_50_beta2 = -1.64795*lai_sim,
       LICHEN_PRED_RICH_50_beta3 = 0.11608*broadl_40,
@@ -618,10 +557,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   lnd_scen <- rbind(lnd_scen, landscape)
   
   # Collect dynamicstand data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
-  dynamicstand <-(dynamicstand %>% mutate(run=case))
-  dys_scen <-rbind(dys_scen, dynamicstand)
-  
-  # Collect dynamicstand data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
   tree <-(tree %>% mutate(run=case))
   tree_scen <-rbind(tree_scen, tree)
   
@@ -632,30 +567,10 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Collect dynamicstand data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
   carbon <-(carbon %>% mutate(run=case))
   carbon_scen <-rbind(carbon_scen, carbon)
-  
-  # Collect dynamicstand data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
-  carbonflow <-(carbonflow %>% mutate(run=case))
-  carbonflow_scen <-rbind(carbonflow_scen, carbonflow)
-
-  # Collect barkbeetle data FOR CREATE THE VARIABLE BB FOR ALL THE RUNS
-#  barkbeetle <-(barkbeetle %>% mutate(run=case))
- # bb_scen <-rbind(bb_scen, barkbeetle)
-  
-  # Collect wind data FOR CREATE THE VARIABLE WIND FOR ALL THE RUNS
-  # wind <-(wind %>% mutate(run=case))
-  # w <-rbind(w, wind)
 
   # CREATE THE VARIABLE FOR THE DIFFERENT WOOD REMOVAL ACTIVITY
   # HERE IT IS NOT NEEDED TO CHANGE CASE TO RUN BECAUSE ALREADY DONE
-  removals<-rbind(removals,ab.regcuts,ab.finalcuts,ab.thinnig,ab.salvaged)
-  
-  # CREATE THE VARIABLE DAMAGE FOR ALL THE RUNS
-# damage <-(damage %>% mutate(run=case))
-#  damage.all<-rbind(damage.all, damage)                                         # PUT ALL THE DAMAGE RUNS INTO A SINGLE DATAFRAME WITH DIFF CASES TO BE PLOT ALL TOGETHER IN LINE 370
-  
-  # CREATE THE VARIABLES DF FOR ALL THE RUNS
-  variables <-(variables %>% mutate(run=case))
-  variables.all<-rbind(variables.all, variables) 
+  removals<-rbind(removals,ab.regcuts,ab.finalcuts,ab.thinnig,ab.salvaged)                                         # PUT ALL THE DAMAGE RUNS INTO A SINGLE DATAFRAME WITH DIFF CASES TO BE PLOT ALL TOGETHER IN LINE 370
   
   # CREATE THE VARIABLE H of BA per species FOR ALL THE RUNS
   H_BA_heterogenity <-(H_BA_heterogenity %>% mutate(run=case))
@@ -695,7 +610,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241121_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241111_BDV_mng_plot_L6_site_unmanaged_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -757,7 +672,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1200)+
+  ylim(0,1100)+
   theme_bw()
 
 # Plot grid arrange
@@ -1172,7 +1087,7 @@ standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
-# Deadwood Carbon
+# Volume deadwood
 deadwood <- ggplot(Bayesian_BDV_model_V3_multi, aes(x=year, y=deadwood))+
   geom_line(color = "#2e2e2e") +
   facet_wrap(~run, ncol=2)+
@@ -1221,16 +1136,6 @@ tree_10_40 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Trees with dbh 10cm to 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw
-
-# NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included
-
-tree_10_40_2 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
-  geom_line(color = "#4897D8") +
-  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="Trees with dbh 10cm to 40cm [x^2]")+
-  theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
 # NUMBER OF BROADLEAVE TREES WITH DBH > 40cm
@@ -1274,29 +1179,13 @@ ba_broadl
 # NUMBER OF TREES WITH DBH BETWEEN 10CM AND 40CM
 tree_10_40
 
-# NUMBER OF TREES WITH DBH BETWEEN 10CM AND 40CM - POWER OF 2
-tree_10_40_2
-
 # NUMBER OF BROADLEAVE TREES WITH DBH > 40CM
 broadl_40
 
 #-------------------------------------------------------------------------------
 # Cumulative Natural Mortality
 
-landscape_removed_scen_natmor_cum <- landscape_removed_scen_natmor %>%
-  group_by(year,run) %>%
-  summarise(
-    total_carbon_year = sum(total_carbon),
-    volume_m3_year = sum(volume_m3)  # Sum volume_m3 for each year
-  ) %>%
-  arrange(year) %>%  # Ensure years are in ascending order
-  mutate(
-    cum_mortality_c = cumsum(total_carbon_year),  # Cumulative sum for total_carbon
-    cum_volume_m3 = cumsum(volume_m3_year)        # Cumulative sum for volume_m3
-  )
-
-# Plot natural cumulative mortality
-P1 <- ggplot(landscape_removed_scen_natmor_cum, aes(year, cum_mortality_c )) +
+P1 <- ggplot(landscape_removed_scen_natmor, aes(year, cumm_mortality_total_carbon, color=species )) +
   geom_line(size = 0.6) +
   facet_wrap(~run, ncol=2)+
   ggtitle("Cumulative Natural Mortality in Carbon") +
@@ -1311,8 +1200,7 @@ P1 <- ggplot(landscape_removed_scen_natmor_cum, aes(year, cum_mortality_c )) +
 
 # Display the plot
 grid.arrange(age_plot, deadwood, lai_plot, ncol=1)
-
-
+dev.off()
 # Shannon entropy of single species basal area (heterogeneity of individuals dimensions)
 
 {H_BA_sp <- ggplot(H_BA_heterogenity_scen, aes(x=year, y=shannon_ba_heterog))+
@@ -1424,14 +1312,18 @@ P1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BRYO_PRED_RICH_2.
   coord_cartesian(ylim = c(NA, NA))
 
 # Set plot title
-#P1 <- P1 + ggtitle("Bryophytes BDV Richness Over Time")
-P1 <- P1 + ggtitle("Bryo = 9.71337 + 0.01584*age + 0.00004*deadwood")
+P1 <- P1 + ggtitle("Bryophytes BDV Richness Over Time")
 
 # Print the plot
 print(P1)
 
 # Plot grid arrange
 grid.arrange(age_plot, deadwood, P1, ncol=1)
+
+########################################################## CLOSE EVERY PLOTs
+
+dev.off()
+
 
 #-------------------------------------------------------------------------------
 ###############    LICHENS DEADWOOD CHANGING ################
@@ -1485,15 +1377,11 @@ P2 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = LICHEN_PRED_RICH_
   coord_cartesian(ylim = c(-10, 80))
 
 # Set plot title
-#P2 <- P2 + ggtitle("Lichens BDV Richness Over Time")
-P2 <- P2 + ggtitle("Lichens = 9.82144 + 0.04723*age + (-1.64795)*lai_sim + 0.11608*broadl_40")
-
+P2 <- P2 + ggtitle("Lichens BDV Richness Over Time")
 
 # Print the plot
 print(P2)
 
-# Plot grid arrange
-grid.arrange(age_plot, lai_plot, broadl_40, P2, ncol=1)
 
 #-------------------------------------------------------------------------------
 ###############    MACROFUNGI DEADWOOD CHANGING ################
@@ -1547,15 +1435,18 @@ P3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_RICH_2
   coord_cartesian(ylim = c(0, NA))
 
 # Set plot title
-#P3 <- P3 + ggtitle("Macrofungi BDV Richness Over Time")
-P3 <- P3 + ggtitle("Macrofungi = 83.52201 + 0.17438*age + 0.00035*deadwood + 3.29810*ba_broadl + 0.08110*tree_10_40")
+P3 <- P3 + ggtitle("Macrofungi BDV Richness Over Time")
 
 # Print the plot
 print(P3)
 
 
 # Plot grid arrange
-grid.arrange(age_plot, deadwood, ba_broadl, tree_10_40, P3, ncol=1)
+grid.arrange(ba_broadl, tree_10_40, P1, ncol=1)
+
+########################################################## CLOSE EVERY PLOTs
+
+dev.off()
 
 #-------------------------------------------------------------------------------
 ###############    MACROFUNGI RED LIST DEADWOOD CHANGING ################
@@ -1609,15 +1500,17 @@ P4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_RED_RI
   coord_cartesian(ylim = c(0, NA))
 
 # Set plot title
-# P4 <- P4 + ggtitle("Macrofungi IUCN Red List BDV Richness Overweighted")
-P4 <- P4 + ggtitle("Macrofungi RD = 115.57863 + 0.00088*deadwood + 6.18950*ba_broadl")
-
+P4 <- P4 + ggtitle("Macrofungi IUCN Red List BDV Richness Overweighted")
 
 # Print the plot
 print(P4)
 
 # Plot grid arrange
 grid.arrange(deadwood, ba_broadl,P4, ncol=1)
+
+########################################################## CLOSE EVERY PLOTs
+
+dev.off()
 
 #-------------------------------------------------------------------------------
 ###############    BEETLES DEADWOOD CHANGING ################
@@ -1671,16 +1564,18 @@ P5 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BEETLES_RICH_2.5,
   coord_cartesian(ylim = c(0, NA))
 
 # Set plot title
-# P5 <- P5 + ggtitle("Beetles BDV Richness Over Time")
-P5 <- P5 + ggtitle("Beetles = 8.55743 + 0.00002*deadwood + 0.11495*ba_broadl")
+P5 <- P5 + ggtitle("Beetles BDV Richness Over Time")
 
 # Print the plot
 print(P5)
 
 
 # Plot grid arrange
-grid.arrange(deadwood, ba_broadl, P5, ncol=1)
+grid.arrange(ba_broadl, tree_10_40, P5, ncol=1)
 
+########################################################## CLOSE EVERY PLOTs
+
+dev.off()
 
 #-------------------------------------------------------------------------------
 ###############    MOTHS DEADWOOD CHANGING ################
@@ -1734,16 +1629,18 @@ P6 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_RICH_2.5, y
   coord_cartesian(ylim = c(0, NA))
 
 # Set plot title
-#P6 <- P6 + ggtitle("MOTHS BDV Richness Over Time")
-P6 <- P6 + ggtitle("MOTHS = 61.44840 + (-0.00018)*tree_10_40_2 + 0.62675*broadl_40")
+P6 <- P6 + ggtitle("MOTHS BDV Richness Over Time")
 
 # Print the plot
 print(P6)
 
 
 # Plot grid arrange
-grid.arrange(tree_10_40_2,broadl_40, P6, ncol=1)
+grid.arrange(ba_broadl, tree_10_40, P6, ncol=1)
 
+########################################################## CLOSE EVERY PLOTs
+
+dev.off()
 #-------------------------------------------------------------------------------
 ###############    MOTHS RED LIST DEADWOOD CHANGING ################
 
@@ -1796,14 +1693,13 @@ P7 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_RED_RICH_2.
   coord_cartesian(ylim = c(0, NA))
 
 # Set plot title
-#P7 <- P7 + ggtitle("MOTHS IUCN Red List BDV Richness Overweighted")
-P7 <- P7 + ggtitle("MOTHS RD = 62.49055 + (-0.00019)*tree_10_40_2 + 0.65890*broadl_40")
+P7 <- P7 + ggtitle("MOTHS IUCN Red List BDV Richness Overweighted")
 
 # Print the plot
 print(P7)
 
 # Plot grid arrange
-grid.arrange(tree_10_40_2, broadl_40, P7, ncol=1)
+grid.arrange(deadwood, ba_broadl,P7, ncol=1)
 
 ########################################################## CLOSE EVERY PLOTs
 
@@ -1821,197 +1717,146 @@ pdf(paste0(dataroot, "20231211_Scatter_plot_variables_BDV_mng_plot_L1_10_300.pdf
 
 par(mfrow = c(1,2))
 
-plot(Bayesian_BDV_model_V3_multi$BRYO_PRED_RICH_50, Bayesian_BDV_model_V3_multi$deadwood, xlim = c(0,100), ylim = c(0,55000))
-plot(BDV_predictors$`Epiphytic / epixilic bryophytes (0.212)`, BDV_predictors$deadwood50, xlim = c(0,100), ylim = c(0,55000))
+plot(Bayesian_BDV_model_V3_multi$BRYO_PRED_RICH_50, Bayesian_BDV_model_V3_multi$deadwood, xlim = c(-5,20))
+plot(BDV_predictors$`Epiphytic / epixilic bryophytes (0.212)`, BDV_predictors$deadwood, xlim = c(0,100))
 
 
 par(mfrow = c(1,2))
 
-plot(Bayesian_BDV_model_V3_multi$MACROFUNGI_PRED_RICH_50, Bayesian_BDV_model_V3_multi$deadwood, xlim = c(0,500),  ylim = c(0,55000))
-plot(BDV_predictors$`Macrofungi (2.118)`, BDV_predictors$deadwood50, xlim = c(0,500),  ylim = c(0,55000))
+plot(Bayesian_BDV_model_V3_multi$MACROFUNGI_PRED_RICH_50, Bayesian_BDV_model_V3_multi$deadwood, xlim = c(5,300))
+plot(BDV_predictors$`Epiphytic / epixilic bryophytes (0.212)`, BDV_predictors$deadwood, xlim = c(0,100))
 
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Make THE SCATTER PLOT FULL BLACK
 
-g1 <- ggplot(BDV_predictors, aes(deadwood50, `Epiphytic / epixilic bryophytes (0.212)`)) +
+g1 <- ggplot(BDV_predictors, aes(volume_dw, `Epiphytic / epixilic bryophytes (0.212)`)) +
   geom_point() +
-  ggtitle("Scatter Plot Real Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
+  ggtitle("Scatter Plot Real Values Bryophytes sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species", fill = "management") +
   theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 40) +
+  xlim(0, 100) +
   theme_bw()
 
-g2 <- ggplot(BDV_predictors, aes(deadwood50, `Macrofungi (2.118)`)) +
+
+g2 <- ggplot(BDV_predictors, aes(volume_dw, `Macrofungi (2.118)`)) +
   geom_point() +
-  ggtitle("Scatter Plot Real Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
+  ggtitle("Scatter Plot Real Values Macrofungi sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species", fill = "management") +
   theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 300) +
+  xlim(0, 100) +
   theme_bw()
 
-g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, BRYO_PRED_RICH_50)) +
+g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(volume_dw, BRYO_PRED_RICH_50)) +
   geom_point() +
-  ggtitle("Scatter Plot Model Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
+  ggtitle("Scatter Plot Real Values Bryophytes sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species") +
   theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 40) +
+  xlim(0, 100) +
   theme_bw()
 
-g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, MACROFUNGI_PRED_RICH_50)) +
+g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(volume_dw, MACROFUNGI_PRED_RICH_50)) +
   geom_point() +
-  ggtitle("Scatter Plot Model Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
+  ggtitle("Scatter Plot Real Values Macrofungi sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species") +
   theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 300) +
+  xlim(0, 100) +
   theme_bw()
 
 
 # Plot grid arrange
 grid.arrange(g1,g2,g3,g4, ncol=2)
+#
 
-#-------------------------------------------------------------------------------
-# INVERTED AXIS
-
-g1 <- ggplot(BDV_predictors, aes(`Epiphytic / epixilic bryophytes (0.212)`, deadwood50)) +
-  geom_point() +
-  ggtitle("Scatter Plot Real Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g2 <- ggplot(BDV_predictors, aes(`Macrofungi (2.118)`, deadwood50)) +
-  geom_point() +
-  ggtitle("Scatter Plot Real Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(BRYO_PRED_RICH_50, deadwood)) +
-  geom_point() +
-  ggtitle("Scatter Plot Model Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(MACROFUNGI_PRED_RICH_50, deadwood)) +
-  geom_point() +
-  ggtitle("Scatter Plot Model Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-# Plot grid arrange
-grid.arrange(g1, g2, g3, g4, ncol=2)
 
 #-------------------------------------------------------------------------------
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST DEADVOLUME 
 
-g1 <- ggplot(BDV_predictors, aes(`Epiphytic / epixilic bryophytes (0.212)`, deadwood50)) +
-  geom_point(aes(color = management_type), show.legend = FALSE) +  # Removes legend
-  ggtitle("Scatter Plot Real Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species by plotID", y = "Deadwood C [kg/ha]") +
+g1 <- ggplot(BDV_predictors, aes(deadwood, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
+  geom_point() +
+  ggtitle("Scatter Plot Real Values Bryophytes sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species by plotID") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g2 <- ggplot(BDV_predictors, aes(`Macrofungi (2.118)`, deadwood50)) +
-  geom_point(aes(color = management_type), show.legend = FALSE) +  
-  ggtitle("Scatter Plot Real Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species by plotID", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(BRYO_PRED_RICH_50, deadwood)) +
-  geom_point(show.legend = FALSE) +  
-  ggtitle("Scatter Plot Simulated Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = " N. of Species by year", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(MACROFUNGI_PRED_RICH_50, deadwood)) +
-  geom_point(show.legend = FALSE) +  
-  ggtitle("Scatter Plot Simulated Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = " N. of Species by year", y = "Deadwood C [kg/ha]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 40) +
+  xlim(0, 100) +
   theme_bw()
 
 
+g2 <- ggplot(BDV_predictors, aes(deadwood, `Macrofungi (2.118)`, color = management)) +
+  geom_point() +
+  ggtitle("Scatter Plot Real Values Macrofungi sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species by plotID") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 300) +
+  xlim(0, 100) +
+  theme_bw()
+
+g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, BRYO_PRED_RICH_50)) +
+  geom_point() +
+  ggtitle("Scatter Plot Simulated Values Bryophytes sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species by year") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 40) +
+  xlim(0, 100) +
+  theme_bw()
+
+g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, MACROFUNGI_PRED_RICH_50)) +
+  geom_point() +
+  ggtitle("Scatter Plot Simulated Values Macrofungi sp - Volume Deadwood") +
+  labs(x = "Volume Deadwood [m3/ha]", y = " N. of Species by year") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(0, 300) +
+  xlim(0, 100) +
+  theme_bw()
 
 # Plot grid arrange
 grid.arrange(g1,g2,g3,g4, ncol=2)
 
 #-------------------------------------------------------------------------------
-# INVERT AXIS
-
-g1 <- ggplot(BDV_predictors, aes(deadwood50, `Epiphytic / epixilic bryophytes (0.212)`)) +
-  geom_point(aes(color = management_type), show.legend = FALSE) +  # Removes legend
-  ggtitle("Scatter Plot Real Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = "Deadwood C [kg/ha]", y = " N. of Species by plotID") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g2 <- ggplot(BDV_predictors, aes(deadwood50, `Macrofungi (2.118)`)) +
-  geom_point(aes(color = management_type), show.legend = FALSE) +  
-  ggtitle("Scatter Plot Real Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = "Deadwood C [kg/ha]", y = " N. of Species by plotID") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, BRYO_PRED_RICH_50)) +
-  geom_point(show.legend = FALSE) +  
-  ggtitle("Scatter Plot Simulated Values Bryophytes sp - Deadwood Carbon") +
-  labs(x = "Deadwood C [kg/ha]", y = " N. of Species by year" ) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(deadwood, MACROFUNGI_PRED_RICH_50)) +
-  geom_point(show.legend = FALSE) +  
-  ggtitle("Scatter Plot Simulated Values Macrofungi sp - Deadwood Carbon") +
-  labs(x = "Deadwood C [kg/ha]", y = " N. of Species by year") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_bw()
-
-
-
-# Plot grid arrange
-grid.arrange(g1,g2,g3,g4, ncol=2)
-
 #-------------------------------------------------------------------------------
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST AGE
 
-g1 <- ggplot(BDV_predictors, aes(age, `Epiphytic / epixilic bryophytes (0.212)`, color = management_type)) +
+g1 <- ggplot(BDV_predictors, aes(age, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Bryophytes SP - Mean Age") +
-  labs(x = "Mean Age Oldest 20% Trees [year]", y = " N. of Species by plotID") +
+  labs(x = "Mean Age [year]", y = " N. of Species by plotID") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 40) +
-  #xlim(0, 300) +
+  ylim(0, 40) +
+  xlim(0, 300) +
   theme_bw()
 
 
-g2 <- ggplot(BDV_predictors, aes(age, `Macrofungi (2.118)`, color = management_type)) +
+g2 <- ggplot(BDV_predictors, aes(age, `Macrofungi (2.118)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Macrofungi SP - Mean Age") +
-  labs(x = "Mean Age Oldest 20% Trees [year]", y = " N. of Species by plotID") +
+  labs(x = "Mean Age [year]", y = " N. of Species by plotID") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 300) +
-  #xlim(0, 300) +
+  ylim(0, 300) +
+  xlim(0, 300) +
   theme_bw()
 
 g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(age, BRYO_PRED_RICH_50)) +
   geom_point() +
   ggtitle("Scatter Plot Simulated Values Bryophytes SP - Mean Age over time") +
-  labs(x = "Mean Age Oldest 20% Trees [year]", y = " N. of Species by year") +
+  labs(x = "Mean Age [year]", y = " N. of Species by year") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 40) +
-  #xlim(0, 300) +
+  ylim(0, 40) +
+  xlim(0, 300) +
   theme_bw()
 
 g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(age, MACROFUNGI_PRED_RICH_50)) +
   geom_point() +
   ggtitle("Scatter Plot Simulated Values Macrofungi SP - Mean Age over Time") +
-  labs(x = "Mean Age Oldest 20% Trees [year]", y = " N. of Species by year") +
+  labs(x = "Mean Age [year]", y = " N. of Species by year") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 300) +
-  #xlim(0, 300) +
+  ylim(0, 300) +
+  xlim(0, 300) +
   theme_bw()
 
 # Plot grid arrange
@@ -2021,7 +1866,7 @@ grid.arrange(g1,g2,g3,g4, ncol=2)
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST SIMULATED LAI
 
-g1 <- ggplot(BDV_predictors, aes(lai , `Epiphytic / epixilic bryophytes (0.212)`, color = management_type)) +
+g1 <- ggplot(BDV_predictors, aes(lai_sim, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Bryophytes SP - LAI") +
   labs(x = "Leaf Area Index [m2/m2]", y = " N. of Species by plotID") +
@@ -2031,7 +1876,7 @@ g1 <- ggplot(BDV_predictors, aes(lai , `Epiphytic / epixilic bryophytes (0.212)`
   theme_bw()
 
 
-g2 <- ggplot(BDV_predictors, aes(lai , `Macrofungi (2.118)`, color = management_type)) +
+g2 <- ggplot(BDV_predictors, aes(lai_sim, `Macrofungi (2.118)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Macrofungi SP - LAI") +
   labs(x = "Leaf Area Index [m2/m2]", y = " N. of Species by plotID") +
@@ -2062,53 +1907,10 @@ g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(lai_sim, MACROFUNGI_PRED_RICH_50))
 grid.arrange(g1,g2,g3,g4, ncol=2)
 
 #-------------------------------------------------------------------------------
-# INVERTED AXIS
-
-g1 <- ggplot(BDV_predictors, aes(`Epiphytic / epixilic bryophytes (0.212)`, lai, color = management_type)) +
-  geom_point() +
-  ggtitle("Scatter Plot Real Values Bryophytes SP - LAI") +
-  labs(x = " N. of Species by plotID", y ="Leaf Area Index [m2/m2]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 40) +
-  #xlim(0, 10) +
-  theme_bw()
-
-
-g2 <- ggplot(BDV_predictors, aes(`Macrofungi (2.118)`, lai, color = management_type)) +
-  geom_point() +
-  ggtitle("Scatter Plot Real Values Macrofungi SP - LAI") +
-  labs(x = " N. of Species by plotID", y = "Leaf Area Index [m2/m2]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 300) +
-  #xlim(0, 10) +
-  theme_bw()
-
-g3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(BRYO_PRED_RICH_50, lai_sim)) +
-  geom_point() +
-  ggtitle("Scatter Plot Simulated Values Bryophytes SP - LAI over time") +
-  labs(x = " N. of Species by year", y = "Leaf Area Index [m2/m2]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 40) +
-  #xlim(0, 10) +
-  theme_bw()
-
-g4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(MACROFUNGI_PRED_RICH_50, lai_sim)) +
-  geom_point() +
-  ggtitle("Scatter Plot Simulated Values Macrofungi SP - LAI over Time") +
-  labs(x = " N. of Species by year", y = "Leaf Area Index [m2/m2]") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  #ylim(0, 300) +
-  #xlim(0, 10) +
-  theme_bw()
-
-# Plot grid arrange
-grid.arrange(g1,g2,g3,g4, ncol=2)
-
-#-------------------------------------------------------------------------------
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST Basal Area Broadleave
 
-g1 <- ggplot(BDV_predictors, aes(ba_broadl_spec, `Epiphytic / epixilic bryophytes (0.212)`, color = management_type)) +
+g1 <- ggplot(BDV_predictors, aes(ba_broadl, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Bryophytes SP - Basal Area Broadleave SP") +
   labs(x = "Basal Area Broadleave sp [m2]", y = " N. of Species by plotID") +
@@ -2118,7 +1920,7 @@ g1 <- ggplot(BDV_predictors, aes(ba_broadl_spec, `Epiphytic / epixilic bryophyte
   theme_bw()
 
 
-g2 <- ggplot(BDV_predictors, aes(ba_broadl_spec, `Macrofungi (2.118)`, color = management_type)) +
+g2 <- ggplot(BDV_predictors, aes(ba_broadl, `Macrofungi (2.118)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Macrofungi SP - Basal Area Broadleave SP") +
   labs(x = "Basal Area Broadleave sp [m2]", y = " N. of Species by plotID") +
@@ -2153,7 +1955,7 @@ grid.arrange(g1,g2,g3,g4, ncol=2)
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST Trees between 10 and 40 cm DBH
 
-g1 <- ggplot(BDV_predictors, aes(trees_10_40, `Epiphytic / epixilic bryophytes (0.212)`, color = management_type)) +
+g1 <- ggplot(BDV_predictors, aes(tree_10_40, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Bryophytes SP - Trees between 10 and 40 cm DBH") +
   labs(x = "Trees between 10 and 40 cm DBH [No.]", y = " N. of Species by plotID") +
@@ -2163,7 +1965,7 @@ g1 <- ggplot(BDV_predictors, aes(trees_10_40, `Epiphytic / epixilic bryophytes (
   theme_bw()
 
 
-g2 <- ggplot(BDV_predictors, aes(trees_10_40, `Macrofungi (2.118)`, color = management_type)) +
+g2 <- ggplot(BDV_predictors, aes(tree_10_40, `Macrofungi (2.118)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Macrofungi SP - Trees between 10 and 40 cm DBH") +
   labs(x = "Trees between 10 and 40 cm DBH [No.]", y = " N. of Species by plotID") +
@@ -2197,7 +1999,7 @@ grid.arrange(g1,g2,g3,g4, ncol=2)
 # Make the scatter plot by color for mang type 
 # MACROFUNGI and BRYOPHYTES AGAINST Trees Broadleave > 40 cm DBH
 
-g1 <- ggplot(BDV_predictors, aes(`broadl>40`, `Epiphytic / epixilic bryophytes (0.212)`, color = management_type)) +
+g1 <- ggplot(BDV_predictors, aes(`broadl>40`, `Epiphytic / epixilic bryophytes (0.212)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Bryophytes SP - Trees Broadleave > 40 cm DBH") +
   labs(x = "Trees Broadleave > 40 cm DBH [No.]", y = " N. of Species by plotID") +
@@ -2207,7 +2009,7 @@ g1 <- ggplot(BDV_predictors, aes(`broadl>40`, `Epiphytic / epixilic bryophytes (
   theme_bw()
 
 
-g2 <- ggplot(BDV_predictors, aes(`broadl>40`, `Macrofungi (2.118)`, color = management_type)) +
+g2 <- ggplot(BDV_predictors, aes(`broadl>40`, `Macrofungi (2.118)`, color = management)) +
   geom_point() +
   ggtitle("Scatter Plot Real Values Macrofungi SP - Trees Broadleave > 40 cm DBH") +
   labs(x = "Trees Broadleave > 40 cm DBH [No.]", y = " N. of Species by plotID") +
@@ -2281,14 +2083,14 @@ B1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   theme_minimal() +
   facet_wrap(~run, ncol=2)+
   scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
+  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20),
+                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20))+
   theme(
     panel.border = element_rect(color = "black", fill = NA, size = 0.5)
   )
 
 # Plot grid arrange
-grid.arrange(B1,P1, ncol=1)
+grid.arrange(C1,P1, ncol=1)
 
 
 #-------------------------------------------------------------------------------
@@ -2298,23 +2100,25 @@ grid.arrange(B1,P1, ncol=1)
 
 L1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   geom_line(aes(y = LICHEN_PRED_RICH_50_beta1, color = "Beta 1 age"), size = 0.5) +
-  geom_line(aes(y = LICHEN_PRED_RICH_50_beta2, color = "Beta 2 lai_sim"), size = 0.5) +
-  geom_line(aes(y = LICHEN_PRED_RICH_50_beta3, color = "Beta 3 broadl_40_1"), size = 0.5) +
+  geom_line(aes(y = LICHEN_PRED_RICH_50_beta2, color = "Beta 2 deadwood"), size = 0.5) +
+  geom_line(aes(y = LICHEN_PRED_RICH_50_beta3, color = "Beta 3 lai_sim"), size = 0.5) +
+  geom_line(aes(y = LICHEN_PRED_RICH_50_beta4, color = "Beta 4 broadl_40_1"), size = 0.5) +
+  geom_line(aes(y = LICHEN_PRED_RICH_50_beta5, color = "Beta 5 broadl_40_2"), size = 0.5) +
   geom_line(aes(y = LICHEN_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Lichens in function of Beta 1 to 3",
+  labs(title = "Time Series of Lichens in function of Beta 1 to 5",
        x = "Year",
        y = "Values") +
   theme_minimal() +
   facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 lai_sim" = "#8FBC8F", "Beta 3 broadl_40_1" = "#FF1493",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40)) +
+  scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Beta 3 lai_sim" = "#8FBC8F", "Beta 4 broadl_40_1" = "#FF1493","Beta 5 broadl_40_2" = "mediumpurple4",  "Y" = "chocolate3")) +
+  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20),
+                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20))+
   theme(
     panel.border = element_rect(color = "black", fill = NA, size = 0.5)
   )
 
 # Plot grid arrange
-grid.arrange(L1, P2, ncol=1)
+grid.arrange(L1,P1, ncol=1)
 
 
 #-------------------------------------------------------------------------------
@@ -2322,7 +2126,7 @@ grid.arrange(L1, P2, ncol=1)
 
 # Plotting beta1, beta2, ... etc over time with Y
 
-MF1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
+F1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   geom_line(aes(y = MACROFUNGI_PRED_RICH_50_beta1, color = "Beta 1 age"), size = 0.5) +
   geom_line(aes(y = MACROFUNGI_PRED_RICH_50_beta2, color = "Beta 2 deadwood"), size = 0.5) +
   geom_line(aes(y = MACROFUNGI_PRED_RICH_50_beta3, color = "Beta 3 ba_broadl"), size = 0.5) +
@@ -2334,14 +2138,14 @@ MF1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   theme_minimal() +
   facet_wrap(~run, ncol=2)+
   scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Beta 3 ba_broadl" = "#8FBC8F", "Beta 4 tree_10_40" = "#FF1493",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
+  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20),
+                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20))+
   theme(
     panel.border = element_rect(color = "black", fill = NA, size = 0.5)
   )
 
 # Plot grid arrange
-grid.arrange(MF1,P3, ncol=1)
+grid.arrange(L1,P1, ncol=1)
 
 
 #-------------------------------------------------------------------------------
@@ -2349,98 +2153,26 @@ grid.arrange(MF1,P3, ncol=1)
 
 # Plotting beta1, beta2, ... etc over time with Y
 
-R_MF1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
-  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50_beta1, color = "Beta 1 deadwood"), size = 0.5) +
-  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50_beta2, color = "Beta 2 ba_broadl"), size = 0.5) +
+RM1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
+  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50_beta1, color = "Beta 1 age"), size = 0.5) +
+  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50_beta2, color = "Beta 2 deadwood"), size = 0.5) +
+  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50_beta3, color = "Beta 3 ba_broadl"), size = 0.5) +
   geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50, color = "Y"), size = 0.5) +
   labs(title = "Time Series of Red List Macrofungi in function of Beta 1 to 3",
        x = "Year",
        y = "Values") +
   theme_minimal() +
   facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 deadwood" = "black", "Beta 2 ba_broadl" = "#8FBC8F",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
+  scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Beta 3 ba_broadl" = "#8FBC8F",  "Y" = "chocolate3")) +
+  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20),
+                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 20))+
   theme(
     panel.border = element_rect(color = "black", fill = NA, size = 0.5)
   )
 
 # Plot grid arrange
-grid.arrange(R_MF1,P4, ncol=1)
-
-#-------------------------------------------------------------------------------
-# BEETLES
-
-# Plotting beta1, beta2, ... etc over time with Y
-
-NFB1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
-  geom_line(aes(y = BEETLES_PRED_RICH_50_beta1, color = "Beta 1 deadwood"), size = 0.5) +
-  geom_line(aes(y = BEETLES_PRED_RICH_50_beta2, color = "Beta 2 ba_broadl"), size = 0.5) +
-  geom_line(aes(y = BEETLES_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Non-flying Beetles in function of Beta 1 to 3",
-       x = "Year",
-       y = "Values") +
-  theme_minimal() +
-  facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 deadwood" = "black", "Beta 2 ba_broadl" = "#8FBC8F",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
-  theme(
-    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
-  )
-
-# Plot grid arrange
-grid.arrange(NFB1,P5, ncol=1)
-
-
-#-------------------------------------------------------------------------------
-# MOTHS 
-
-# Plotting beta1, beta2, ... etc over time with Y
-
-M1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
-  geom_line(aes(y = MOTHS_PRED_RICH_50_beta1, color = "Beta 1 tree_10_40_2"), size = 0.5) +
-  geom_line(aes(y = MOTHS_PRED_RICH_50_beta2, color = "Beta 2 broadl_40"), size = 0.5) +
-  geom_line(aes(y = MOTHS_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Red List Macrofungi in function of Beta 1 to 2",
-       x = "Year",
-       y = "Values") +
-  theme_minimal() +
-  facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 tree_10_40_2" = "black", "Beta 2 broadl_40" = "#8FBC8F",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
-  theme(
-    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
-  )
-
-# Plot grid arrange
-grid.arrange(M1,P6, ncol=1)
+grid.arrange(L1,P1, ncol=1)
 
 
 #---------------------------------------------------------------------------------
-# Red Listed - Moths
 
-# Plotting beta1, beta2, ... etc over time with Y
-
-R_M1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
-  geom_line(aes(y = MOTHS_RED_PRED_RICH_50_beta1, color = "Beta 1 tree_10_40_2"), size = 0.5) +
-  geom_line(aes(y = MOTHS_RED_PRED_RICH_50_beta2, color = "Beta 2 broadl_40"), size = 0.5) +
-  geom_line(aes(y = MOTHS_RED_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Red List Macrofungi in function of Beta 1 to 2",
-       x = "Year",
-       y = "Values") +
-  theme_minimal() +
-  facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 tree_10_40_2" = "black", "Beta 2 broadl_40" = "#8FBC8F",  "Y" = "chocolate3")) +
-  scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
-                     labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
-  theme(
-    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
-  )
-
-# Plot grid arrange
-grid.arrange(R_M1,P7, ncol=1)
-
-#-------------------------------------------------------------------------------
-dev.off()

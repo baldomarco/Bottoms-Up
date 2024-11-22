@@ -117,27 +117,26 @@ Variables appearing in both linear and quadratic terms are mean-standardized (bo
 
 # CREATE DATAFRAMES FROM THE BAYESIAN STAT MODEL FOR BDV PREDICTORS
 
-
 # BRYOPHYTES = [beta0 + beta1*"age"  + beta2*"deadwood" ]
-bryophytes_bayesian <- data.frame(
+bryophytes_bayesian_updated <- data.frame(
   Parameter = c("beta0", "beta[1]", "beta[2]", "sigma"),
-  mean = c(11.55822, 0.00005, -0.11744, 4.76408),
-  se_mean = c(0.01382, 0.00000, 0.00183, 0.00617),
-  sd = c(0.65792, 0.00001, 0.10979, 0.35392),
-  `2.5%` = c(10.30503, 0.00003, -0.40080, 4.13199),
-  `25%` = c(11.11138, 0.00004, -0.16644, 4.51685),
-  `50%` = c(11.55649, 0.00005, -0.08539, 4.73812),
-  `75%` = c(11.99520, 0.00005, -0.03453, 4.99985),
-  `97.5%` = c(12.84475, 0.00007, -0.00284, 5.49677),
-  n_eff = c(2265, 2147, 3606, 3286),
-  Rhat = c(1.00094, 1.00076, 1.00009, 0.99962)
+  mean = c(9.66445, 0.01634, 0.00004, 4.64611),
+  se_mean = c(0.03181, 0.00023, 0.00000, 0.00659),
+  sd = c(1.07307, 0.00752, 0.00001, 0.32912),
+  `2.5%` = c(7.49491, 0.00269, 0.00001, 4.06785),
+  `25%` = c(8.92257, 0.01101, 0.00003, 4.40523),
+  `50%` = c(9.71337, 0.01584, 0.00004, 4.63247),
+  `75%` = c(10.43265, 0.02123, 0.00004, 4.86033),
+  `97.5%` = c(11.67784, 0.03236, 0.00006, 5.33883),
+  n_eff = c(1138, 1077, 1867, 2496),
+  Rhat = c(1.00033, 1.00103, 0.99992, 1.00034)
 )
 
-# Print the data frame
-print(bryophytes_bayesian)
+# Print the updated data frame
+print(bryophytes_bayesian_updated)
 
-R2_bryophytes_bayesian <- 0.1680912
-
+# Updated R-squared
+R2_bryophytes_bayesian_updated <- 0.2157045
 
 # To select a single position of the list can use this command:
 bryophytes_bayesian[1, "X2.5."] # for example for beta1 bryophytes 2.5% 
