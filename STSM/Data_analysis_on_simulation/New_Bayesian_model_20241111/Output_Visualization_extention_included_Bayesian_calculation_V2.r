@@ -695,7 +695,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241121_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241122_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -757,7 +757,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1200)+
+  ylim(0,1400)+
   theme_bw()
 
 # Plot grid arrange
@@ -2402,7 +2402,7 @@ M1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   geom_line(aes(y = MOTHS_PRED_RICH_50_beta1, color = "Beta 1 tree_10_40_2"), size = 0.5) +
   geom_line(aes(y = MOTHS_PRED_RICH_50_beta2, color = "Beta 2 broadl_40"), size = 0.5) +
   geom_line(aes(y = MOTHS_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Red List Macrofungi in function of Beta 1 to 2",
+  labs(title = "Time Series of Red List Moths in function of Beta 1 to 2",
        x = "Year",
        y = "Values") +
   theme_minimal() +
@@ -2427,7 +2427,7 @@ R_M1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   geom_line(aes(y = MOTHS_RED_PRED_RICH_50_beta1, color = "Beta 1 tree_10_40_2"), size = 0.5) +
   geom_line(aes(y = MOTHS_RED_PRED_RICH_50_beta2, color = "Beta 2 broadl_40"), size = 0.5) +
   geom_line(aes(y = MOTHS_RED_PRED_RICH_50, color = "Y"), size = 0.5) +
-  labs(title = "Time Series of Red List Macrofungi in function of Beta 1 to 2",
+  labs(title = "Time Series of Red List Moths in function of Beta 1 to 2",
        x = "Year",
        y = "Values") +
   theme_minimal() +
