@@ -450,7 +450,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # CREATE FUNCTION FOR THE BAYESIAN STATISTICAL MODEL 
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
     group_by(year) %>%
-    mutate(deadwood = total_AGDW_C_kgha/4)
+    mutate(deadwood = total_AGDW_C_kgha)
   
   # SELECT VARIABLES NEEDED
   Bayesian_BDV_model_V3 <- Bayesian_BDV_model_V3 %>%
@@ -881,7 +881,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241122_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241204_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -943,7 +943,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1400)+
+  ylim(0,1200)+
   theme_bw()
 
 # Plot grid arrange
@@ -1400,24 +1400,23 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 
 
 # NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included
-
-tree_10_40 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
+tree_10_40 <- ggplot(plot_variables_all, aes(x = year, y = tree_10_40)) +
   geom_line(color = "#4897D8") +
-  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="Trees with dbh 10cm to 40cm [No]")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw
-
-# NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included
-
-tree_10_40_2 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
-  geom_line(color = "#4897D8") +
-  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared")+
-  facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="Trees with dbh 10cm to 40cm [x^2]")+
-  theme(plot.title = element_text(hjust = 0.5))+
+  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included") +
+  facet_wrap(~run, ncol = 2) +
+  labs(x = "Year", y = "Trees with dbh 10cm to 40cm [No]") +
+  theme(plot.title = element_text(hjust = 0.5)) +
   theme_bw()
+
+# NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared
+tree_10_40_2 <- ggplot(plot_variables_all, aes(x = year, y = I(tree_10_40^2))) +
+  geom_line(color = "#4897D8") +
+  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared") +
+  facet_wrap(~run, ncol = 2) +
+  labs(x = "Year", y = "Trees with dbh 10cm to 40cm [x^2]") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+
 
 # NUMBER OF BROADLEAVE TREES WITH DBH > 40cm
 
