@@ -450,7 +450,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # CREATE FUNCTION FOR THE BAYESIAN STATISTICAL MODEL 
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
     group_by(year) %>%
-    mutate(deadwood = total_AGDW_C_kgha)
+    mutate(deadwood = total_AGDW_C_kgha/4) # This is needed because in the bayesian model and the sampling area of biodiversty was at 50x50 so 1/4 of an ha.
   
   # SELECT VARIABLES NEEDED
   Bayesian_BDV_model_V3 <- Bayesian_BDV_model_V3 %>%
@@ -881,7 +881,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241204_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241206_BDV_plot_SINGLE_BIG_WIND_unmanaged_NODIST_ag_dw_2_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)

@@ -1288,7 +1288,7 @@ print(A6)
 
 
 
-
+dev.off()
 
 
 

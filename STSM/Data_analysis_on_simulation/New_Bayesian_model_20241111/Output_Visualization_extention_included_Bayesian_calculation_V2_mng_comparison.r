@@ -249,7 +249,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Create a data frame with all unique years to not having missing years
   all_years <- data.frame(year = unique(tree$year))
   
-  # Perform left join with the summarization result
+  # Perform left join with the summary of the result
   tree_10_40 <- all_years %>%
     left_join(
       tree %>%
