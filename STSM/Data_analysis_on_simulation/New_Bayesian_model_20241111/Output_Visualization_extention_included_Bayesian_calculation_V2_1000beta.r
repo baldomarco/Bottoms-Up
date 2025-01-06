@@ -50,10 +50,10 @@ file_paths <- list(
 
 #-------------------------------------------------------------------------------
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output1/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output1/"
 
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
@@ -281,7 +281,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   LAI <- landscape %>% 
     group_by(year) %>%
     summarise(LAI = sum(LAI))%>%
-    select(year, LAI)
+    dplyr::select(year, LAI)
   
   # EDIT IT FOR THE PREDICTORS BA BROADLEAF - TREE_10_40 - BROAD>40
   
@@ -881,7 +881,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241206_BDV_plot_SINGLE_BIG_WIND_unmanaged_NODIST_ag_dw_2_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241218_BDV_plot_SINGLE_BIG_WIND_and_NODIST_unmanaged_ag_dw_x4_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -1998,7 +1998,7 @@ dev.off()
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20231129/"
-pdf(paste0(dataroot, "20231211_Scatter_plot_variables_BDV_mng_plot_L1_10_300.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20231211_Scatter_plot_variables_BDV_unmng_plot_L1_10_300.pdf"), height=8, width=12)
 
 #-------------------------------------------------------------------------------
 # Create a scatter plot to compare the points position in the space between the real values and the simulated ones

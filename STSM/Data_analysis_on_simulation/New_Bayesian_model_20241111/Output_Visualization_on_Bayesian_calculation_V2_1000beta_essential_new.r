@@ -848,6 +848,10 @@ grid.arrange(R_M1,P7, ncol=1)
 
 
 #-------------------------------------------------------------------------------
+library(ggpointdensity)
+library(ggplot2)
+library(viridis)
+
 # Reduce dataset by 50%
 reduced_data <- bayesian_results_all %>%
   sample_frac(0.5)
@@ -862,7 +866,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   
   # Beta 1 and Beta 2 lines
   geom_line(data = Bayesian_BDV_model_V3_multi,
-            aes(x = year, y = BEETLES_PRED_RICH_50_beta1, linetype = "Beta1 * deadwood"), color = "#00A091", size = 0.9, inherit.aes = FALSE) +
+            aes(x = year, y = BEETLES_PRED_RICH_50_beta1, linetype = "Beta1 * deadwood"), color = "#533600", size = 0.9, inherit.aes = FALSE) +
   geom_line(data = Bayesian_BDV_model_V3_multi,
             aes(x = year, y = BEETLES_PRED_RICH_50_beta2, linetype = "Beta2 * ba_broadl"), color = "chocolate3", size = 0.9, inherit.aes = FALSE) +
   
@@ -872,7 +876,8 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 5, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 15, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -887,7 +892,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions (obs richness 12 - 12)",
+    title = "Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions (obs richness 14 - 8)",
     x = "Year",
     y = "Predicted Sp. Richness of Non-Flying Beetles"
   ) +
@@ -926,7 +931,9 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+ # geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  
+  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 37, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -941,7 +948,7 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions (obs richness 37 - 21)",
+    title = "Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions (obs richness 15 - 13)",
     x = "Year",
     y = "Predicted Sp. Richness of Bryophytes"
   ) +
@@ -1033,7 +1040,8 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 71, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -1049,7 +1057,7 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions (obs richness 41 - 23)",
+    title = "Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions (obs richness 13 - 42)",
     x = "Year",
     y = "Predicted Sp. Richness of Lichens"
   ) +
@@ -1083,7 +1091,7 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   geom_line(data = Bayesian_BDV_model_V3_multi,
             aes(x = year, y = MACROFUNGI_PRED_RICH_50_beta3, linetype = "Beta3 * ba_broadl"), color = "chocolate3", size = 0.9, inherit.aes = FALSE) +
   geom_line(data = Bayesian_BDV_model_V3_multi,
-            aes(x = year, y = MACROFUNGI_PRED_RICH_50_beta4, linetype = "Beta3 * tree_10_40"), color = "#EEC9E5", size = 0.9, inherit.aes = FALSE) +
+            aes(x = year, y = MACROFUNGI_PRED_RICH_50_beta4, linetype = "Beta4 * tree_10_40"), color = "#EEC9E5", size = 0.9, inherit.aes = FALSE) +
   
   # Bryophytes function (single solid line)
   geom_line(data = Bayesian_BDV_model_V3_multi, 
@@ -1091,7 +1099,9 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 52, color = "red", linetype = "dashed", size = 0.5) +
+  #geom_hline(yintercept = 52, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 156, color = "red", linetype = "dashed", size = 0.5) +
+  
   geom_hline(yintercept = 284, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -1099,8 +1109,8 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
     values = c(
       "Beta1 * age" = "solid",
       "Beta2 * deadwood" = "solid",
-      "Beta3 * ba_broadl = solid",
-      "Beta3 * tree_10_40 = solid",
+      "Beta3 * ba_broadl" = "solid",
+      "Beta4 * tree_10_40" = "solid",
       "Macrofungi Function" = "solid"
     ),
     name = "Legend"
@@ -1108,7 +1118,7 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Macrofungi Sp. Richness with Beta Functions (obs richness 268 - 237)",
+    title = "Density Point Cloud of Predicted Macrofungi Sp. Richness with Beta Functions (obs richness 129 - 142)",
     x = "Year",
     y = "Predicted Sp. Richness of Macrofungi"
   ) +
@@ -1199,8 +1209,10 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 25 and y = 106
-  geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 106, color = "red", linetype = "dashed", size = 0.5) +
+  #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 54, color = "red", linetype = "dashed", size = 0.5) +
+  #geom_hline(yintercept = 106, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 96, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom line type scale for beta lines
   scale_linetype_manual(
@@ -1214,7 +1226,7 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions (obs richness 72 - 55)",
+    title = "Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions (obs richness 52 - 56)",
     x = "Year",
     y = "Predicted Sp. Richness of Moths"
   ) +
@@ -1290,7 +1302,7 @@ print(A6)
 
 dev.off()
 
-
+################################################################################
 
 
 

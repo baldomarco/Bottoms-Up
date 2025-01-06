@@ -16,10 +16,10 @@ library(writexl)
 # Path to the directory containing your SQLite databases
 #dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523/L6_21_test/"
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot_1/")
 
 
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240523_official_plot_models_setting/DB_plot_1/"
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
 
@@ -108,7 +108,28 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   dbDisconnect(db)    # close the file
   
+  #-----------------------------------------------------------------------------
   # TO UNDERSTAND THE OPERATORS %>% AND %IN% HAVE TO STUDY THEM IN DATACAMP AND IN DPLYR CRAN PACKAGES
+  
+  # To avoid in case of zero trees the starting year of landscape = 0 let's assign value 0 at all the column in year before 1 in case there is not year 0 assigned. To do it I need to specified a species too. For simplicity let's use piab.
+  # Check if year 0 exists in the landscape for species "piab"
+  if (!any(landscape$year == 0 & landscape$species == "piab")) {
+    # Create a row with year 0 and all other columns set to 0, but set area and area_100m to 1.0
+    new_row <- landscape %>%
+      filter(year == 1 & species == "piab") %>%
+      summarise(across(everything(), ~ 0)) %>%
+      mutate(year = 0, 
+             species = "piab", 
+             area = 1.0, 
+             area_100m = 1.0)  # Add area and area_100m
+    
+    # Append the new row to the landscape dataset
+    landscape <- bind_rows(new_row, landscape) %>%
+      arrange(year)  # Sort by year for consistency
+  }
+  
+  # View the updated dataset
+  print(landscape)
   
   #-----------------------------------------------------------------------------
   # CREATE SHANNON VARIABLE
@@ -607,7 +628,7 @@ ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=1)+
+  facet_wrap(~run, ncol=3)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   ylim(0,1000)+
@@ -617,7 +638,7 @@ ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))
 
 ggplot(carbon_scen, aes(x=year, y=snags_c))+
   geom_line() +
-  facet_wrap(~run, ncol=1)+
+  facet_wrap(~run, ncol=2)+
   ggtitle("Snags_C [iLand snags_C fun]")+
   labs(x = "Year",y="snags_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -719,7 +740,7 @@ write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_21.xlsx"))
 
 snag_c <- carbon_scen %>%
   # Filter the dataframe based on the specific value in the 'run' column
-  filter(run == "DB_CZ_JH1_L6XL6_14_plot.sqlite") %>%
+  filter(run == "DB_CZ_JH1_L5XL5_04.sqlite") %>%
   group_by(year)%>%
   select(year,snags_c)
 
@@ -731,7 +752,7 @@ selected_years <- selected_years %>% arrange(year)
 
 # Create a new data frame with the required structure
 snags_fun <- data.frame(
-  plotID = "L6_14",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L5_04",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$snags_c[selected_years$year == 120],
   second_rot = selected_years$snags_c[selected_years$year == 240],
   third_rot = selected_years$snags_c[selected_years$year == 360]
@@ -748,7 +769,7 @@ print(snags_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L6_14.xlsx"))
+write_xlsx(snags_fun, file.path(dataroot, "snags_fun_table_plot_L5_04.xlsx"))
 
 
 #-------------------------------------------------------------------------------
@@ -925,7 +946,7 @@ write_xlsx(total_stem_C_sim, file.path(dataroot, "total_stem_C_sim_fun_table_plo
 #-------------------------------------------------------------------------------
 data_C_pools_CF <- plot_variables_all %>%
   # Filter the dataframe based on the specific value in the 'run' column
-  filter(run == "DB_CZ_JH1_L1XL1_07_plot.sqlite") %>%
+  filter(run == "DB_CZ_JH1_L5XL5_04.sqlite") %>%
   group_by(year)%>%
   select(year,snag_c , total_AG_DW_C_sim , total_DW_C_sim ,total_alive_C_sim, total_C_sim, total_stem_C_sim)
 
@@ -937,7 +958,7 @@ selected_years <- selected_years %>% arrange(year)
 
 # Create a new data frame with the required structure
 deadwood_fun <- data.frame(
-  plotID = "L1_07",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L5_04",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$total_DW_C_sim[selected_years$year == 120],
   second_rot = selected_years$total_DW_C_sim[selected_years$year == 240],
   third_rot = selected_years$total_DW_C_sim[selected_years$year == 360]
@@ -954,13 +975,13 @@ print(deadwood_fun)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/deadwood_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L1_03.xlsx"))
+write_xlsx(deadwood_fun, file.path(dataroot, "deadwood_fun_table_plot_L5_04.xlsx"))
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Aboveground (AG) deadwood (DW) Carbon
 
 AG_DW_C <- data.frame(
-  plotID = "L1_07",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L5_04",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$total_AG_DW_C_sim[selected_years$year == 120],
   second_rot = selected_years$total_AG_DW_C_sim[selected_years$year == 240],
   third_rot = selected_years$total_AG_DW_C_sim[selected_years$year == 360]
@@ -977,12 +998,12 @@ print(AG_DW_C)
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/AG_DW_C_sim_fun/"
 
 # sp prop per site based on n. of trees
-write_xlsx(AG_DW_C, file.path(dataroot, "AG_DW_C_sim_fun_table_plot_L1_03.xlsx"))
+write_xlsx(AG_DW_C, file.path(dataroot, "AG_DW_C_sim_fun_table_plot_L5_04.xlsx"))
 
 #-------------------------------------------------------------------------------
 # TOTAL CARBON FUNCTION 
 total_carbon_fun <- data.frame(
-  plotID = "L1_03",  # Replace with actual plotID value or a sequence of plotIDs if available
+  plotID = "L1_02",  # Replace with actual plotID value or a sequence of plotIDs if available
   first_rot = selected_years$total_C_sim[selected_years$year == 120],
   second_rot = selected_years$total_C_sim[selected_years$year == 240],
   third_rot = selected_years$total_C_sim[selected_years$year == 360]

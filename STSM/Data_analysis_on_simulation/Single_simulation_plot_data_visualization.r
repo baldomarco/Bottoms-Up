@@ -14,10 +14,10 @@ dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240703/Test_unmanaged_w
 # Get a list of all SQLite databases in the directory
 # database_files <- list.files(path = dataroot, pattern = ".sqlite", full.names = TRUE)
 
-setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/test/")
+setwd("C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/")
 
 # Path to the directory containing your SQLite databases
-dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/test/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/outputs/20240905/20240907/test2/"
 
 {# Create an empty list to store data frames
   dfs <- list() # not working for several subset, only one
@@ -128,12 +128,10 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # print(head(annual.data))
   # print(head(annual.spec.data))
   
-  # Make the number of species by year always present as numerinc synmbol even if zero.
-  S <- landscape %>% 
-    group_by(year) %>% 
-    filter(volume_m3 > 0 & year > 0) %>% 
-    summarise(n = n()) %>% 
-    complete(year = seq(min(year), max(year), by = 1), fill = list(n = 0))
+  S<-landscape %>% 
+    group_by(year) %>%                        # BECARFUL THE NUMBERS OF VALUES CAN BE LESS THEN THE NUMBER OF YEARS IN YOUNG STANDS.
+    filter(volume_m3>0 & year>0) %>% 
+    summarise(n=n())   
   
   # number of species in each year  (added the filter to count non-zero volumes, now it is okay)
   
@@ -221,8 +219,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Calculate the Shannon diversity index
   H_BA_heterogenity <- t %>%
     group_by(year) %>%
-    summarize(shannon_ba_heterog = diversity(prop.BA, base = exp(1))) %>%
-    complete(year = seq(min(year), max(year), by = 1), fill = list(shannon_ba_heterog = 0))
+    summarize(shannon_ba_heterog = diversity(prop.BA, base = exp(1)))
   
   # Print the resulting dataframe
   print(H_BA_heterogenity)
@@ -261,18 +258,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   dynamicstand_1 <- dynamicstand %>%
     select(year, height_mean, dbh_mean, age_mean)
   
-  # Aggregate dynamic stand values to ensure no repeated years
-  dynamicstand_1 <- dynamicstand %>%
-    select(year, height_mean, dbh_mean, age_mean) %>%
-    group_by(year) %>%
-    summarise(
-      height_mean = mean(height_mean, na.rm = TRUE),
-      dbh_mean = mean(dbh_mean, na.rm = TRUE),
-      age_mean = mean(age_mean, na.rm = TRUE),
-      .groups = 'drop'
-    )
-  
-  # Add missing years with 0 values
   dynamicstand_1 <- tibble(
     year = setdiff(1:max(dynamicstand_1$year), dynamicstand_1$year),
     height_mean = 0,
@@ -288,7 +273,6 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     ) %>%
     filter(year > 0) %>%
     select(year, height_mean, dbh_mean, age_mean)
-  
   
   # CREATE THE NEW DATA FRAME FOR VARIABLES 
   

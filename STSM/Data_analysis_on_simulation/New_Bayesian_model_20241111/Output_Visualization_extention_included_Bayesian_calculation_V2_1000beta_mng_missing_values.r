@@ -376,113 +376,68 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   head(variables)
   
-  #-------------------------------------------------------------------------------
-  # Create tables for all variables of plot bdv predictors
-  # Create the LAI time series
   
-  LAI <- landscape %>% 
+  #-----------------------------------------------------------------------------
+  # Create tables for all variables of plot predictors
+  # LAI time series
+  LAI <- landscape %>%
     group_by(year) %>%
-    summarise(LAI = sum(LAI))%>%
-    select(year, LAI)
-  
-  # EDIT IT FOR THE PREDICTORS BA BROADLEAF - TREE_10_40 - BROAD>40
-  
-  #-------------------------------------------------------------------------------
-  # Calculate the number of trees between 10 and 40 cm
+    summarise(LAI = sum(LAI), .groups = "drop")
   
   # Specify the range for DBH
   dbh_min <- 10
   dbh_max <- 40
   
-  # Calculate the number of trees in each year with DBH between 10 and 40 cm
+  # Trees with DBH between 10 and 40 cm
   tree_10_40 <- tree %>%
     filter(dbh >= dbh_min, dbh <= dbh_max) %>%
     group_by(year) %>%
-    summarise(tree_10_40 = n(), .groups = "drop") %>%
-    complete(year = full_seq(year, 1), fill = list(tree_10_40 = 0))  # Ensure all years are included
+    summarise(tree_10_40 = n() / 4, .groups = "drop") %>%
+    mutate(tree_10_40_2 = tree_10_40^2)
   
-  # Now calculate the squared values separately in a new step
-  tree_10_40_2 <- tree_10_40 %>%
-    mutate(tree_10_40_2 = tree_10_40^2)  # Squared column
-
-  
-  #-------------------------------------------------------------------------------
-  # To define the species to be removed
-  #-------------------------------------------------------------------------------
-  # Species Filtering
+  # Basal area of broadleaf species
   species_to_remove <- c("piab", "pisy", "abal", "lade", "psme", "pini", "pice")
   
   filtered_broadl <- landscape %>%
     filter(!species %in% species_to_remove)
   
-  # Sum BA for every broadleaf species in every year (Basal Area Calculation)
-  summed_broadl_ba <- filtered_broadl %>%
+  ba_broadl <- filtered_broadl %>%
     group_by(year) %>%
-    summarise(basal_area_m2 = sum(basal_area_m2, na.rm = TRUE), .groups = "drop") %>%
-    complete(year = full_seq(year, 1), fill = list(basal_area_m2 = 0))
+    summarise(ba_broadl = sum(basal_area_m2 / 4, na.rm = TRUE), .groups = "drop")
   
-  
-  #-------------------------------------------------------------------------------
-  # Calculate the basal area only of the broadleave with a dbh > 40cm
-  
+  # Broadleaf trees with DBH > 40 cm
   broadl_40 <- tree %>%
     filter(dbh > 40, !species %in% species_to_remove) %>%
     group_by(year) %>%
-    summarise(broadl_40 = n(), .groups = "drop") %>%
-    complete(year = full_seq(year, 1), fill = list(broadl_40 = 0)) %>%
+    summarise(broadl_40 = n() / 4, .groups = "drop") %>%
     mutate(broadl_40_2 = broadl_40^2)
   
-
-  #-------------------------------------------------------------------------------
-  # Method to replace the missing values
-  # Age Calculations
-  all_years <- data.frame(year = full_seq(tree$year, 1))
-  
-  # Age - comes from the 20% oldest tree avg age
+  # Stand age based on top 20% oldest trees
   age <- tree %>%
     group_by(year) %>%
     arrange(desc(age)) %>%
     slice_head(prop = 0.2) %>%
     summarise(age = mean(age, na.rm = TRUE), .groups = "drop") %>%
-    complete(year = full_seq(year, 1), fill = list(age = 0)) %>%
-    mutate(age = round(age))
-  
-  # if wants to standardize by 50x50 size 
-  #age <- tree %>%
-  # group_by(year) %>%
-  #sample_frac(0.25) %>%                      # Randomly sample 1/4 of the trees each year
-  #arrange(desc(age)) %>%                     # Sort trees by age in descending order within each year
-  #slice_head(prop = 0.2) %>%                 # Select the top 20% oldest trees from the sampled subset
-  #summarize(age = mean(age, na.rm = TRUE))   # Calculate mean age for the selected trees
-  #age <- round(age)
-  
-  #-----------------------------------------------------------------------------
-  # Age - comes from the avarage age
-
-  # Summarize the mean age for each year and round the ages
-  stand_age <- tree %>%
-    group_by(year) %>%
-    summarise(age = mean(age, na.rm = TRUE), .groups = "drop") %>%
-    complete(year = full_seq(year, 1), fill = list(age = 0)) %>%
     mutate(age = round(age))
   
   #-----------------------------------------------------------------------------
-  # DW volume - USE snags_c divided by 4 and converted into volume 
-  # Alternative use the Carbon instead that volume
-  
-  #-----------------------------------------------------------------------------
-  # CREATE THE DATA FRAME FOR ADD VARIABLES ABOUT CARBON IN THE FINAL DATA FRAME
-  
+  # Total carbon variables
   totalC_kgha_iland <- carbon %>%
     group_by(year) %>%
-    summarise(totalC_kgha_iland = sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, 
-                                      regeneration_c, snags_c, snagsOther_c, downedWood_c, 
-                                      litter_c, soil_c, na.rm = TRUE), .groups = "drop")
+    summarise(
+      totalC_kgha_iland = sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c,
+                              regeneration_c, snags_c, snagsOther_c, downedWood_c,
+                              litter_c, soil_c, na.rm = TRUE),
+      .groups = "drop"
+    )
   
   total_alive_C_sim <- carbon %>%
     group_by(year) %>%
-    summarise(total_alive_C_sim = sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c, 
-                                      regeneration_c, na.rm = TRUE), .groups = "drop")
+    summarise(
+      total_alive_C_sim = sum(stem_c, branch_c, foliage_c, coarseRoot_c, fineRoot_c,
+                              regeneration_c, na.rm = TRUE),
+      .groups = "drop"
+    )
   
   total_stem_C_sim <- carbon %>%
     group_by(year) %>%
@@ -492,15 +447,13 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     group_by(year) %>%
     summarise(total_DW_C_kgha = sum(snags_c, snagsOther_c, downedWood_c, na.rm = TRUE), .groups = "drop")
   
-  total_AGDW_C_kgha <- carbon %>%
+  total_AG_DW_C_kgha <- carbon %>%
     group_by(year) %>%
-    summarise(total_AGDW_C_kgha = sum(snags_c, snagsOther_c_ag, downedWood_c_ag, na.rm = TRUE), .groups = "drop")
+    summarise(total_AG_DW_C_kgha = sum(snags_c, snagsOther_c_ag, downedWood_c_ag, na.rm = TRUE), .groups = "drop")
   
   standing_DW_C <- carbon %>%
     group_by(year) %>%
     summarise(standing_DW_C = sum(snags_c, na.rm = TRUE), .groups = "drop")
-  
-  
   
   # Create a new row with manually specified values
   new_row_1 <- c(0, standing_DW_C %>% filter(year == 1)%>% pull(standing_DW_C))       # Add your values accordingly
@@ -508,7 +461,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   new_row_3 <- c(0, totalC_kgha_iland %>% filter(year == 1)%>% pull(totalC_kgha_iland))   # Add your values accordingly
   new_row_4 <- c(0, total_alive_C_sim %>% filter(year == 1)%>% pull(total_alive_C_sim))
   new_row_5 <- c(0, total_stem_C_sim %>% filter(year == 1)%>% pull(total_stem_C_sim))
-  new_row_6 <- c(0, total_AGDW_C_kgha %>% filter(year == 1)%>% pull(total_AGDW_C_kgha))
+  new_row_6 <- c(0, total_AG_DW_C_kgha %>% filter(year == 1)%>% pull(total_AG_DW_C_kgha))
   
   # Convert the new row to a data frame
   new_row_1_df <- as.data.frame(t(new_row_1))
@@ -527,7 +480,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   colnames(new_row_5_df) <- colnames(total_stem_C_sim)
   
   new_row_6_df <- as.data.frame(t(new_row_6))
-  colnames(new_row_6_df) <- colnames(total_AGDW_C_kgha)
+  colnames(new_row_6_df) <- colnames(total_AG_DW_C_kgha)
   
   # Add the new row at the beginning of the data frame in all Carbon variables
   totalC_kgha_iland <- rbind(new_row_3_df, totalC_kgha_iland)
@@ -535,53 +488,35 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   standing_DW_C <- rbind(new_row_1_df, standing_DW_C)
   total_alive_C_sim <- rbind(new_row_4_df, total_alive_C_sim)
   total_stem_C_sim <- rbind(new_row_5_df, total_stem_C_sim)
-  total_AGDW_C_kgha <- rbind(new_row_6_df, total_AGDW_C_kgha)
+  total_AG_DW_C_kgha <- rbind(new_row_6_df, total_AG_DW_C_kgha)
+  #-----------------------------------------------------------------------------
   
+  # Merge all predictors into a single data frame
+  plot_L1_10_df_simul <- LAI %>%
+    left_join(age, by = "year") %>%
+    left_join(tree_10_40, by = "year") %>%
+    left_join(ba_broadl, by = "year") %>%
+    left_join(broadl_40, by = "year") %>%
+    left_join(totalC_kgha_iland, by = "year") %>%
+    left_join(total_alive_C_sim, by = "year") %>%
+    left_join(total_stem_C_sim, by = "year") %>%
+    left_join(total_DW_C_kgha, by = "year") %>%
+    left_join(total_AG_DW_C_kgha, by = "year") %>% # this is the deadwood but at 1ha scale in the following step we will edit it dividing by 4 to be standardized at 50mx50m
+    left_join(standing_DW_C, by = "year")
   
-  #-------------------------------------------------------------------------------
-  # Merge the data frames Plot L1_10
-  plot_L1_10_df_simul <- bind_cols(
-    year=age$year,
-    age = age$age,
-    standing_DW_C = standing_DW_C$standing_DW_C,
-    totalC_kgha_iland = totalC_kgha_iland$totalC_kgha_iland,
-    total_DW_C_kgha = total_DW_C_kgha$total_DW_C_kgha,
-    total_alive_C_sim = total_alive_C_sim$total_alive_C_sim,
-    total_stem_C_sim = total_stem_C_sim$total_stem_C_sim,
-    total_AGDW_C_kgha = total_AGDW_C_kgha$total_AGDW_C_kgha,
-    lai_sim = LAI$LAI,
-    ba_broadl = summed_broadl_ba$basal_area_m2,
-    trees_10_40 = tree_10_40$tree_10_40,
-    tree_10_40_2 = tree_10_40_2$tree_10_40_2,
-    broadl_40 = broadl_40$broadl_40,
-    broadl_40_2 = broadl_40$broadl_40_2
-  )
+  # Replace NA values with 0
+  plot_L1_10_df_simul <- plot_L1_10_df_simul %>%
+    mutate(across(everything(), ~ replace_na(., 0)))
   
-  
-  #-------------------------------------------------------------------------------
-  # CREATE FUNCTION FOR THE BAYESIAN STATISTICAL MODEL 
+  #-----------------------------------------------------------------------------
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
-    group_by(year) %>%
-    mutate(deadwood = total_AGDW_C_kgha/4) # This is needed because in the bayesian model and the sampling area of biodiversty was at 50x50 so 1/4 of an ha.
-  
-  # SELECT VARIABLES NEEDED
-  Bayesian_BDV_model_V3 <- Bayesian_BDV_model_V3 %>%
-    dplyr::select(
-      year,
-      age,
-      deadwood,
-      lai_sim,
-      ba_broadl,
-      trees_10_40,
-      tree_10_40_2,
-      broadl_40,
-      broadl_40_2
+    mutate(deadwood = total_AG_DW_C_kgha / 4) %>%
+    select(
+      year, age, deadwood, lai_sim = LAI, ba_broadl,
+      tree_10_40, tree_10_40_2, broadl_40, broadl_40_2
     )
   
-  # Assign the tree_10_40 and tree_10_40_2 results to the model object
-  Bayesian_BDV_model_V3$tree_10_40 <- tree_10_40$tree_10_40
-  Bayesian_BDV_model_V3$tree_10_40_2 <- tree_10_40_2$tree_10_40_2
-  
+  #-----------------------------------------------------------------------------
   # Function to calculate predictions for each taxon based on the existing data frame
   calculate_predictions <- function(taxon_name, file_path, data_frame) {
     # Read the CSV file for the taxon
@@ -921,10 +856,10 @@ str(Bayesian_BDV_model_V3_multi)
 # Create volume conversion
 
 # write a csv table for bayesian_results_all
-readr::write_csv(bayesian_results_all, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Plot_BDV_simul_test/Bayesian_BDV_model_V3_L6_site.csv")
+# readr::write_csv(bayesian_results_all, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Plot_BDV_simul_test/Bayesian_BDV_model_V3_L6_site.csv")
 
 # write excel
-writexl::write_xlsx(Bayesian_BDV_model_V3_multi, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Plot_BDV_simul_test/Bayesian_BDV_model_V3_L6_site.xlsx")
+# writexl::write_xlsx(Bayesian_BDV_model_V3_multi, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Plot_BDV_simul_test/Bayesian_BDV_model_V3_L6_site.xlsx")
 
 #--------------------------------------------------------------
 # Start with plots
@@ -936,7 +871,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241206_BDV_plot_SINGLE_BIG_WIND_unmanaged_NODIST_ag_dw_2_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241220_BDV_plot_MNG_4plots_Spruce_beech_Dist_set_aside_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -998,7 +933,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=2)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1200)+
+  ylim(0,1400)+
   theme_bw()
 
 # Plot grid arrange
@@ -1396,7 +1331,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   theme_bw()
 
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS)
-total_AGDW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AGDW_C_kgha))+
+total_AG_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_kgha))+
   geom_line() +
   facet_wrap(~run, ncol=2)+
   ggtitle("Aboveground Deadwood C in iLand [kg/ha]")+
@@ -1494,7 +1429,7 @@ totalC_kgha_iland
 total_DW_C_kgha
 
 # TOTAL ABOVEGROUND DEADWOOD CARBON (SNAGS + OTHERSNAGS)
-total_AGDW_C_kgha
+total_AG_DW_C_kgha
 
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C

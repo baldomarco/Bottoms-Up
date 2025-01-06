@@ -695,7 +695,9 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241122_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+# pdf(paste0(dataroot, "20241122_BDV_mng_plot_SINGLE_BIG_WIND_site_unmanaged_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20241211_BDV_mng_plot_SINGLE_BIG_WIND_site_managed_600_scatter_plot_comp.pdf"), height=8, width=12)
+
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -1217,15 +1219,15 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 
 tree_10_40 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
   geom_line(color = "#4897D8") +
-  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included")+
+  ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm")+
   facet_wrap(~run, ncol=2)+
-  labs(x = "Year",y="Trees with dbh 10cm to 40cm [No]")+
+  labs(x = "Year",y="Trees with dbh 10cm to 40cm")+
   theme(plot.title = element_text(hjust = 0.5))+
-  theme_bw
+  theme_bw()
 
 # NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included
 
-tree_10_40_2 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40))+
+tree_10_40_2 <- ggplot(plot_variables_all, aes(x=year, y=tree_10_40_2))+
   geom_line(color = "#4897D8") +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared")+
   facet_wrap(~run, ncol=2)+
