@@ -10,7 +10,7 @@
 # Load the database
 load("C:/_R/R_bottoms_up/db/alldata (1).RData")     # Bottoms-Up data
 
-speciesrichnessdata_95_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/plot_init/R/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
+speciesrichnessdata_95_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
 C_stock_total_CZ <- readRDS("C:/_R/R_bottoms_up/db/C_stock_total_CZ.rds")
 dataBIRD_CZ <- readRDS("C:/_R/R_bottoms_up/db/dataBIRD_CZ.rds")
 dataBRYO_CZ <- readRDS("C:/_R/R_bottoms_up/db/dataBRYO_CZ.rds")
@@ -176,7 +176,7 @@ CZ_JH1$treevol <- ifelse(is.na(CZ_JH1$treevol), 0, CZ_JH1$treevol)
 # Convert non-numeric values to NA
 CZ_JH1$treevol <- as.numeric(CZ_JH1$treevol)
 
-# Summarize tree volume by plot ID
+# Summarize tree volume by plot ID (if is giving an error just restart the R session, it is due a conflict between R packages with dplyr)
 volume_m3 <- CZ_JH1 %>%
   group_by(keyID) %>%
   summarize(volume_m3 = sum(treevol, na.rm = TRUE))
@@ -265,7 +265,7 @@ plot(H.count, main="H.count")
 
 #-------------------------------------------------------------------------------
 # Data manipulation to harmonize the matrix for the biodiversity analysis of the system (PRESENCE - ABSENCE)
-dataroot <- "C:/iLand/2023/plot_bottoms_up/plots/species_df/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/plots/species_df/"
 
 # Define a vector of data frame names
 original_df_names <- c("beech_forest_6_BIRD", "beech_forest_7_BIRD", "beech_forest_6_BRYO","beech_forest_7_BRYO","beech_forest_6_FU", "beech_forest_7_FU","beech_forest_6_LI", "beech_forest_7_LI","beech_forest_6_SB","beech_forest_7_SB","beech_forest_6_VP","beech_forest_7_VP")

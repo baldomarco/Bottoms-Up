@@ -617,7 +617,16 @@ library(GGally)
 
 #-------------------------------------------------------------------------------
 # Load the dataset
-tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/19_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/21_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_test_clean.xlsx")
+
+tab1 <- tab1 %>%
+  mutate(DeadWood_C = DeadWood_C / 4)
+
+# Second case
+tab1 <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+
+tab1 <- tab1 %>%
+  mutate(DeadWood_C = DeadWood_C / 4)
 
 #-------------------------------------------------------------------------------
 # Manipulate and inspect the table
@@ -640,7 +649,7 @@ hist(tab1$MeanGAMAge_2, breaks = 20)
 
 #-------------------------------------------------------------------------------
 # Subset the relevant columns for correlation (adjust indices or use column names as necessary)
-a.num <- tab1[,4:19]
+a.num <- tab1[,4:16]
 
 col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F", "cyan", "#007FFF", "blue", "#00007F"))
 
@@ -657,7 +666,7 @@ ggpairs(a.num) # https://www.r-bloggers.com/2021/06/ggpairs-in-r-a-brief-introdu
 p_ <- GGally::print_if_interactive
 
 # Not include management_type in the column list to not have a boxplot in the upper part otherwise include it if you want
-pm <- ggpairs(tab1, columns = 3:19, ggplot2::aes(colour = management_type))
+pm <- ggpairs(tab1, columns = 3:16, ggplot2::aes(colour = management_type))
 
 # To create boxplots in the upper part
 p_(pm)
