@@ -666,7 +666,7 @@ ggpairs(a.num) # https://www.r-bloggers.com/2021/06/ggpairs-in-r-a-brief-introdu
 p_ <- GGally::print_if_interactive
 
 # Not include management_type in the column list to not have a boxplot in the upper part otherwise include it if you want
-pm <- ggpairs(tab1, columns = 3:16, ggplot2::aes(colour = management_type))
+pm <- ggpairs(tab1, columns = 3:29, ggplot2::aes(colour = management_type))
 
 # To create boxplots in the upper part
 p_(pm)

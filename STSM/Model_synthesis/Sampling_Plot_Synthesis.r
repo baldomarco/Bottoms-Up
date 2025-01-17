@@ -89,6 +89,7 @@ for (plot in plots){
 print(plot_subsets) # Here I have a database subseted into 6 different dataframes
 
 #-------------------------------------------------------------------------------
+# FIRST METHODS BUT NOT THE GOOD ONE, JUST IN CASE YOU WANT TO PLOTS AND SAVE THE COORDINATED COMPARISON
 #_______________________________________________________________________________
 # Subset site 1
 # Subset the db for the CZ_JH1 group of sites

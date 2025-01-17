@@ -877,7 +877,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 5, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 15, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -892,7 +892,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions (obs richness 14 - 8)",
+    title = "Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Non-Flying Beetles"
   ) +
@@ -933,7 +933,7 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   # Horizontal dashed lines at y = 4 and y = 37
  # geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
   
-  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 9, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 37, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -948,7 +948,7 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions (obs richness 15 - 13)",
+    title = "Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Bryophytes"
   ) +
@@ -1041,7 +1041,7 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 11, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 71, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -1057,7 +1057,7 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions (obs richness 13 - 42)",
+    title = "Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Lichens"
   ) +
@@ -1100,7 +1100,7 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 52, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 156, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 116, color = "red", linetype = "dashed", size = 0.5) +
   
   geom_hline(yintercept = 284, color = "red", linetype = "dashed", size = 0.5) +
   
@@ -1210,7 +1210,7 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Horizontal dashed lines at y = 25 and y = 106
   #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 54, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 45, color = "red", linetype = "dashed", size = 0.5) +
   #geom_hline(yintercept = 106, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 96, color = "red", linetype = "dashed", size = 0.5) +
   
@@ -1226,7 +1226,7 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions (obs richness 52 - 56)",
+    title = "Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Moths"
   ) +

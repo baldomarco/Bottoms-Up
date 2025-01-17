@@ -510,7 +510,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   #-----------------------------------------------------------------------------
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
-    mutate(deadwood = total_AG_DW_C_kgha / 4) %>%
+    mutate(deadwood = total_AG_DW_C_kgha) %>%
     select(
       year, age, deadwood, lai_sim = LAI, ba_broadl,
       tree_10_40, tree_10_40_2, broadl_40, broadl_40_2
@@ -871,7 +871,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20241220_BDV_plot_MNG_4plots_Spruce_beech_Dist_set_aside_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "20250116_Test_BB_module_climpar_+brow_Dist_set_aside_600.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
