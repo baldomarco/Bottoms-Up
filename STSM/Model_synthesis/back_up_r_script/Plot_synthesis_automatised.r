@@ -2,6 +2,8 @@
 #                                       Dr. Marco Baldo, MSc
 # 
 #                                11/10/2023  CZU and Sapienza - University of Rome 
+#                                08/10/2024 this version was modified due a change of directory names to keep the original version go to hard disk SanDisk/2023/20230901_Bottoms_Up_old_folder
+#                                some folder don't have the excel tables, this is because in the script are filtered and not selected the siteID without plotId, coordinates or other important parameters...
 
 
 #            This script will read and manipulate the Bottoms Up database of multi-taxonomic samples divided into plots
@@ -17,10 +19,9 @@ library(ggplot2)
 library(rgdal)
 library(writexl)
 library(dplyr)
-library(tidyverse)
 
 # Load the data
-load("C:/iland/20230901_Bottoms_Up/plot_init/R/stsm_roma/alldata (1).RData")
+load("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/alldata (1).RData") # Bottoms-Up data
 
 # Create a function to process and save a site
 process_site <- function(site_data, output_dir) {
@@ -43,7 +44,7 @@ process_site <- function(site_data, output_dir) {
 }
 
 # Create a directory to store the plots
-plot_dir <- "C:/iLand/20230901_Bottoms_Up/plot_init/plots/New folder/"
+plot_dir <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/plots/New folder/"
 if (!dir.exists(plot_dir)) {
   dir.create(plot_dir)
 }
@@ -70,7 +71,7 @@ library(raster)
 library(fields)
 
 # Define the directory path where your Excel files are located
-directory_path <- "C:/iLand/20230901_Bottoms_Up/plot_init/plots/clean_plot/"
+directory_path <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/plots/clean_plot/"
 
 # List all Excel files in the directory
 file_paths <- list.files(directory_path, pattern = "\\.xlsx$", full.names = TRUE)
@@ -103,7 +104,7 @@ process_excel_file <- function(file_path) {
   
   #----------------------------------------------------------------
   # Write out the RU and Stand grids
-  out.dataroot <- "C:/iLand/20230901_Bottoms_Up/plot_init/gis/"
+  out.dataroot <- "C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/gis/"
   
   # WHERE ARE WE?
   x.coord.corner <- as.integer(corner1[1])
@@ -188,8 +189,8 @@ process_excel_file <- function(file_path) {
   #-------------------------------------------------------------------------------
   # SELECT THE COLUMNS
   
-  desired_columns <- dplyr::select(data, x, y, treesp, treedb, treeht, age)      # Select the dataset
-  colnames(desired_columns)<-c("x","y","species","dbh","height","age")      # CHANGE THE NAME OF THE COLUMNS
+  desired_columns <- dplyr::select(data, x, y, treesp, treedb, treeht)      # Select the dataset
+  colnames(desired_columns)<-c("x","y","species","dbh","height")      # CHANGE THE NAME OF THE COLUMNS
   
   # Get the unique species names
   sp <- unique(desired_columns$species)
@@ -233,8 +234,6 @@ process_excel_file <- function(file_path) {
   desired_columns$x <- as.integer(desired_columns$x)
   desired_columns$y <- as.integer(desired_columns$y)    
   desired_columns$height <- as.numeric(desired_columns$height)    
-  desired_columns$age <- as.numeric(desired_columns$age)    
-  desired_columns$dbh <- as.numeric(desired_columns$dbh)    
   
   #---------------------------------------------------------------------
   # Shift the numbers from metrics coordinates in iland quadrant coordinates
@@ -291,10 +290,10 @@ process_excel_file <- function(file_path) {
   
   #-------------------------------------------------------------------
   # write 
-  out.dataroot<-"C:/iLand/20230901_Bottoms_Up/plot_init/gis/init/"    # use the same place
+  out.dataroot<-"C:/iLand/20230901_Bottoms_Up_old_folder/plot_init/gis/init/"    # use the same place
   
   # Write out the plot input tables
-  Plot.grid.file <- paste0(out.dataroot, plot_id, "_init_age_CORR_GAM.txt")
+  Plot.grid.file <- paste0(out.dataroot, "Plot_init_", plot_id, ".txt")
   
   write.table(desired_columns, file = paste(Plot.grid.file, sep = ""),
               append = FALSE, quote = FALSE, sep = ";", eol = "\n", na = "NA",
@@ -314,3 +313,4 @@ processed_data_list <- lapply(file_paths, process_excel_file)
 #                                       END
 #
 #-------------------------------------------------------------------------------
+
