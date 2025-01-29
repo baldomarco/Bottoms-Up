@@ -854,14 +854,14 @@ library(viridis)
 
 # Reduce dataset by 50%
 reduced_data <- bayesian_results_all %>%
-  sample_frac(0.25)
+  sample_frac(0.5)
 
 # BEETLES OFFICIAL PLOT V1
 
 # Combined Plot with Separate Scales
 A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   # Density point cloud
-  geom_pointdensity(alpha = 0.05) + # geom_point(alpha = 0.05)
+  geom_pointdensity(alpha = 0.05) + 
   scale_color_viridis(option = "H", name = "Density") + 
   
   # Beta 1 and Beta 2 lines
@@ -877,7 +877,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 6, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 15, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
@@ -898,7 +898,7 @@ A0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   ) +
   
   # Facet by 'run'
-  facet_wrap(~run, ncol = 6) +
+  facet_wrap(~run, ncol = 2) +
   
   # Themes and adjustments
   theme_minimal() +
@@ -933,8 +933,8 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   # Horizontal dashed lines at y = 4 and y = 37
  # geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
   
-  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 19, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 9, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 37, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
   scale_linetype_manual(
@@ -954,7 +954,7 @@ A1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   ) +
   
   # Facet by 'run'
-  facet_wrap(~run, ncol = 6) +
+  facet_wrap(~run, ncol = 2) +
   
   # Themes and adjustments
   theme_minimal() +
@@ -1041,8 +1041,8 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 13, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 18, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 11, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 71, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
   scale_linetype_manual(
@@ -1063,7 +1063,7 @@ A2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   ) +
   
   # Facet by 'run'
-  facet_wrap(~run, ncol = 6) +
+  facet_wrap(~run, ncol = 2) +
   
   # Themes and adjustments
   theme_minimal() +
@@ -1100,9 +1100,9 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 52, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 181, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 116, color = "red", linetype = "dashed", size = 0.5) +
   
-  geom_hline(yintercept = 219, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 284, color = "red", linetype = "dashed", size = 0.5) +
   
   # Custom linetype scale for beta lines
   scale_linetype_manual(
@@ -1124,7 +1124,7 @@ A3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   ) +
   
   # Facet by 'run'
-  facet_wrap(~run, ncol = 6) +
+  facet_wrap(~run, ncol = 2) +
   
   # Themes and adjustments
   theme_minimal() +
@@ -1210,7 +1210,7 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Horizontal dashed lines at y = 25 and y = 106
   #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 69, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 45, color = "red", linetype = "dashed", size = 0.5) +
   #geom_hline(yintercept = 106, color = "red", linetype = "dashed", size = 0.5) +
   geom_hline(yintercept = 96, color = "red", linetype = "dashed", size = 0.5) +
   
@@ -1232,7 +1232,7 @@ A5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   ) +
   
   # Facet by 'run'
-  facet_wrap(~run, ncol = 6) +
+  facet_wrap(~run, ncol = 2) +
   
   # Themes and adjustments
   theme_minimal() +

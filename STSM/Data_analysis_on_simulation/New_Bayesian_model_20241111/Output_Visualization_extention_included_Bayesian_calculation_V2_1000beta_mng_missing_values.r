@@ -510,7 +510,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   #-----------------------------------------------------------------------------
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
-    mutate(deadwood = total_AG_DW_C_kgha) %>%
+    mutate(deadwood = total_AG_DW_C_kgha) %>% # here put /4 if want a standardization at 50mx50m of deadwood pool
     select(
       year, age, deadwood, lai_sim = LAI, ba_broadl,
       tree_10_40, tree_10_40_2, broadl_40, broadl_40_2
@@ -917,7 +917,7 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 
 M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
   geom_bar(position="stack", stat="identity")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
   scale_fill_manual(values=c("#4897D8","#FFDB5C","#FA6E59","#B3C100"))+               #"#B7B8B6","#34675C","#B3C100" grey and greens
   theme_bw()
@@ -930,10 +930,10 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1400)+
+  ylim(0,1200)+
   theme_bw()
 
 # Plot grid arrange
@@ -1176,7 +1176,7 @@ landscape_removed_scen_natmor <- landscape_removed_scen %>%
 nm1 <- ggplot(landscape_removed_scen_natmor, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
   geom_col() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(title = "Species", reverse=TRUE))+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=4)+
   ggtitle("Natural Mortality volume") + theme(plot.title = element_text(lineheight=3, face="bold", color="black", size=22)) +
   ylab("Volume [m3/ha]") + theme(axis.title.y = element_text(size = rel(1.8), angle = 90)) +
   xlab("Year") + theme(axis.title.x = element_text(size = rel(1.8), angle = 00)) +
@@ -1333,7 +1333,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS)
 total_AG_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_kgha))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Aboveground Deadwood C in iLand [kg/ha]")+
   labs(x = "Year",y="Aboveground deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
