@@ -871,7 +871,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "20250116_Test_BB_module_climpar_+brow_Dist_set_aside_600.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "L6.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -933,7 +933,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1200)+
+  ylim(0,1000)+
   theme_bw()
 
 # Plot grid arrange
@@ -1176,7 +1176,7 @@ landscape_removed_scen_natmor <- landscape_removed_scen %>%
 nm1 <- ggplot(landscape_removed_scen_natmor, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
   geom_col() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(title = "Species", reverse=TRUE))+
-  facet_wrap(~run, ncol=4)+
+  facet_wrap(~run, ncol=6)+
   ggtitle("Natural Mortality volume") + theme(plot.title = element_text(lineheight=3, face="bold", color="black", size=22)) +
   ylab("Volume [m3/ha]") + theme(axis.title.y = element_text(size = rel(1.8), angle = 90)) +
   xlab("Year") + theme(axis.title.x = element_text(size = rel(1.8), angle = 00)) +

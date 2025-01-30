@@ -854,7 +854,7 @@ library(viridis)
 
 # Reduce dataset by 50%
 reduced_data <- bayesian_results_all %>%
-  sample_frac(0.05)
+  sample_frac(0.5)
 
 # BEETLES OFFICIAL PLOT V1
 
@@ -1146,7 +1146,7 @@ dev.off()
 
 ################################################################################
 #_______________________________________________________________________________
-# Reduce dataset by 50%
+# Reduce dataset by 95%
 reduced_data <- bayesian_results_all %>%
   sample_frac(0.05)
 
@@ -1171,8 +1171,8 @@ B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
             aes(x = year, y = BEETLES_PRED_RICH_50, linetype = "Non-Flying Beetles Function"),
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
-  geom_hline(yintercept = 6, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 15, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 4, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 5, color = "red", linetype = "dashed", size = 0.5) +
   
   
   geom_violin(data = BDV_predictors, 
@@ -1194,7 +1194,7 @@ B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   ) +
   
   labs(
-    title = "Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions and Observed Richness",
+    title = "L6 - Density Point Cloud of Predicted Non-Flying Beetles Sp. Richness with Beta Functions and Observed Richness",
     x = "Year",
     y = "Predicted Sp. Richness of Non-Flying Beetles"
   ) +
@@ -1214,7 +1214,7 @@ print(B0)
 #-------------------------------------------------------------------------------
 # BRYOPHYTES OFFICIAL PLOT V1
 
-# Rename column to 'bryophytes'
+# Rename column to 'Bryophytes'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Epiphytic / epixilic bryophytes (0.212)")] <- "Bryophytes"
 
 # Combined Plot with Violin Plot and Dots
@@ -1235,8 +1235,8 @@ B1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 10, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 19, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 9, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 12, color = "red", linetype = "dashed", size = 0.5) +
   
   geom_violin(data = BDV_predictors, 
               aes(x = plotID + 590, y = Bryophytes),
@@ -1258,7 +1258,7 @@ B1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions",
+    title = "L6 - Density Point Cloud of Predicted Bryophytes Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Bryophytes"
   ) +
@@ -1301,8 +1301,8 @@ B2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
             color = "darkred", size = 1, inherit.aes = FALSE) +
   
   # Horizontal dashed lines at y = 4 and y = 37
-  geom_hline(yintercept = 13, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 18, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 11, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 24, color = "red", linetype = "dashed", size = 0.5) +
   
   # Add the violin plot within the density point graph
   geom_violin(data = BDV_predictors, 
@@ -1327,7 +1327,7 @@ B2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions",
+    title = "L6 - Density Point Cloud of Predicted Lichens Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Lichens"
   ) +
@@ -1348,7 +1348,7 @@ print(B2)
 #-------------------------------------------------------------------------------
 # MACROFUNGI OFFICIAL PLOT V1
 
-# Rename column to 'bryophytes'
+# Rename column to 'Macromycetes'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Macrofungi (2.118)")] <- "Macromycetes"
 
 B3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
@@ -1373,9 +1373,9 @@ B3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Horizontal dashed lines at y = 4 and y = 37
   #geom_hline(yintercept = 52, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 181, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 116, color = "red", linetype = "dashed", size = 0.5) +
   
-  geom_hline(yintercept = 219, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 138, color = "red", linetype = "dashed", size = 0.5) +
   
   
   # Add the violin plot within the density point graph
@@ -1403,7 +1403,7 @@ B3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Macromycetes Sp. Richness with Beta Functions",
+    title = "L6 - Density Point Cloud of Predicted Macromycetes Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Macromycetes"
   ) +
@@ -1425,7 +1425,7 @@ print(B3)
 #-------------------------------------------------------------------------------
 # MOTHS OFFICIAL PLOT V1
 
-# Rename column to 'bryophytes'
+# Rename column to 'Moths'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Moths (0.566)")] <- "Moths"
 
 B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
@@ -1446,9 +1446,9 @@ B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Horizontal dashed lines at y = 25 and y = 106
   #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 69, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 56, color = "red", linetype = "dashed", size = 0.5) +
   #geom_hline(yintercept = 106, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 96, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 59, color = "red", linetype = "dashed", size = 0.5) +
   
   
   # Add the violin plot within the density point graph
@@ -1473,7 +1473,7 @@ B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions",
+    title = "L6 - Density Point Cloud of Predicted Moths Sp. Richness with Beta Functions",
     x = "Year",
     y = "Predicted Sp. Richness of Moths"
   ) +
