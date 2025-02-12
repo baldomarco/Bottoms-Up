@@ -625,19 +625,19 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       LICHEN_PRED_RICH_2.5 = 5.17480 + 0.01805*age + (-2.98086)*lai_sim + 0.01149*broadl_40,
       MACROFUNGI_PRED_RICH_97.5 = 103.14266 + 0.34920*age + 0.00054*deadwood + 5.67190*ba_broadl + 0.17916*tree_10_40,
       MACROFUNGI_PRED_RICH_50 = 83.52201 + 0.17438*age + 0.00035*deadwood + 3.29810*ba_broadl + 0.08110*tree_10_40,
-      MACROFUNGI_RICH_2.5 = 62.10863 + 0.03120*age + 0.00014*deadwood + 0.82859*ba_broadl + 0.01157*tree_10_40,
+      MACROFUNGI_PRED_RICH_2.5 = 62.10863 + 0.03120*age + 0.00014*deadwood + 0.82859*ba_broadl + 0.01157*tree_10_40,
       MACROFUNGI_RED_PRED_RICH_97.5 = 134.47920 + 0.00116*deadwood + 9.44456*ba_broadl,
       MACROFUNGI_RED_PRED_RICH_50 = 115.57863 + 0.00088*deadwood + 6.18950*ba_broadl,
-      MACROFUNGI_RED_RICH_2.5 = 97.41300 + 0.00061*deadwood + 3.06694*ba_broadl,
+      MACROFUNGI_RED_PRED_RICH_2.5 = 97.41300 + 0.00061*deadwood + 3.06694*ba_broadl,
       BEETLES_PRED_RICH_97.5 = 9.32954 + 0.00003*deadwood + 0.25618*ba_broadl,
       BEETLES_PRED_RICH_50 = 8.55743 + 0.00002*deadwood + 0.11495*ba_broadl,
-      BEETLES_RICH_2.5 = 7.78440 + 0.00000*deadwood + 0.01439*ba_broadl,
+      BEETLES_PRED_RICH_2.5 = 7.78440 + 0.00000*deadwood + 0.01439*ba_broadl,
       MOTHS_PRED_RICH_97.5 = 64.98348 + (-0.00004)*tree_10_40_2 + 0.89673*broadl_40,
       MOTHS_PRED_RICH_50 = 61.44840 + (-0.00018)*tree_10_40_2 + 0.62675*broadl_40,
-      MOTHS_RICH_2.5 = 57.88974 + (-0.00033)*tree_10_40_2 + 0.35542*broadl_40,
+      MOTHS_PRED_RICH_2.5 = 57.88974 + (-0.00033)*tree_10_40_2 + 0.35542*broadl_40,
       MOTHS_RED_PRED_RICH_97.5 = 66.44195 + (-0.00005)*tree_10_40_2 + 0.94178*broadl_40,
       MOTHS_RED_PRED_RICH_50 = 62.49055 + (-0.00019)*tree_10_40_2 + 0.65890*broadl_40,
-      MOTHS_RED_RICH_2.5 = 58.73980 + (-0.00035)*tree_10_40_2 + 0.38171*broadl_40,
+      MOTHS_RED_PRED_RICH_2.5 = 58.73980 + (-0.00035)*tree_10_40_2 + 0.38171*broadl_40,
       BRYO_PRED_RICH_50_beta1 = 0.01584*age,                          # beta[1] 50% for age
       BRYO_PRED_RICH_50_beta2 = 0.00004*deadwood,                      # beta[2] 50% for deadwood
       LICHEN_PRED_RICH_50_beta1 = 0.04723*age,
@@ -871,7 +871,7 @@ library(gridExtra) # To arrange the graphs in a grid
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "L6.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "L3.pdf"), height=8, width=12)
 
 # or
 png(paste0(dataroot, "1_20231205_BDV_bayesian_mng_plot_L1_10_300.png"), height = 8 * 300, width = 12 * 300, res = 300)
@@ -886,7 +886,7 @@ species.we.have<-unique(lnd_scen$species)                                       
 # LIST OF ALL POSSIBLE SPECIES
 
 cols.all=c( "rops"="#e0e0e0", "acpl"="#A9A9A9",   "alin"="#696969", "alvi"="#2e2e2e",
-            "bepe"="#fadfad", 
+            "bepe"="#fadfad", "acca"="darkorange4",
             "casa"="#7eeadf", "coav"="#20c6b6",  
             "tipl"="#645394", "ulgl"="#311432" ,
             "saca"="#D8BFD8",  "soar"="#DDA0DD", "soau"="#BA55D3",
@@ -902,7 +902,7 @@ cols.all=c( "rops"="#e0e0e0", "acpl"="#A9A9A9",   "alin"="#696969", "alvi"="#2e2
 # COLORATION ORDER FOR ALL THE POSSIBLE SPECIES
 
 new_order_gg.all=c("alvi","alin", "acpl", "rops","bepe" ,"coav", "casa", "ulgl", "tipl",  "soau", "soar", "saca",  "pini", "pice",
-                   "poni", "algl", "tico", "potr",  "frex","cabe", "acps",  "lade", "abal",  "qupu", "qupe","quro","pisy", "fasy", "piab")
+                   "poni", "algl", "tico", "potr",  "frex","cabe", "acps",  "lade", "abal",  "qupu", "qupe","quro","pisy", "fasy", "piab", "acca")
 
 
 # This will show at the end only the species we really have on the landscape. 
@@ -933,7 +933,7 @@ g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order
   facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
-  ylim(0,1000)+
+  #ylim(0,1200)+
   theme_bw()
 
 # Plot grid arrange
@@ -1127,7 +1127,7 @@ g8 <- ggplot(lnd_scen, aes(year, total_carbon_kg, fill=factor(species, levels=ne
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Carbon in Living Biomass")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=6)+
   labs(x = "Year",y="[kg/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1674,14 +1674,14 @@ grid.arrange(age_plot, lai_plot, broadl_40, P2, ncol=1)
 ###############    MACROFUNGI DEADWOOD CHANGING ################
 
 
-P3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_RICH_2.5, ymax = MACROFUNGI_PRED_RICH_97.5, fill = run)) +
+P3 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_PRED_RICH_2.5, ymax = MACROFUNGI_PRED_RICH_97.5, fill = run)) +
   
   # Add ribbon layers for uncertainty with alpha = 0.3
   geom_ribbon(alpha = 0.3) +
   
   # Add lines for mean, min, and max values
   geom_line(aes(y = MACROFUNGI_PRED_RICH_50, color = run), lwd = 0.9) +
-  geom_line(aes(y = MACROFUNGI_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
+  geom_line(aes(y = MACROFUNGI_PRED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
   geom_line(aes(y = MACROFUNGI_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
@@ -1736,14 +1736,14 @@ grid.arrange(age_plot, deadwood, ba_broadl, tree_10_40, P3, ncol=1)
 ###############    MACROFUNGI RED LIST DEADWOOD CHANGING ################
 
 
-P4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_RED_RICH_2.5, ymax = MACROFUNGI_RED_PRED_RICH_97.5, fill = run)) +
+P4 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MACROFUNGI_RED_PRED_RICH_2.5, ymax = MACROFUNGI_RED_PRED_RICH_97.5, fill = run)) +
   
   # Add ribbon layers for uncertainty with alpha = 0.3
   geom_ribbon(alpha = 0.3) +
   
   # Add lines for mean, min, and max values
   geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_50, color = run), lwd = 0.9) +
-  geom_line(aes(y = MACROFUNGI_RED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
+  geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
   geom_line(aes(y = MACROFUNGI_RED_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
@@ -1798,14 +1798,14 @@ grid.arrange(deadwood, ba_broadl,P4, ncol=1)
 ###############    BEETLES DEADWOOD CHANGING ################
 
 
-P5 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BEETLES_RICH_2.5, ymax = BEETLES_PRED_RICH_97.5, fill = run)) +
+P5 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BEETLES_PRED_RICH_2.5, ymax = BEETLES_PRED_RICH_97.5, fill = run)) +
   
   # Add ribbon layers for uncertainty with alpha = 0.3
   geom_ribbon(alpha = 0.3) +
   
   # Add lines for mean, min, and max values
   geom_line(aes(y = BEETLES_PRED_RICH_50, color = run), lwd = 0.9) +
-  geom_line(aes(y = BEETLES_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
+  geom_line(aes(y = BEETLES_PRED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
   geom_line(aes(y = BEETLES_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
@@ -1861,14 +1861,14 @@ grid.arrange(deadwood, ba_broadl, P5, ncol=1)
 ###############    MOTHS DEADWOOD CHANGING ################
 
 
-P6 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_RICH_2.5, ymax = MOTHS_PRED_RICH_97.5, fill = run)) +
+P6 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_PRED_RICH_2.5, ymax = MOTHS_PRED_RICH_97.5, fill = run)) +
   
   # Add ribbon layers for uncertainty with alpha = 0.3
   geom_ribbon(alpha = 0.3) +
   
   # Add lines for mean, min, and max values
   geom_line(aes(y = MOTHS_PRED_RICH_50, color = run), lwd = 0.9) +
-  geom_line(aes(y = MOTHS_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
+  geom_line(aes(y = MOTHS_PRED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
   geom_line(aes(y = MOTHS_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
@@ -1923,14 +1923,14 @@ grid.arrange(tree_10_40_2,broadl_40, P6, ncol=1)
 ###############    MOTHS RED LIST DEADWOOD CHANGING ################
 
 
-P7 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_RED_RICH_2.5, ymax = MOTHS_RED_PRED_RICH_97.5, fill = run)) +
+P7 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_RED_PRED_RICH_2.5, ymax = MOTHS_RED_PRED_RICH_97.5, fill = run)) +
   
   # Add ribbon layers for uncertainty with alpha = 0.3
   geom_ribbon(alpha = 0.3) +
   
   # Add lines for mean, min, and max values
   geom_line(aes(y = MOTHS_RED_PRED_RICH_50, color = run), lwd = 0.9) +
-  geom_line(aes(y = MOTHS_RED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
+  geom_line(aes(y = MOTHS_RED_PRED_RICH_2.5, color = run), lwd = 0.3) +  # Change line type for min
   geom_line(aes(y = MOTHS_RED_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
