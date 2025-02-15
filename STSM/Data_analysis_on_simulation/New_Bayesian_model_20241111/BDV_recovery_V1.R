@@ -1,0 +1,327 @@
+# Load required packages
+#library(ggplot2)
+#library(ggpubr)    # For stat_pvalue_manual
+library(tidyr)
+library(dplyr)
+#library(rstatix)   # For Kruskal-Wallis and correlation tests
+library(readxl)    # For reading Excel files
+
+# Load the data
+BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
+
+# Remake the names in the table for a better understanding and coding
+BDV_predictors <- BDV_predictors %>%
+  mutate(management_type = recode(management_type,
+                                  "EX" = "Broadl",
+                                  "MZ" = "Mixed",
+                                  "IN" = "Transition",
+                                  "PA" = "Clearcutted",
+                                  "PR" = "Old-growth",
+                                  "ML" = "Conifer")) %>%
+  select(-c(Lichens_RD1, Macrofungi_RD1, Moths_RD1, `Macrofungi x red-listed (2.652)`, `Moths x red-listed (0.574)`)) %>%
+  rename(
+    Bryophytes = `Epiphytic / epixilic bryophytes (0.212)`,
+    Lichens = `Lichens (0.137)`,
+    Macrofungi = `Macrofungi (2.118)`,
+    Beetles = `Non-flying beetles (0.053)`,
+    Moths = `Moths (0.566)`
+  )
+
+# Check
+table(BDV_predictors$management_type)
+glimpse(BDV_predictors)
+BDV_predictors
+
+#-------------------------------------------------------------------------------
+# Make Old growth forest quartiles for select the 25% and 50% BDV threshold per Taxa sp richness
+
+# Filter only Old-growth category
+BDV_old_growth <- BDV_predictors %>% 
+  filter(management_type == "Old-growth")
+
+# Compute quartiles for the 5 taxa in Old-growth
+taxa_quartiles_thrashold <- BDV_old_growth %>%
+  summarise(across(c(Bryophytes, Lichens, Macrofungi, Beetles, Moths), quantile, probs = c(0.25, 0.5, 0.75), na.rm = TRUE))
+
+# Transpose the result for better readability
+taxa_quartiles_thrashold <- as.data.frame(t(taxa_quartiles_thrashold))
+
+# Rename columns for clarity
+colnames(taxa_quartiles_thrashold) <- c("Q1", "Median", "Q3")
+
+# Print the quartiles
+print(taxa_quartiles_thrashold)
+
+#-------------------------------------------------------------------------------
+# Now assign to them the management_type
+
+# Extract plotID from run names and detect managed versions
+bayesian_results_all <- bayesian_results_all %>%
+  mutate(
+    plotID = gsub(".*(L\\d+_\\d+).*", "\\1", run), # Extract Lx_xx code
+    is_mng = grepl("_mng", run) # Check if "_mng" is in the run name
+  )
+
+# Merge with BDV_predictors to get management_type
+bayesian_results_all <- bayesian_results_all %>%
+  left_join(select(BDV_predictors, plotID, management_type), by = "plotID") %>%
+  mutate(
+    management_type = if_else(is_mng, paste0(management_type, "_mng"), management_type)
+  )
+
+# Check unique management types after update
+unique(bayesian_results_all$management_type)
+
+#-------------------------------------------------------------------------------
+# NOW THE MAIN PART OF THE WORK - EVALUATE THE PERCENTAGE (PROBABILITY) THAT OUR
+# SAMPLING PLOTS (FORESTS) REACH OT EXCEED THE OLD GROWTH FOREST TAXA SPECIES RICHNESS
+#-------------------------------------------------------------------------------
+
+# Define quartiles from Old-Growth Forests
+taxa_quartiles <- list(
+  BRYOPHYTES = c(Q1 = 10.5, Median = 17.5, Q3 = 22.0),
+  LICHENS = c(Q1 = 16.25, Median = 18.5, Q3 = 23.75),
+  MACROFUNGI = c(Q1 = 162, Median = 192, Q3 = 225),
+  BEETLES = c(Q1 = 8.5, Median = 11.5, Q3 = 13.75),
+  MOTHS = c(Q1 = 54.25, Median = 62, Q3 = 72.75)
+)
+
+# Select only relevant taxa columns
+data_filtered <- bayesian_results_all %>%
+  select(plotID, year = year...1, age = age...2, management_type,
+         BRYOPHYTES = PRED_RICH_BRYOPHYTES, 
+         LICHENS = PRED_RICH_LICHENS, 
+         MACROFUNGI = PRED_RICH_MACROFUNGI, 
+         BEETLES = PRED_RICH_BEETLES, 
+         MOTHS = PRED_RICH_MOTHS)  
+
+# Compute percentages above each quartile
+BDV_recovery <- data_filtered %>%
+  group_by(plotID, year,management_type, age) %>%
+  summarise(
+    across(c(BRYOPHYTES, LICHENS, MACROFUNGI, BEETLES, MOTHS), 
+           list(
+             Q1 = ~mean(. >= taxa_quartiles[[cur_column()]]["Q1"], na.rm = TRUE) * 100,
+             Median = ~mean(. >= taxa_quartiles[[cur_column()]]["Median"], na.rm = TRUE) * 100,
+             Q3 = ~mean(. >= taxa_quartiles[[cur_column()]]["Q3"], na.rm = TRUE) * 100
+           ),
+           .names = "%_above_{fn}_{col}")
+  ) %>%
+  ungroup()  # Ensure ungrouped output
+
+# View result
+BDV_recovery
+
+#-------------------------------------------------------------------------------
+# Let's remove the management runs
+
+BDV_recovery_filtered <- BDV_recovery %>%
+  filter(!grepl("_mng", management_type))
+
+#-------------------------------------------------------------------------------
+# Let's remove the zero
+
+
+#-------------------------------------------------------------------------------
+# Example Data (assuming the data is already loaded as 'data_processed')
+# You would replace the below example data with your actual data
+# data_processed <- your_data
+
+# NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+pdf(paste0(dataroot, "BDV_recovery.pdf"), height=8, width=12)
+
+# Bar plot of `%_above_Median_BRYOPHYTES` by management type
+P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_BRYOPHYTES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bryophytes Above Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Bryophytes") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Faceted plot of `%_above_Median_BRYOPHYTES` by management type and year
+P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_BRYOPHYTES`, color = management_type)) +
+  geom_line() +
+  facet_wrap(~ management_type) +
+  labs(title = "Bryophytes Above Median by Management Type and Year",
+       x = "Year",
+       y = "% Above Median Bryophytes") +
+  theme_minimal()
+
+
+# Plot grid arrange
+grid.arrange(P1,P2, ncol=2)
+
+#-------------------------------------------------------------------------------
+# Bar plot of `%_above_Median_BRYOPHYTES` by management type
+
+# Bryophyta
+p1 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BRYOPHYTES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q1 Bryophyta") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p2 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_BRYOPHYTES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Bryophyta") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p3 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BRYOPHYTES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+       x = "Management Type",
+       y = "% Above Q3 Bryophyta") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Lichens
+
+p4 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_LICHENS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q1 Lichenes") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p5 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_LICHENS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Lichenes") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p6 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_LICHENS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+       x = "Management Type",
+       y = "% Above Q3 Lichenes") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Beetles
+
+p7 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BEETLES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q1 Coleoptera") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p8 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_BEETLES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Coleoptera") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p9 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BEETLES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+       x = "Management Type",
+       y = "% Above Q3 Coleoptera") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Macrofungi
+
+p10 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MACROFUNGI`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q1 Macrofungi") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p11 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_MACROFUNGI`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (main phyla) Above Old-Growth Forest Sp. Richness Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Macrofungi") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p12 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MACROFUNGI`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q3 Macrofungi") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Moths
+
+p13 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MOTHS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lepidoptera (order - only moths) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+       x = "Management Type",
+       y = "% Above Q1 Moths") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p14 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_MOTHS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lepidoptera (order - only moths) Above Above Old-Growth Forest Sp. Richness Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Moths") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p15 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MOTHS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lepidoptera (order - only moths) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+       x = "Management Type",
+       y = "% Above Q3 Moths") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Plot grid arrange
+grid.arrange(p3,p2,p6,p5,p9,p8,p12,p11,p15,p14, ncol=5)
+
+# Plot the q1, q2, q3 per taxa
+grid.arrange(p1,p4,p7,p10,p13, ncol=5)
+
+grid.arrange(p2,p5,p8,p11,p14, ncol=5)
+
+grid.arrange(p3,p6,p9,p12,p15, ncol=5)
+
+# plot the q1 + q2 + q3 in evry taxa
+
+grid.arrange(p1,p2,p3, ncol=3)
+
+grid.arrange(p4,p5,p6, ncol=3)
+
+grid.arrange(p7,p8,p9, ncol=3)
+
+grid.arrange(p10,p11,p12, ncol=3)
+
+grid.arrange(p13,p14,p15, ncol=3)
+
+
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+dev.off()
+
+# write excel
+writexl::write_xlsx(BDV_recovery, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data.xlsx")

@@ -8,7 +8,6 @@
 # Load required libraries
 
 library(readxl)
-library(readxl)
 library(readr)
 library(tidyr)
 library(dplyr)

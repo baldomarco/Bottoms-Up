@@ -9,6 +9,16 @@ library(readxl)    # For reading Excel files
 # Load the data
 BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood.xlsx")
 
+# Mutate names of management type
+BDV_predictors <- BDV_predictors %>%
+  mutate(management_type = recode(management_type,
+                                  "EX" = "Broadl",
+                                  "MZ" = "Mixed",
+                                  "IN" = "Transition",
+                                  "PA" = "Clearcutted",
+                                  "PR" = "Old-growth",
+                                  "ML" = "Conifer"))
+
 # Clean up column names for easier handling
 colnames(BDV_predictors) <- gsub(" ", "_", colnames(BDV_predictors))  # Replace spaces with underscores
 colnames(BDV_predictors) <- gsub("[[:punct:]]", "", colnames(BDV_predictors))  # Remove punctuation
