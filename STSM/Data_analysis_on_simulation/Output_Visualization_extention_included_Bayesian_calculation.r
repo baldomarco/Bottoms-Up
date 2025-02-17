@@ -414,6 +414,13 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # CREATE FUNCTION FOR THE BAYESIAN STATISTICAL MODEL 
   
   # VERSION WITH CHANGING DW VOLUME
+  
+  # Broadleaves 
+  # broad_density <- (542 + 450 + 349 + 251 + 153)/5
+  
+  # Conifer deadwood density in Central European mixed forests
+  conifer_density <- (375 + 334 + 271 + 198 + 160)/5
+  
   # ADD NECROMSS AND VOLUME DW
   Bayesian_BDV_model_bryophytes_V1 <- plot_L1_10_df_simul %>%
     group_by(year) %>%

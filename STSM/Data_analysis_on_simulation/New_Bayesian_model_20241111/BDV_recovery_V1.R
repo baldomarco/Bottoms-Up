@@ -185,7 +185,7 @@ p3 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BRY
 
 p4 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Lichenes") +
   theme_minimal() +
@@ -193,7 +193,7 @@ p4 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_LIC
 
 p5 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Lichenes") +
   theme_minimal() +
@@ -201,7 +201,7 @@ p5 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median
 
 p6 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichenes (informal group) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Lichenes") +
   theme_minimal() +
@@ -314,9 +314,76 @@ grid.arrange(p13,p14,p15, ncol=3)
 #-------------------------------------------------------------------------------
 
 
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
 
+# FUNZIONE per generare i grafici per un dato taxa e quartile
+plot_taxa_quartile <- function(df, taxa, quartile) {
+  
+  # Nome della colonna da analizzare
+  col_name <- paste0("%_above_", quartile, "_", taxa)
+  
+  # 🔹 Filtra solo gli anni in cui la % è > 0 (tranne per G1)
+  df_filtered <- df %>%
+    filter(!!sym(col_name) > 0)
+  
+  # 1️⃣ (G1) Bar plot: Numero di anni in cui la % supera 0 per management type
+  G1 <- df %>%
+    filter(!!sym(col_name) > 0) %>%
+    group_by(management_type) %>%
+    summarise(years_above_0 = n()) %>%
+    ggplot(aes(x = management_type, y = years_above_0, fill = management_type)) +
+    geom_bar(stat = "identity") +
+    labs(title = paste(taxa, quartile, "- Years Above 0"),
+         x = "Management Type",
+         y = "Years Above 0") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # 2️⃣ (G2) Scatter plot: Year vs. % sopra la soglia, colorato per management type
+  G2 <- ggplot(df_filtered, aes(x = year, y = !!sym(col_name), color = management_type)) +
+    geom_point(alpha = 0.7) +
+    geom_smooth(method = "loess", se = FALSE) +
+    labs(title = paste(taxa, quartile, "- % Above Threshold per Year"),
+         x = "Year",
+         y = paste("% Above", quartile)) +
+    theme_minimal()
+  
+  # 3️⃣ (G3) Boxplot: Distribuzione delle % sopra la soglia per management type
+  G3 <- ggplot(df_filtered, aes(x = management_type, y = !!sym(col_name), fill = management_type)) +
+    geom_boxplot() +
+    labs(title = paste(taxa, quartile, "- Distribution of % Above"),
+         x = "Management Type",
+         y = paste("% Above", quartile)) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # 4️⃣ (G4) Boxplot per età in cui si supera la soglia
+  G4 <- ggplot(df_filtered, aes(x = management_type, y = age, fill = management_type)) +
+    geom_boxplot() +
+    labs(title = paste(taxa, quartile, "- Age Distribution Above Threshold"),
+         x = "Management Type",
+         y = "Age") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Mostra i 4 grafici insieme
+  grid.arrange(G1, G2, G3, G4, ncol = 2)
+}
 
+# 🚀 Esempio per Bryophytes e quartile Median
+plot_taxa_quartile(BDV_recovery_filtered, "BRYOPHYTES", "Median")
 
+# Per generare tutti i grafici per ogni taxa e quartile:
+taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
+quartiles <- c("Q1", "Median", "Q3")
+
+for (taxa in taxa_list) {
+  for (quartile in quartiles) {
+    plot_taxa_quartile(BDV_recovery_filtered, taxa, quartile)
+  }
+}
 
 
 
