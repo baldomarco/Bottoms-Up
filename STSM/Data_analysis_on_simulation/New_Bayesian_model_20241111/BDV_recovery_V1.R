@@ -129,7 +129,7 @@ BDV_recovery_filtered <- BDV_recovery %>%
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "BDV_recovery.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "BDV_recovery_test.pdf"), height=8, width=12)
 
 # Bar plot of `%_above_Median_BRYOPHYTES` by management type
 P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_BRYOPHYTES`, fill = management_type)) +
@@ -159,7 +159,7 @@ grid.arrange(P1,P2, ncol=2)
 # Bryophyta
 p1 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BRYOPHYTES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Bryophyta ", #(phylum) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Bryophyta") +
   theme_minimal() +
@@ -167,7 +167,7 @@ p1 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BRY
 
 p2 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_BRYOPHYTES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Bryophyta ", #(phylum) Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Bryophyta") +
   theme_minimal() +
@@ -175,7 +175,7 @@ p2 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median
 
 p3 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BRYOPHYTES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Bryophyta (phylum) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+  labs(title = "Bryophyta ", #(phylum) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Bryophyta") +
   theme_minimal() +
@@ -185,7 +185,7 @@ p3 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BRY
 
 p4 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Lichens ", #(informal group) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Lichenes") +
   theme_minimal() +
@@ -193,7 +193,7 @@ p4 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_LIC
 
 p5 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Lichens ", #(informal group) Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Lichenes") +
   theme_minimal() +
@@ -201,7 +201,7 @@ p5 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median
 
 p6 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_LICHENS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lichens (informal group) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+  labs(title = "Lichens ", #(informal group) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Lichenes") +
   theme_minimal() +
@@ -212,7 +212,7 @@ p6 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_LIC
 
 p7 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BEETLES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Coleoptera ", #(order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Coleoptera") +
   theme_minimal() +
@@ -220,7 +220,7 @@ p7 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_BEE
 
 p8 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_BEETLES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Coleoptera ", #(order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Coleoptera") +
   theme_minimal() +
@@ -228,7 +228,7 @@ p8 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median
 
 p9 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BEETLES`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Coleoptera (order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+  labs(title = "Coleoptera ", #(order - mainly saproxylic) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Coleoptera") +
   theme_minimal() +
@@ -239,7 +239,7 @@ p9 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_BEE
 
 p10 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MACROFUNGI`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Fungi ", #(kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Macrofungi") +
   theme_minimal() +
@@ -247,7 +247,7 @@ p10 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MA
 
 p11 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_MACROFUNGI`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (main phyla) Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Fungi ", #(kingdom) - Basidiomycota / Ascomycota (main phyla) Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Macrofungi") +
   theme_minimal() +
@@ -255,7 +255,7 @@ p11 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Media
 
 p12 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MACROFUNGI`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Fungi (kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Fungi ", #(kingdom) - Basidiomycota / Ascomycota (phyla principali) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Macrofungi") +
   theme_minimal() +
@@ -265,7 +265,7 @@ p12 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MA
 
 p13 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MOTHS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lepidoptera (order - only moths) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
+  labs(title = "Lepidoptera", #(order - only moths) Above Old-Growth Forest Sp. Richness Q1 by Management Type",
        x = "Management Type",
        y = "% Above Q1 Moths") +
   theme_minimal() +
@@ -273,7 +273,7 @@ p13 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q1_MO
 
 p14 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Median_MOTHS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lepidoptera (order - only moths) Above Above Old-Growth Forest Sp. Richness Median by Management Type",
+  labs(title = "Lepidoptera", #(order - only moths) Above Above Old-Growth Forest Sp. Richness Median by Management Type",
        x = "Management Type",
        y = "% Above Median Moths") +
   theme_minimal() +
@@ -281,7 +281,7 @@ p14 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Media
 
 p15 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MOTHS`, fill = management_type)) +
   geom_bar(stat = "identity") +
-  labs(title = "Lepidoptera (order - only moths) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
+  labs(title = "Lepidoptera", #(order - only moths) Above Old-Growth Forest Sp. Richness Q3 by Management Type",
        x = "Management Type",
        y = "% Above Q3 Moths") +
   theme_minimal() +
@@ -289,14 +289,14 @@ p15 <- ggplot(BDV_recovery_filtered, aes(x = management_type, y = `%_above_Q3_MO
 
 
 # Plot grid arrange
-grid.arrange(p3,p2,p6,p5,p9,p8,p12,p11,p15,p14, ncol=5)
+grid.arrange(p3,p2,p6,p5,p9,p8,p12,p11,p15,p14, ncol=3)
 
 # Plot the q1, q2, q3 per taxa
-grid.arrange(p1,p4,p7,p10,p13, ncol=5)
+grid.arrange(p1,p4,p7,p10,p13, ncol=2)
 
-grid.arrange(p2,p5,p8,p11,p14, ncol=5)
+grid.arrange(p2,p5,p8,p11,p14, ncol=2)
 
-grid.arrange(p3,p6,p9,p12,p15, ncol=5)
+grid.arrange(p3,p6,p9,p12,p15, ncol=2)
 
 # plot the q1 + q2 + q3 in evry taxa
 
@@ -318,6 +318,44 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
+
+# 🔹 Define fixed colors for management types
+management_colors <- c(
+  "Old-growth"   = "#1f77b4",  # Blue → Represents conservation and stability
+  "Broadl" = "#ff7f0e",  # Orange → Associated with deciduous trees
+  "Mixed"       = "#2ca02c",  # Green → Represents biodiversity and mixture
+  "Conifer"  = "#d62728",  # Red → Symbolizing evergreen dominance
+  "Transition"  = "#9467bd",  # Purple → Signifies change and transformation
+  "Clearcutted" = "#8c564b"   # Brown → Reflecting soil exposure and disturbance
+)
+
+management_colors <- c(
+  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
+  "Broadl" = "#E69F00",  # Warm golden amber → Deciduous richness  
+  "Mixed"       = "#009E73",  # Vibrant jade green → Diversity and life  
+  "Conifer"  = "#D55E00",  # Burnt orange → Evergreen dominance  
+  "Transition"  = "#CC79A7",  # Soft magenta → Transformation and change  
+  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown → Soil and disturbance  
+)
+
+management_colors <- c(
+  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
+  "Broadl" = "#D55E00",  # Warm golden amber → Deciduous richness  
+  "Mixed"       = "#E69F00",  # Vibrant jade green → Diversity and life  
+  "Conifer"  = "darkolivegreen",  # Burnt orange → Evergreen dominance  
+  "Transition"  = "#FF1493",  # Soft magenta → Transformation and change  
+  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown → Soil and disturbance  
+)
+
+management_colors <- c(
+  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
+  "Broadl" = "#FF8247",  # Warm golden amber → Deciduous richness  
+  "Mixed"       = "goldenrod1",  # Vibrant jade green → Diversity and life  
+  "Conifer"  = "darkolivegreen",  # Burnt orange → Evergreen dominance  
+  "Transition"  = "#9370DB",  # Soft magenta → Transformation and change  
+  "Clearcutted" = "navajowhite3"   # Earthy cocoa brown → Soil and disturbance  
+)
+
 # FUNZIONE per generare i grafici per un dato taxa e quartile
 plot_taxa_quartile <- function(df, taxa, quartile) {
   
@@ -338,6 +376,7 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
     labs(title = paste(taxa, quartile, "- Years Above 0"),
          x = "Management Type",
          y = "Years Above 0") +
+    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -348,23 +387,26 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
     labs(title = paste(taxa, quartile, "- % Above Threshold per Year"),
          x = "Year",
          y = paste("% Above", quartile)) +
+    scale_color_manual(values = management_colors) +  # 🔹 Fixed colors
     theme_minimal()
   
   # 3️⃣ (G3) Boxplot: Distribuzione delle % sopra la soglia per management type
   G3 <- ggplot(df_filtered, aes(x = management_type, y = !!sym(col_name), fill = management_type)) +
-    geom_boxplot() +
+    geom_boxplot(outlier.color = "black", outlier.alpha = 0.1) +
     labs(title = paste(taxa, quartile, "- Distribution of % Above"),
          x = "Management Type",
          y = paste("% Above", quartile)) +
+    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
   # 4️⃣ (G4) Boxplot per età in cui si supera la soglia
   G4 <- ggplot(df_filtered, aes(x = management_type, y = age, fill = management_type)) +
-    geom_boxplot() +
+    geom_boxplot(outlier.shape = 1, outlier.color = "gray40", outlier.size = 1, outlier.alpha = 0.3) +
     labs(title = paste(taxa, quartile, "- Age Distribution Above Threshold"),
          x = "Management Type",
          y = "Age") +
+    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -384,7 +426,6 @@ for (taxa in taxa_list) {
     plot_taxa_quartile(BDV_recovery_filtered, taxa, quartile)
   }
 }
-
 
 
 
