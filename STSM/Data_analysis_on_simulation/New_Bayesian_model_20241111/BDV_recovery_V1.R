@@ -127,16 +127,20 @@ BDV_recovery_filtered <- BDV_recovery %>%
 # You would replace the below example data with your actual data
 # data_processed <- your_data
 
+library(ggplot2)
+library(gridExtra)
+
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
 dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "BDV_recovery_test.pdf"), height=8, width=12)
+pdf(paste0(dataroot, "BDV_recovery_all.pdf"), height=9, width=16)
 
+# BRYOPHYTES--------------------------------------------------------------------
 # Bar plot of `%_above_Median_BRYOPHYTES` by management type
 P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_BRYOPHYTES`, fill = management_type)) +
   geom_bar(stat = "identity") +
   labs(title = "Bryophytes Above Median by Management Type",
        x = "Management Type",
-       y = "% Above Median Bryophytes") +
+       y = "% of Predictions Above Median Bryophytes") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -144,14 +148,110 @@ P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_BRYOPHYT
 P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_BRYOPHYTES`, color = management_type)) +
   geom_line() +
   facet_wrap(~ management_type) +
-  labs(title = "Bryophytes Above Median by Management Type and Year",
+  labs(title = "Bryophytes Predictions Above PR Sp.Richness Median by Management Type and Year",
        x = "Year",
-       y = "% Above Median Bryophytes") +
+       y = "% of Predictions Above Median Bryophytes") +
   theme_minimal()
 
 
 # Plot grid arrange
 grid.arrange(P1,P2, ncol=2)
+
+# LICHENS-----------------------------------------------------------------------
+# Bar plot of `%_above_Median_LICHENS` by management type
+P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_LICHENS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Lichens Above Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Lichens") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Faceted plot of `%_above_Median_LICHENS` by management type and year
+P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_LICHENS`, color = management_type)) +
+  geom_line() +
+  facet_wrap(~ management_type) +
+  labs(title = "Lichens Above Median by Management Type and Year",
+       x = "Year",
+       y = "% Above Median Lichens") +
+  theme_minimal()
+
+
+# Plot grid arrange
+grid.arrange(P1,P2, ncol=2)
+
+# MACROFUNGI-----------------------------------------------------------------------
+# Bar plot of `%_above_Median_MACROFUNGI` by management type
+P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_MACROFUNGI`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Macrofungi Above Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Macrofungi") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Faceted plot of `%_above_Median_MACROFUNGI` by management type and year
+P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_MACROFUNGI`, color = management_type)) +
+  geom_line() +
+  facet_wrap(~ management_type) +
+  labs(title = "Macrofungi Above Median by Management Type and Year",
+       x = "Year",
+       y = "% Above Median Macrofungi") +
+  theme_minimal()
+
+
+# Plot grid arrange
+grid.arrange(P1,P2, ncol=2)
+
+
+# BEETLES-----------------------------------------------------------------------
+# Bar plot of `%_above_Median_BEETLES` by management type
+P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_BEETLES`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Beetles Above Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Beetles") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Faceted plot of `%_above_Median_BEETLES` by management type and year
+P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_BEETLES`, color = management_type)) +
+  geom_line() +
+  facet_wrap(~ management_type) +
+  labs(title = "Beetles Above Median by Management Type and Year",
+       x = "Year",
+       y = "% Above Median Beetles") +
+  theme_minimal()
+
+
+# Plot grid arrange
+grid.arrange(P1,P2, ncol=2)
+
+
+# MOTHS-----------------------------------------------------------------------
+# Bar plot of `%_above_Median_BEETLES` by management type
+P1 <- ggplot(BDV_recovery, aes(x = management_type, y = `%_above_Median_MOTHS`, fill = management_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Moths Above Median by Management Type",
+       x = "Management Type",
+       y = "% Above Median Moths") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Faceted plot of `%_above_Median_BEETLES` by management type and year
+P2 <- ggplot(BDV_recovery, aes(x = year, y = `%_above_Median_MOTHS`, color = management_type)) +
+  geom_line() +
+  facet_wrap(~ management_type) +
+  labs(title = "Moths Above Median by Management Type and Year",
+       x = "Year",
+       y = "% Above Median Moths") +
+  theme_minimal()
+
+
+# Plot grid arrange
+grid.arrange(P1,P2, ncol=2)
+
+
 
 #-------------------------------------------------------------------------------
 # Bar plot of `%_above_Median_BRYOPHYTES` by management type
@@ -432,4 +532,4 @@ for (taxa in taxa_list) {
 dev.off()
 
 # write excel
-writexl::write_xlsx(BDV_recovery, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data.xlsx")
+writexl::write_xlsx(BDV_recovery, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data_all.xlsx")
