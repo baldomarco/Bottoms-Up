@@ -249,10 +249,10 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     replace(is.na(.), 0)
   
   # here I just put the proportion of number of trees
-  set.panel(3,1)
-  plot(H.BA)
-  plot(H.VOL)
-  plot(H.count)
+  #set.panel(3,1)
+  #plot(H.BA)
+  #plot(H.VOL)
+  #plot(H.count)
   
   #The higher the value of H, the higher the diversity of species in a particular community. 
   #The lower the value of H, the lower the diversity. 
@@ -287,10 +287,10 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   print(H_BA_heterogenity)
   
   # PLOT THE EARLY SPECIES PROPORTION AND THE SHANNON EQUITABILITY INDEX
-  set.panel(3,1)
-  plot(SEI)
-  plot(esp$year,esp$BA)
-  plot(H_BA_heterogenity$year, H_BA_heterogenity$shannon_ba_heterog)
+  #set.panel(3,1)
+  #plot(SEI)
+  #plot(esp$year,esp$BA)
+  #plot(H_BA_heterogenity$year, H_BA_heterogenity$shannon_ba_heterog)
   
   
   
@@ -834,7 +834,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   Bayesian_BDV_model_V3 <-(Bayesian_BDV_model_V3 %>% mutate(run=case))
   Bayesian_BDV_model_V3_multi <- rbind(Bayesian_BDV_model_V3_multi, Bayesian_BDV_model_V3)
   
-  # CREATE THE VARIABLES NEEDED FOR PLOT THE BAYESIAN FUNCTION
+  # CREATE THE VARIABLES NEEDED FOR PLOT THE BAYESIAN FUNCTION 1000 FITTING FUNCTIONS
   bayesian_results <-(bayesian_results %>% mutate(run=case))
   bayesian_results_all <- rbind(bayesian_results_all, bayesian_results)
   
@@ -859,6 +859,30 @@ str(Bayesian_BDV_model_V3_multi)
 
 # write excel
 # writexl::write_xlsx(Bayesian_BDV_model_V3_multi, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Plot_BDV_simul_test/Bayesian_BDV_model_V3_L6_site.xlsx")
+
+#  TO SAVE THE DATAFRAME AND GET USED FASTER FOR NEXT TIME
+# SAVE SIGLE OBJECT
+saveRDS(Bayesian_BDV_model_V3_multi, file.path(dataroot, "Bayesian_BDV_model_V3_multi.rds")) # ARIABLES NEEDED IN THE BDV STUDY - Bayesian_BDV_model_bryophytes_V2
+saveRDS(bayesian_results_all, file.path(dataroot, "bayesian_results_all.rds")) # VARIABLES NEEDED FOR PLOT THE BAYESIAN FUNCTION 1000 FITTING FUNCTIONS
+saveRDS(summary_bayesian_results, file.path(dataroot, "summary_bayesian_results.rds")) # VARIABLES FOR SUMMARY THE BAYESIAN FUNCTION
+saveRDS(plot_variables_all, file.path(dataroot, "plot_variables_all.rds")) # VARIABLES NEEDED IN THE BDV STUDY
+
+# READ IT BACK
+big_df <- readRDS(file.path(dataroot, "Bayesian_BDV_model_V3_multi.rds"))
+
+# COMPRESS IT FURTHER FOR SENDING
+saveRDS(big_df, "Bayesian_BDV_model_V3_multi_compressed.rds", compress = TRUE)
+
+
+# IN CASE OF MULTIPLE OBJECTS
+save(Bayesian_BDV_model_V3_multi, 
+     bayesian_results_all, 
+     summary_bayesian_results, 
+     plot_variables_all, 
+     file = file.path(dataroot, "BDV_data.RData"))
+
+# READ IT BACK
+load("BDV_data.RData")
 
 #--------------------------------------------------------------
 # Start with plots
@@ -925,11 +949,17 @@ M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","f
 #-------------------------------------------------------------------------------
 # PLOT LANDSCAPE VOLUME PLOT FOR CASES (GEOM AREA)
 
-g1 <- ggplot(lnd_scen, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
+# Filter rows where 'run' contains 'L4'
+#lnd_scen_L4 <- subset(lnd_scen, grepl("L4", run))
+
+# FILTER FOR THE FIRST 350 YEARS
+lnd_scen_filtered <- lnd_scen %>% filter(year >= 0 & year <= 350)
+
+g1 <- ggplot(lnd_scen_filtered, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=10)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   #ylim(0,1200)+

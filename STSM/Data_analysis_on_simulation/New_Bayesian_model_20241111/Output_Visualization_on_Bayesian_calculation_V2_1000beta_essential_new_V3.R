@@ -15,14 +15,14 @@ species_columns <- c("Epiphytic / epixilic bryophytes (0.212)",
                      "Lichens (0.137)", 
                      "Macrofungi (2.118)", 
                      "Non-flying beetles (0.053)", 
-                     "Moths")
+                     "Moths (0.566)")
 
 # Calculate the medians
 median_species_richness <- BDV_PR %>%
   select(all_of(species_columns)) %>%
   summarise(across(everything(), median, na.rm = TRUE))
 
-median_species_richness)
+median_species_richness
 
 
 ################################################################################

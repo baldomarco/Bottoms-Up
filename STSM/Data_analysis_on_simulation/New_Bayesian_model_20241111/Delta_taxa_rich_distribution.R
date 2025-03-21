@@ -532,7 +532,7 @@ ggplot(long_data, aes(x = plotID, y = value, fill = percentile)) +
 # Box plot
 ggplot(long_data, aes(x = plotID, y = value, fill = percentile)) +
   geom_boxplot(width = 0.1, color = "black", alpha = 0.5) +
-  facet_wrap(~ taxa, scales = "free_y", , ncol=1) +
+  facet_wrap(~ taxa, scales = "free_y", ncol=1) +
   scale_fill_manual(values = c("2.5" = "lightblue", "50" = "lightgreen", "97.5" = "lightcoral")) +
   theme_minimal() +
   labs(title = "Distribuzione dei Valori per Taxa e PlotID (Box Plot)",
