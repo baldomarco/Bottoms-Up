@@ -1,0 +1,96 @@
+---
+title: "Indice di Probabilità Relativo"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+## Formula per l'indice di probabilità relativo
+
+L'indice di probabilità relativo per ogni categoria di foresta si basa sul calcolo della percentuale di anni in cui un determinato plot supera la soglia, ponderato per il numero di plot presenti in ogni categoria di foresta.
+
+Definiamo i seguenti parametri:
+- **\( X_{ij} \)**: Il valore percentuale della previsione per l'anno \( j \) e il plot \( i \).
+- **\( T \)**: La soglia predefinita (ad esempio, 50% o 0.5).
+- **\( P_{ij} \)**: Un indicatore binario che definisce se la percentuale \( X_{ij} \) supera la soglia. Quindi:
+
+\[
+P_{ij} = \begin{cases} 
+1 & \text{se } X_{ij} > T \\
+0 & \text{se } X_{ij} \leq T
+\end{cases}
+\]
+
+Dove \( P_{ij} \) è 1 quando la percentuale \( X_{ij} \) supera la soglia, e 0 quando non la supera.
+
+---
+
+### Passo 1: Percentuale di anni in cui ogni plot supera la soglia
+
+Per ogni **plot** \( i \), calcoliamo la percentuale di anni in cui il plot supera la soglia. Questo si fa sommando gli indicatori \( P_{ij} \) (cioè quante volte il plot ha superato la soglia) e dividendo per il numero di anni distinti \( Y_i \) per quel plot:
+
+\[
+\text{percentuale}_{i} = \frac{1}{Y_i} \sum_{j=1}^{Y_i} P_{ij}
+\]
+
+Questa formula ci dà la frazione di anni in cui il plot \( i \) ha superato la soglia.
+
+---
+
+### Passo 2: Media delle percentuali per categoria
+
+Una volta che abbiamo calcolato la percentuale di anni per ogni plot, vogliamo aggregare queste informazioni per la categoria di foresta. Per fare ciò, calcoliamo la media delle percentuali sopra la soglia per tutti i plot in una determinata categoria di foresta. Se **\( N_{cat} \)** è il numero totale di plot in una categoria, allora la probabilità media di superamento della soglia per la categoria di foresta è:
+
+\[
+\text{probabilità media}_{cat} = \frac{1}{N_{cat}} \sum_{i=1}^{N_{cat}} \text{percentuale}_{i}
+\]
+
+Dove \( \text{percentuale}_{i} \) è la frazione di anni in cui il plot \( i \) ha superato la soglia.
+
+---
+
+### Passo 3: Normalizzazione della probabilità
+
+Per rendere il nostro indice relativo e comparabile tra le categorie, dobbiamo normalizzare la probabilità media di ogni categoria. Questo significa che dobbiamo dividere la probabilità media di superamento della soglia per la somma totale delle probabilità medie di tutte le categorie. Se **\( S_{total} \)** è la somma di tutte le probabilità medie delle categorie, la probabilità normalizzata di una categoria **\( cat \)** è:
+
+\[
+\text{probabilità normalizzata}_{cat} = \frac{\text{probabilità media}_{cat}}{S_{total}}
+\]
+
+Dove **\( S_{total} \)** è la somma delle probabilità medie per tutte le categorie:
+
+\[
+S_{total} = \sum_{cat=1}^{N_{categories}} \text{probabilità media}_{cat}
+\]
+
+---
+
+### Riassunto delle formule
+
+1. **Percentuale di anni in cui il plot supera la soglia**:
+   
+   \[
+   \text{percentuale}_{i} = \frac{1}{Y_i} \sum_{j=1}^{Y_i} P_{ij}
+   \]
+
+2. **Probabilità media di superamento per categoria**:
+
+   \[
+   \text{probabilità media}_{cat} = \frac{1}{N_{cat}} \sum_{i=1}^{N_{cat}} \text{percentuale}_{i}
+   \]
+
+3. **Probabilità normalizzata per categoria**:
+
+   \[
+   \text{probabilità normalizzata}_{cat} = \frac{\text{probabilità media}_{cat}}{S_{total}}
+   \]
+
+---
+
+**Dove:**
+- \( Y_i \) è il numero di anni distinti per il plot \( i \),
+- \( P_{ij} \) è l'indicatore binario che ci dice se la percentuale \( X_{ij} \) per l'anno \( j \) del plot \( i \) supera la soglia,
+- \( N_{cat} \) è il numero di plot per categoria,
+- \( S_{total} \) è la somma delle probabilità medie di tutte le categorie.
+
