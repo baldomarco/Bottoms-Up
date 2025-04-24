@@ -1357,18 +1357,9 @@ obs_sim_data <- Observed_vs_Simulated %>%
 
 saveRDS(obs_sim_data, file.path(dataroot, "obs_sim_data_v2.rds")) 
 
-
-
-
-
 #-------------------------------------------------------------------------------
-# SECOND SECTION ON THE OBSERVATION STATISTICS
-#-------------------------------------------------------------------------------
+
 # NORMAL PLOTS WITHOUT SAVING
-
-
-
-
 
 # --- CREATE BOXPLOTS FOR SPECIES RICHNESS --- #
 
