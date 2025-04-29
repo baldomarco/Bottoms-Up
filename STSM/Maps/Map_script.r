@@ -11,6 +11,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(raster)
 library(ggspatial)
+library(dplyr)
 
 #-------------------------------------------------------------------------------
 # IMPORT THE TABLE WITH THE COORDINATES AND OTHE PLOT INFORMATIONS AND CREATE GEOREFERNTIAL OBJECTS
@@ -74,6 +75,36 @@ dem <- raster(dem_file)
 # plot the DEM
 plot(dem)
 
+# In this DEM the background rectangular is assigned as 0. Let's make it as NA
+dem[dem <= 0] <- NA
+
+# Now can be plotted without the background
+plot(dem, colNA = "white", main = "DEM Czech Republic - Cleaned")
+
+
+#-------------------------------------------------------------------------------
+# Convert clipped DEM to a data frame suitable for ggplot2
+dem_df <- as.data.frame(rasterToPoints(dem), xy = TRUE)
+names(dem_df)[3] <- "elevation"
+
+# Color Palette
+col <- rev(terrain.colors(255))
+
+# BEST - Plotting code with labels and custom color ramp
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer with custom color scale
+  scale_fill_gradientn(colors = col, na.value =  "white") +  # Use custom color ramp for elevation
+  #geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
+  #geom_text(data = bdv_plot_sf, aes(label = site, x = st_coordinates(geometry)[, "X"], y = st_coordinates(geometry)[, "Y"]), size = 3, nudge_y = 0.002) +  # Add labels for sites
+  geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots without specifying colors
+  theme_minimal() +
+  labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
+  theme(legend.position = "right")
+
+
+
+#-------------------------------------------------------------------------------
+# DOWNSCALE THE DEM RESOLUTION FOR A MATTER OF SIZE WHEN PLOTTING
 #-------------------------------------------------------------------------------
 # Downsample DEM data to reduce resolution (factor of 10 as an example)
 dem_downsampled <- aggregate(dem, fact = 2, fun = mean)
@@ -82,18 +113,33 @@ dem_downsampled <- aggregate(dem, fact = 2, fun = mean)
 czech_republic_raster <- st_transform(czech_republic, crs = crs(dem_downsampled))
 
 # Create a mask of the DEM with the Czech Republic boundaries
-dem_clipped <- mask(dem_downsampled, czech_republic)
+dem_clipped <- mask(dem_downsampled, czech_republic_raster)
 
 # Convert clipped DEM to a data frame suitable for ggplot2
 dem_df <- as.data.frame(rasterToPoints(dem_clipped), xy = TRUE)
 
-# Convert DEM to a format suitable for ggplot2
-# dem_df <- as.data.frame(rasterToPoints(dem_downsampled), xy = TRUE)
+names(dem_df)[3] <- "elevation"
+
+
+# Color Palette
+col <- rev(terrain.colors(255))
+
+# BEST - Plotting code with labels and custom color ramp
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer with custom color scale
+  scale_fill_gradientn(colors = col, na.value = "white") +  # Use custom color ramp for elevation
+  #geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
+  #geom_text(data = bdv_plot_sf, aes(label = site, x = st_coordinates(geometry)[, "X"], y = st_coordinates(geometry)[, "Y"]), size = 3, nudge_y = 0.002) +  # Add labels for sites
+  geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots without specifying colors
+  theme_minimal() +
+  labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
+  theme(legend.position = "right")
+
 
 # Plot using ggplot2 with a DEM layer
 ggplot() +
   geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer
-  scale_fill_gradient(low = "gray90", high = "gray10", na.value = NA) +  # Grayscale
+  scale_fill_gradient(low = "gray90", high = "gray10", na.value = "white") +  # Grayscale
   #geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
   geom_sf(data = bdv_plot_sf, aes(color = site)) +  # Plot the BDV plots
   theme_minimal() +
@@ -102,16 +148,40 @@ ggplot() +
 
 
 # Other plot with different legend position and dem map color ramp palette for the elevation gradient
-# Plot using ggplot2
+# Plot using ggplot2 - viridis color ramp for the dem
 ggplot() +
   geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer
-  scale_fill_viridis_c(na.value = NA) +  # Default color scale for raster images
+  scale_fill_viridis_c(na.value =  "white") +  # Default color scale for raster images
   geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
   geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots
   theme_minimal() +
   labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
   theme(legend.position = "right")
 
+
+#-------------------------------------------------------------------------------
+# PLOT FOR HAVING THE SHAPE FOR THE UNIQUE SITE
+
+# Create a unique value
+bdv_plot_sf_unique <- bdv_plot_sf %>%
+  group_by(site) %>%
+  slice(1) %>%
+  ungroup()
+
+# Now plot with different shapes for each site and white for NAs
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer
+  scale_fill_gradientn(colors = col, na.value = "white") +  # Custom color ramp with NA as white
+  geom_sf(data = bdv_plot_sf_unique, aes(color = site, shape = site), size = 3, stroke = 1.5) +  # Add shapes for sites
+  scale_shape_manual(values = 1:length(unique(bdv_plot_sf_unique$site))) +  # Assign a different shape per site
+  theme_minimal() +
+  labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
+  theme(legend.position = "right")
+
+
+#-------------------------------------------------------------------------------
+# TEST COLORS PALETTES
+#-------------------------------------------------------------------------------
 # Define specific colors for each site
 site_colors <- c("CZ_JH1_L1" = "red", 
                  "CZ_JH2_L6" = "blue", 
@@ -131,7 +201,7 @@ ggplot() +
   labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
   theme(legend.position = "right")
 
-# Other version probably the most meaningfull
+# Other version probably the most meaningful - Blue color scale
 ggplot() +
   geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer with default colors
   geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots without specifying colors
@@ -166,17 +236,5 @@ ggplot() +
   geom_sf(data = bdv_plot_sf, color = "black", size = 2) +  # Plot the BDV plots in black
   theme_minimal() +
   labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Plots", fill = "Elevation") +
-  theme(legend.position = "right")
-
-
-# Using viridis elevation gradient
-ggplot() +
-  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +  # Overlay DEM layer
-  scale_fill_viridis_d(na.value = NA) +  # Default color scale for raster images
-  geom_sf(data = czech_republic, fill = NA, color = "black") +  # Plot the Czech Republic borders
-  geom_sf(data = bdv_plot_sf, aes(color = site), size = 2) +  # Plot the BDV plots
-  #geom_text(data = bdv_plot_sf, aes(label = site, x = st_coordinates(geometry)[, "X"], y = st_coordinates(geometry)[, "Y"]), size = 3, nudge_y = 0.002) +  # Add labels for sites
-  theme_minimal() +
-  labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
   theme(legend.position = "right")
 

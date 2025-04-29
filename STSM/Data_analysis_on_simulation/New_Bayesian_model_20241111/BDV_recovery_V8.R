@@ -1172,7 +1172,9 @@ write.csv(stats_summary, "BDV_Plausibility_Test_Stats_V6.csv", row.names = FALSE
 #--------
 dev.off()
 
+#-------------------------------------------------------------------------------
 #################  Here the section on the differences among the forest categories and observation - simulations
+#-------------------------------------------------------------------------------
 
 # 1. Filter and calculate summary statistics for observed data
 observed_data <- Observed_vs_Simulated %>%
