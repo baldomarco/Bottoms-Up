@@ -86,7 +86,7 @@ unique(bayesian_results_all$forest_cat)
 
 #-------------------------------------------------------------------------------
 # NOW THE MAIN PART OF THE WORK - EVALUATE THE PERCENTAGE (PROBABILITY) THAT OUR
-# SAMPLING PLOTS (FORESTS) REACH OT EXCEED THE OLD GROWTH FOREST TAXA SPECIES RICHNESS
+# SAMPLING PLOTS (FORESTS) REACH O EXCEED THE OLD GROWTH FOREST TAXA SPECIES RICHNESS
 #-------------------------------------------------------------------------------
 
 # Define quartiles from Old-Growth Forests

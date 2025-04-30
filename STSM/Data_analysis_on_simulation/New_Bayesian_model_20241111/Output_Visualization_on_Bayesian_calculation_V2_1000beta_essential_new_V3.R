@@ -11,6 +11,7 @@ library(dplyr)
 # Filter management type Protected area
 BDV_PR <- BDV_predictors %>% filter(management_type == "PR")
 
+# Remember to change the excel file for BDV_predictors should be the V20
 species_columns <- c("Epiphytic / epixilic bryophytes (0.212)", 
                      "Lichens (0.137)", 
                      "Macrofungi (2.118)", 

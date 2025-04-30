@@ -862,7 +862,7 @@ str(Bayesian_BDV_model_V3_multi)
 
 #  TO SAVE THE DATAFRAME AND GET USED FASTER FOR NEXT TIME
 # SAVE SIGLE OBJECT
-saveRDS(Bayesian_BDV_model_V3_multi, file.path(dataroot, "Bayesian_BDV_model_V3_multi.rds")) # ARIABLES NEEDED IN THE BDV STUDY - Bayesian_BDV_model_bryophytes_V2
+saveRDS(Bayesian_BDV_model_V3_multi, file.path(dataroot, "Bayesian_BDV_model_V3_multi.rds")) # VARIABLES NEEDED IN THE BDV STUDY - Bayesian_BDV_model_bryophytes_V2
 saveRDS(bayesian_results_all, file.path(dataroot, "bayesian_results_all.rds")) # VARIABLES NEEDED FOR PLOT THE BAYESIAN FUNCTION 1000 FITTING FUNCTIONS
 saveRDS(summary_bayesian_results, file.path(dataroot, "summary_bayesian_results.rds")) # VARIABLES FOR SUMMARY THE BAYESIAN FUNCTION
 saveRDS(plot_variables_all, file.path(dataroot, "plot_variables_all.rds")) # VARIABLES NEEDED IN THE BDV STUDY
@@ -940,7 +940,7 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 
 M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
   geom_bar(position="stack", stat="identity")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=3)+
   labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
   scale_fill_manual(values=c("#4897D8","#FFDB5C","#FA6E59","#B3C100"))+               #"#B7B8B6","#34675C","#B3C100" grey and greens
   theme_bw()
@@ -958,8 +958,8 @@ lnd_scen_filtered <- lnd_scen %>% filter(year >= 0 & year <= 350)
 g1 <- ggplot(lnd_scen_filtered, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
-  ggtitle("Landscape Volume by species")+
-  facet_wrap(~run, ncol=10)+
+  ggtitle("Landscape volume by species")+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   #ylim(0,1200)+
@@ -1152,11 +1152,11 @@ g7 <- ggplot(abeStand_scen, aes(x=year, y=age))+
 #-------------------------------------------------------------------------------
 # Total Carbon in Kg (total_carbon_kg	double	total carbon in living biomass (aboveground compartments and roots) of all living trees (including regeneration layer) (kg/ha))
 
-g8 <- ggplot(lnd_scen, aes(year, total_carbon_kg, fill=factor(species, levels=new_order_gg)))+
+g8 <- ggplot(lnd_scen_filtered, aes(year, total_carbon_kg, fill=factor(species, levels=new_order_gg)))+
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
   ggtitle("Total Carbon in Living Biomass")+
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=4)+
   labs(x = "Year",y="[kg/ha]",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1344,7 +1344,7 @@ png(paste0(dataroot, "3_20231205_Fungi_RedList_BDV_mng_plot_L1_10_300.png"), hei
 # TOTAL CARBON IN THE PLOT (LIVING + DEADWOOD + LITTER + SOIL)
 totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   ggtitle("Total Plot Carbon [living trees - deadwood - litter - soil]")+
   labs(x = "Year",y="Total C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1353,7 +1353,7 @@ totalC_kgha_iland <- ggplot(plot_variables_all, aes(x=year, y=totalC_kgha_iland)
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS + DOWNED DEADWOOD)
 total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
   geom_line() +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   ggtitle("Total Deadwood C in iLand standing and lying [kg/ha]")+
   labs(x = "Year",y="Deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1362,7 +1362,7 @@ total_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_DW_C_kgha))+
 # TOTAL DEADWOOD CARBON (SNAGS + OTHERSNAGS)
 total_AG_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_kgha))+
   geom_line() +
-  facet_wrap(~run, ncol=6)+
+  facet_wrap(~run, ncol=8)+
   ggtitle("Aboveground Deadwood C in iLand [kg/ha]")+
   labs(x = "Year",y="Aboveground deadwood C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1371,7 +1371,7 @@ total_AG_DW_C_kgha <- ggplot(plot_variables_all, aes(x=year, y=total_AG_DW_C_kgh
 # TOTAL STANDING DEADWOOD CARBON (SNAGS ONLY)
 standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
   geom_line(color = "#2e2e2e") +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   ggtitle("snag_C [iLand snag_C fun] = standing_DW_C")+
   labs(x = "Year",y="snag_C [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1380,7 +1380,7 @@ standing_DW_C <- ggplot(plot_variables_all, aes(x=year, y=standing_DW_C))+
 # Deadwood Carbon
 deadwood <- ggplot(Bayesian_BDV_model_V3_multi, aes(x=year, y=deadwood))+
   geom_line(color = "#2e2e2e") +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   ggtitle("Deadwood [kg/ha]")+
   labs(x = "Year",y="Deadwood [kg/ha]")+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -1391,7 +1391,7 @@ deadwood <- ggplot(Bayesian_BDV_model_V3_multi, aes(x=year, y=deadwood))+
 age_plot <- ggplot(Bayesian_BDV_model_V3_multi, aes(x=year, y=age))+
   geom_line(color = "red") +
   ggtitle("Avarage Age of the 20% oldest Tree")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   labs(x = "Year",y="Age [years]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1402,7 +1402,7 @@ lai_plot <- ggplot(lnd_scen, aes(year, LAI, fill=factor(species, levels=new_orde
   geom_area() +
   scale_fill_manual(values=cols[new_order_gg], guide=FALSE)+
   ggtitle("LAI index by species")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   labs(x = "Year",y="LAI index",fill = "Species")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1412,7 +1412,7 @@ lai_plot <- ggplot(lnd_scen, aes(year, LAI, fill=factor(species, levels=new_orde
 ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
   geom_line(color = "#311432") +
   ggtitle("BA BROADLEAVE SP")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   labs(x = "Year",y="BA BROADLEAVE SP [m2]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1422,7 +1422,7 @@ ba_broadl <- ggplot(plot_variables_all, aes(x=year, y=ba_broadl))+
 tree_10_40 <- ggplot(plot_variables_all, aes(x = year, y = tree_10_40)) +
   geom_line(color = "#4897D8") +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm included") +
-  facet_wrap(~run, ncol = 2) +
+  facet_wrap(~run, ncol = 8) +
   labs(x = "Year", y = "Trees with dbh 10cm to 40cm [No]") +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_bw()
@@ -1431,7 +1431,7 @@ tree_10_40 <- ggplot(plot_variables_all, aes(x = year, y = tree_10_40)) +
 tree_10_40_2 <- ggplot(plot_variables_all, aes(x = year, y = I(tree_10_40^2))) +
   geom_line(color = "#4897D8") +
   ggtitle("NUMBER OF TREES WITH DBH BETWEEN 10cm AND 40cm squared") +
-  facet_wrap(~run, ncol = 2) +
+  facet_wrap(~run, ncol = 8) +
   labs(x = "Year", y = "Trees with dbh 10cm to 40cm [x^2]") +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_bw()
@@ -1442,7 +1442,7 @@ tree_10_40_2 <- ggplot(plot_variables_all, aes(x = year, y = I(tree_10_40^2))) +
 broadl_40 <- ggplot(plot_variables_all, aes(x=year, y=broadl_40))+
   geom_line(color ="#006600") +
   ggtitle("NUMBER OF BROADLEAVE TREES WITH DBH > 40cm")+
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   labs(x = "Year",y="Broadleave > 40cm [No]")+
   theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
@@ -1560,10 +1560,10 @@ P1 <-ggplot(Bayesian_BDV_model_V3_multi, aes(year, ymin = BRYO_PRED_RICH_2.5, ym
   geom_ribbon(  alpha=0.3)+
   geom_line(aes(year,BRYO_PRED_RICH_50, color=run), lwd=0.9)+
   facet_grid(~run, scales = "free", switch="y")+
-  facet_wrap(~run, scales = "free", ncol = 2) +
+  facet_wrap(~run, scales = "free", ncol = 4) +
   ylab("")+
-  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
-  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
   theme_bw()+
   theme(panel.background = element_blank(),
         strip.background = element_blank(),
@@ -1591,7 +1591,7 @@ P1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BRYO_PRED_RICH_2.
   geom_line(aes(y = BRYO_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
-  facet_wrap(~run, scales = "free", ncol = 2) +
+  facet_wrap(~run, scales = "fixed", ncol = 8) +
   
   # Customize the theme of the plot
   theme_bw() +
@@ -1621,8 +1621,8 @@ P1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = BRYO_PRED_RICH_2.
   ylab("Species Richness Prediction") +
   
   # Set colors manually for fill and color
-  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
-  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
   
   # Set y-axis limits
   coord_cartesian(ylim = c(NA, NA))
@@ -1652,7 +1652,7 @@ P2 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = LICHEN_PRED_RICH_
   geom_line(aes(y = LICHEN_PRED_RICH_97.5, color = run), lwd = 0.3) +  # Change line type for max
   
   # Facet the plot based on the 'run' variable in a 2x2 matrix
-  facet_wrap(~run, scales = "free", ncol = 2) +
+  facet_wrap(~run, scales = "fixed", ncol = 2) +
   
   # Customize the theme of the plot
   theme_bw() +
@@ -1682,8 +1682,8 @@ P2 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = LICHEN_PRED_RICH_
   ylab("") +
   
   # Set colors manually for fill and color
-  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
-  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
   
   # Set y-axis limits
   coord_cartesian(ylim = c(-10, 80))
@@ -1931,8 +1931,8 @@ P6 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year, ymin = MOTHS_PRED_RICH_2
   ylab("Species Richness Prediction") +
   
   # Set colors manually for fill and color
-  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
-  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
+  scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
   
   # Set y-axis limits
   coord_cartesian(ylim = c(0, NA))
@@ -2458,7 +2458,7 @@ b1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(year, BRYO_PRED_RICH_50_beta1)) +
   ggtitle("Isolated [Beta 1 * AGE] BRYOPHYTES Time Series") +
   labs(x =  "Year", y = " Beta 1 * Age") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   theme_bw()
 
 b2 <- ggplot(Bayesian_BDV_model_V3_multi, aes(year, BRYO_PRED_RICH_50_beta2)) +
@@ -2466,7 +2466,7 @@ b2 <- ggplot(Bayesian_BDV_model_V3_multi, aes(year, BRYO_PRED_RICH_50_beta2)) +
   ggtitle("Isolated [Beta 2 * Deaewood Volume] BRYOPHYTES Time Series") +
   labs(x =  "Year", y = " Beta 2 * DW Vol") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  facet_wrap(~run, ncol=2)+
+  facet_wrap(~run, ncol=8)+
   theme_bw()
 
 
@@ -2478,13 +2478,13 @@ grid.arrange(b1,b2,P1, ncol=1)
 B1 <- ggplot(Bayesian_BDV_model_V3_multi, aes(x = year)) +
   geom_line(aes(y = BRYO_PRED_RICH_50_beta1, color = "Beta 1 age"), size = 0.5) +
   geom_line(aes(y = BRYO_PRED_RICH_50_beta2, color = "Beta 2 deadwood"), size = 0.5) +
-  geom_line(aes(y = BRYO_PRED_RICH_50, color = "Y"), size = 0.5) +
+  geom_line(aes(y = BRYO_PRED_RICH_50, color = "Richness"), size = 0.5) +
   labs(title = "Time Series of Bryophytes in function of Beta 1 and Beta 2",
        x = "Year",
-       y = "Values") +
+       y = "Predicted Richness") +
   theme_minimal() +
-  facet_wrap(~run, ncol=2)+
-  scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Y" = "chocolate3")) +
+  facet_wrap(~run, ncol=8)+
+  scale_color_manual(values = c("Beta 1 age" = "blue", "Beta 2 deadwood" = "black", "Richness" = "chocolate3")) +
   scale_x_continuous(breaks = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40),
                      labels = seq(min(Bayesian_BDV_model_V3_multi$year), max(Bayesian_BDV_model_V3_multi$year), by = 40))+
   theme(
