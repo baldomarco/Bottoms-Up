@@ -133,10 +133,10 @@ BDV_recovery_filtered <- BDV_recovery %>%
 
 #-------------------------------------------------------------------------------
 # Let's remove the zero
-#BDV_recovery_filtered <- BDV_recovery %>% filter(year >= 0 & year <= 267)
+#BDV_recovery_filtered <- BDV_recovery %>% filter(year >= 0 & year <= 266)
 
 BDV_recovery_filtered <- BDV_recovery_filtered %>%
-  filter(year >= 0 & year <= 300 & forest_cat %in% c("Native Broadleaves"  ,  "Non-Native Coniferous")) # "Old-Growth"
+  filter(year >= 0 & year <= 266 & forest_cat %in% c("Native Broadleaves"  ,  "Non-Native Coniferous")) # "Old-Growth"
 
 #-------------------------------------------------------------------------------
 # Example Data (assuming the data is already loaded as 'data_processed')
@@ -147,8 +147,16 @@ library(ggplot2)
 library(gridExtra)
 
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "BDV_recovery_all_V14.pdf"), height=9, width=16)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+pdf(paste0(dataroot, "BDV_recovery_all_V17.pdf"), height=9, width=16)
+
+
+# Assign the color to the forest categories bar charts
+management_colors <- c(
+  "Old-Growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
+  "Native Broadleaves" = "#FF8247",  # Warm golden amber → Deciduous richness  
+  "Non-Native Coniferous"  = "darkolivegreen" 
+)
 
 
 # 1' graph
@@ -188,6 +196,7 @@ plot_taxa <- function(df, taxa) {
     labs(title = paste(taxa, "- Normalized Probability of Exceeding", threshold_label),
          x = "Forest Category",
          y = paste("Normalized Probability of Exceeding", threshold_label)) +
+    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +  # Formattare come %
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -266,6 +275,7 @@ plot_taxa_thresholds <- function(df, taxa) {
       labs(title = paste(taxa, "-", threshold, "Normalized Probability of Exceeding Threshold"),
            x = "Forest Category",
            y = paste("% Above", threshold, "Normalized")) +
+      scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
       scale_y_continuous(labels = percent_format(accuracy = 1)) +
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -353,6 +363,7 @@ G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_thresho
   labs(title = "Normalized Probability of Exceeding Threshold (All Taxa)", 
        x = "Forest Category", 
        y = "Normalized Probability of Exceeding") +
+  scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -443,6 +454,7 @@ G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_thresho
   labs(title = "Normalized Probability of Exceeding Threshold (All Taxa)", 
        x = "Forest Category", 
        y = "Normalized Probability of Exceeding") +
+  scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
@@ -752,7 +764,7 @@ plot_single_type_all_taxa(BDV_recovery_filtered, "age")    # Age Distribution
 dev.off()
 
 # write excel
-writexl::write_xlsx(BDV_recovery_filtered, "C:/iLand/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data_all_V13_no_old_growth.xlsx")
+writexl::write_xlsx(BDV_recovery_filtered, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data_all_V17_no_old_growth.xlsx")
 
 
 ## SECOND PART OF THE ANALYSIS WHERE WE CALCULATE THE YEAR OF BDV RECOVERY - 10% OF THE VALUES >= OF THE Q1,Q2 OR Q3 THRESHOLD.
@@ -766,11 +778,11 @@ library(stringr)
 
 # ANALYSIS
 #------------------
-BDV_recovery_data <- read_xlsx("C:/iLand/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data_all_V13_no_old_growth.xlsx")
+BDV_recovery_data <- read_xlsx("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_data_all_V17_no_old_growth.xlsx")
 BDV_recovery_data
 
 #------------------
-# 1️⃣ Initial recovery stage: first row (year == 0) per plot
+# 1️⃣ Initial recovery stage: first row (year == 0) per plo. To select the forest age at year 0 per plot.
 initial_recovery_stage <- BDV_recovery_data %>%
   filter(year == 0) %>%
   group_by(plotID) %>%
@@ -786,13 +798,14 @@ recovery_years <- BDV_recovery_data %>%
     forest_cat = first(forest_cat),
     age = first(age),
     across(starts_with("%_above_"), ~ {
-      recovery_year <- year[which(. > 0)[1]]  # Find first year OF RECOVERY. HERE JUST MAJOR OF 0
+      recovery_year <- year[which(. > 0)[1]]  # Find first year OF RECOVERY. HERE JUST MAJOR EQUAL OF 0
       ifelse(is.na(recovery_year), NA, recovery_year)  # Assign NA if not found
     }),
     .groups = "drop"
   )
 
 recovery_years
+
 #------------------
 
 recovery_long <- recovery_years %>%
@@ -807,8 +820,8 @@ recovery_long <- recovery_years %>%
 
 #--------------------
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
-pdf(paste0(dataroot, "BDV_recovery_V8_no_old_growth.pdf"), height=9, width=16)
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+pdf(paste0(dataroot, "BDV_recovery_V16_no_old_growth.pdf"), height=9, width=16)
 
 #--------------------
 management_colors <- c(
@@ -1036,10 +1049,10 @@ print(combined_taxa_plot)
 
 # 12' graph
 #-------------------------------------------------------------------------------
-
+# PLAUSIBILITY TEST
 #--------------------
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
-dataroot <- "C:/iLand/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/"
 pdf(paste0(dataroot, "BDV_Plausibility_Test_v5.pdf"), height=9, width=16)
 
 
