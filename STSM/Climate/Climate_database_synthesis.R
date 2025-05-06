@@ -159,3 +159,326 @@ for (sheet_name in names(dfs)) {
 # Close the database connection
 dbDisconnect(con)
 
+
+# THE END-----------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+
+#                  SECTION ON TABLE CREATION
+
+#-------------------------------------------------------------------------------
+# Create a table of statistics for plots and sites
+
+library(DBI)
+library(RSQLite)
+
+# 1st STEP----------------------------------------------------------------------
+
+# Import database
+db_path <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/db_clim_plot_prova.sqlite"
+
+# Connect to the SQLite database
+con <- dbConnect(RSQLite::SQLite(), db_path)
+
+# Get a list of all table names
+table_names <- dbListTables(con)
+
+# Create a named list to store all tables
+tables_list <- list()
+
+# Loop through each table and read it into R
+for (name in table_names) {
+  tables_list[[name]] <- dbReadTable(con, name)
+}
+
+# Disconnect from the database
+dbDisconnect(con)
+
+# Now you can access each table using tables_list[["table_name"]]
+# Example: View the first table
+head(tables_list[[1]])
+
+# 2nd STEP----------------------------------------------------------------------
+
+# Crea una lista vuota per le tabelle modificate
+tables_with_id <- list()
+
+# Aggiungi la colonna plotID a ciascuna tabella
+for (plotID in names(tables_list)) {
+  df <- tables_list[[plotID]]
+  df$plotID <- plotID  # Aggiungi una colonna plotID
+  tables_with_id[[plotID]] <- df
+}
+
+# Combina tutte le tabelle in un unico dataframe
+climate_data_all <- do.call(rbind, tables_with_id)
+
+# Visualizza il risultato
+head(climate_data_all)
+
+# 3rd STEP----------------------------------------------------------------------
+
+library(dplyr)
+library(stringr)
+
+# Crea consistenza nei nomi
+climate_data_all <- climate_data_all %>%
+  mutate(
+    
+    # Rimuove il prefisso iniziale
+    plotID = str_remove(plotID, "^CZ_JH1_"),
+    
+    # Estrae il site (es. L1 da L1XL1_02)
+    site = str_extract(plotID, "^L\\d"),
+    
+    # Trasforma L1XL1_02 in L1_02
+    plotID = str_replace(plotID, "^L(\\d)XL\\d_", "L\\1_")
+  )
+
+
+# Filtra solo i plotID che sono presenti in BDV_predictors
+climate_data_all <- climate_data_all %>%
+  filter(plotID %in% BDV_predictors$plotID)
+
+head(climate_data_all)
+
+# 4th STEP----------------------------------------------------------------------
+
+# Create the stats about annual temperature and precipitations
+# PERIOD 1961-1990 & 1991-2020
+
+# Add daily mean temperature first
+climate_data_all <- climate_data_all %>%
+  mutate(daily_mean_temp = (min_temp + max_temp) / 2)
+
+# Table for 1961–1990
+climate_summary_61_90 <- climate_data_all %>%
+  filter(year >= 1961, year <= 1990) %>%
+  group_by(plotID, site, year) %>%
+  summarise(
+    annual_mean_temp = mean(daily_mean_temp, na.rm = TRUE),
+    annual_min_temp = min(min_temp, na.rm = TRUE),
+    annual_max_temp = max(max_temp, na.rm = TRUE),
+    annual_precip = sum(prec, na.rm = TRUE),
+    annual_mean_vpd = mean(vpd, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Table for 1991–2020
+climate_summary_91_20 <- climate_data_all %>%
+  filter(year >= 1991, year <= 2020) %>%
+  group_by(plotID, site, year) %>%
+  summarise(
+    annual_mean_temp = mean(daily_mean_temp, na.rm = TRUE),
+    annual_min_temp = min(min_temp, na.rm = TRUE),
+    annual_max_temp = max(max_temp, na.rm = TRUE),
+    annual_precip = sum(prec, na.rm = TRUE),
+    annual_mean_vpd = mean(vpd, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# AGGREGATE FOR THE 30 YEAR PERIOD
+
+# Aggregate for 1961–1990
+climate_avg_61_90 <- climate_summary_61_90 %>%
+  group_by(plotID, site) %>%
+  summarise(
+    mean_annual_temp = mean(annual_mean_temp, na.rm = TRUE),
+    mean_annual_min_temp = mean(annual_min_temp, na.rm = TRUE),
+    mean_annual_max_temp = mean(annual_max_temp, na.rm = TRUE),
+    mean_annual_precip = mean(annual_precip, na.rm = TRUE),
+    mean_annual_vpd = mean(annual_mean_vpd, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Aggregate for 1991–2020
+climate_avg_91_20 <- climate_summary_91_20 %>%
+  group_by(plotID, site) %>%
+  summarise(
+    mean_annual_temp = mean(annual_mean_temp, na.rm = TRUE),
+    mean_annual_min_temp = mean(annual_min_temp, na.rm = TRUE),
+    mean_annual_max_temp = mean(annual_max_temp, na.rm = TRUE),
+    mean_annual_precip = mean(annual_precip, na.rm = TRUE),
+    mean_annual_vpd = mean(annual_mean_vpd, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# CAPTION
+# Summary of long-term climatic conditions for each forest plot (plotID) and corresponding site, computed for the periods 1961–1990 and 1991–2020. For each 30-year period, the following variables are shown: (1) mean annual air temperature (°C), calculated as the average of daily mean temperatures (i.e., the mean of daily minimum and maximum temperatures); (2) mean annual minimum temperature (°C), representing the average of the lowest daily temperatures recorded in each year; (3) mean annual maximum temperature (°C), representing the average of the highest daily temperatures recorded in each year; (4) mean annual precipitation (mm), computed as the average of annual total precipitation sums; and (5) mean annual vapor pressure deficit (kPa), averaged from daily values over each year. Values represent multi-year means over the respective 30-year periods for each plot, providing insight into site-specific climate baselines and shifts over time.
+
+
+# PER SITE AGGREGATION AND RANGE
+
+# Create site-level summaries for 1961–1990 in a table-friendly format
+climate_summary_1961_1990 <- climate_avg_61_90 %>%
+  group_by(site) %>%
+  summarise(
+    mean_annual_temp_range = paste(min(mean_annual_temp), max(mean_annual_temp), sep = "–"),
+    mean_annual_min_temp_range = paste(min(mean_annual_min_temp), max(mean_annual_min_temp), sep = "–"),
+    mean_annual_max_temp_range = paste(min(mean_annual_max_temp), max(mean_annual_max_temp), sep = "–"),
+    mean_annual_precip_range = paste(min(mean_annual_precip), max(mean_annual_precip), sep = "–"),
+    mean_annual_vpd_range = paste(min(mean_annual_vpd), max(mean_annual_vpd), sep = "–")
+  )
+
+# Create site-level summaries for 1991–2020 in a table-friendly format
+climate_summary_1991_2020 <- climate_avg_91_20 %>%
+  group_by(site) %>%
+  summarise(
+    mean_annual_temp_range = paste(min(mean_annual_temp), max(mean_annual_temp), sep = "–"),
+    mean_annual_min_temp_range = paste(min(mean_annual_min_temp), max(mean_annual_min_temp), sep = "–"),
+    mean_annual_max_temp_range = paste(min(mean_annual_max_temp), max(mean_annual_max_temp), sep = "–"),
+    mean_annual_precip_range = paste(min(mean_annual_precip), max(mean_annual_precip), sep = "–"),
+    mean_annual_vpd_range = paste(min(mean_annual_vpd), max(mean_annual_vpd), sep = "–")
+  )
+
+# Table X. Summary of site-level climate variability for the periods 1961–1990 and 1991–2020. For each forest site, the table reports the range (minimum to maximum) of five climate variables calculated across all plots belonging to that site. The variables include annual mean daily temperature (°C), computed as the average of daily means across each year and then averaged over 30 years; annual average minimum temperature (°C); annual average maximum temperature (°C); total annual precipitation (mm); and annual mean vapor pressure deficit (kPa). These values reflect the spatial heterogeneity of climate conditions within each site, offering a basis for understanding climatic influences on ecological and biodiversity dynamics over time.
+
+# write excel
+writexl::write_xlsx(climate_summary_1961_1990, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/climate_summary_1961_1990.xlsx")
+
+writexl::write_xlsx(climate_summary_1991_2020, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/climate_summary_1991_2020.xlsx")
+
+#-------------------------------------------------------------------------------
+# ==============================================================================
+
+# Let's make some graphs
+library(ggplot2)
+library(tidyr)
+
+# NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
+dataroot <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/"
+pdf(paste0(dataroot, "BDV_Climate_V1.pdf"), height=9, width=16)
+
+# Combine datasets and label period
+climate_all <- bind_rows(
+  climate_avg_61_90 %>% mutate(period = "1961-1990"),
+  climate_avg_91_20 %>% mutate(period = "1991-2020")
+)
+
+#-------------------------------------------------------------------------------
+# Scatter plot matrix (pairs) for selected variables
+library(GGally)
+
+ggpairs(climate_all,
+        columns = c("mean_annual_temp", "mean_annual_min_temp", "mean_annual_max_temp", "mean_annual_precip", "mean_annual_vpd"),
+        mapping = aes(color = site),
+        upper = list(continuous = wrap("cor", size = 3)),
+        lower = list(continuous = wrap("points", alpha = 0.5, size = 1))) +
+  theme_bw()
+
+#-------------------------------------------------------------------------------
+# Example scatter plots
+scatter_vars <- list(
+  c("mean_annual_temp", "mean_annual_vpd"),
+  c("mean_annual_temp", "mean_annual_precip"),
+  c("mean_annual_precip", "mean_annual_vpd")
+)
+
+plot_list <- lapply(scatter_vars, function(vars) {
+  ggplot(climate_all, aes_string(x = vars[1], y = vars[2], color = "period")) +
+    geom_point(alpha = 0.6) +
+    theme_bw() +
+    labs(title = paste(vars[1], "vs", vars[2]), x = vars[1], y = vars[2])
+})
+
+# Display the plots (if using RMarkdown inline)
+library(patchwork)
+wrap_plots(plot_list)
+
+
+# Separate per sites
+scatter_vars <- list(
+  c("mean_annual_temp", "mean_annual_vpd"),
+  c("mean_annual_temp", "mean_annual_precip"),
+  c("mean_annual_precip", "mean_annual_vpd")
+)
+
+plot_list <- lapply(scatter_vars, function(vars) {
+  ggplot(climate_all, aes_string(x = vars[1], y = vars[2], color = "site", shape = "period")) +
+    geom_point(alpha = 0.7, size = 2) +
+    theme_bw() +
+    labs(title = paste(vars[1], "vs", vars[2]), x = vars[1], y = vars[2])
+})
+
+wrap_plots(plot_list)
+
+
+#-------------------------------------------------------------------------------
+# Reshape data to long format
+climate_long <- climate_all %>%
+  pivot_longer(cols = starts_with("mean_"), names_to = "variable", values_to = "value")
+
+# Density plots by variable, shaded by period
+ggplot(climate_long, aes(x = value, fill = period)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~variable, scales = "free", ncol = 2) +
+  theme_bw() +
+  labs(title = "Distributions of Climate Variables by Period",
+       x = "Value", y = "Density")
+
+# Per site
+library(scales)  # for pretty_breaks()
+
+# Filter plot-level data by period
+climate_long_61_90 <- filter(climate_long, period == "1961-1990")
+climate_long_91_20 <- filter(climate_long, period == "1991-2020")
+
+# Histogram for 1961–1990
+p1 <- ggplot(climate_long_61_90, aes(x = value, fill = site)) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) +
+  facet_wrap(~variable, scales = "free", ncol = 2) +
+  scale_x_continuous(breaks = pretty_breaks(n = 8)) +
+  theme_bw() +
+  labs(title = "Histogram of Climate Variables by Site (1961–1990)",
+       x = "Value", y = "Number of Plots")
+
+# Histogram for 1991–2020
+p2 <- ggplot(climate_long_91_20, aes(x = value, fill = site)) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 30) +
+  facet_wrap(~variable, scales = "free", ncol = 2) +
+  scale_x_continuous(breaks = pretty_breaks(n = 8)) +
+  theme_bw() +
+  labs(title = "Histogram of Climate Variables by Site (1991–2020)",
+       x = "Value", y = "Number of Plots")
+
+# Show
+p1
+p2
+
+
+# Boxplot for each variable by site and period
+climate_all_long <- climate_all %>%
+  pivot_longer(cols = starts_with("mean_"), names_to = "variable", values_to = "value")
+
+ggplot(climate_all_long, aes(x = site, y = value, fill = period)) +
+  geom_boxplot(outlier.shape = NA, coef = 1.5) +  # classical Tukey boxplots
+  facet_wrap(~variable, scales = "free_y", ncol = 2) +
+  theme_bw() +
+  labs(title = "Climate Variable Distributions by Site and Period")
+
+# Prepare for ribbon plot
+ribbon_df <- bind_rows(
+  climate_avg_61_90 %>%
+    select(plotID, site, min = mean_annual_min_temp, max = mean_annual_max_temp, mean = mean_annual_temp) %>%
+    mutate(period = "1961-1990"),
+  climate_avg_91_20 %>%
+    select(plotID, site, min = mean_annual_min_temp, max = mean_annual_max_temp, mean = mean_annual_temp) %>%
+    mutate(period = "1991-2020")
+) %>%
+  group_by(site, period) %>%
+  summarise(min = mean(min), max = mean(max), mean = mean(mean), .groups = "drop") %>%
+  mutate(year = ifelse(period == "1961-1990", 1975, 2005))  # approximate midpoints
+
+# Plot with ribbon per site
+ggplot(ribbon_df, aes(x = year, group = site)) +
+  geom_ribbon(aes(ymin = min, ymax = max, fill = site), alpha = 0.3) +
+  geom_line(aes(y = mean, color = site), size = 1) +
+  facet_wrap(~site) +
+  theme_bw() +
+  labs(title = "Temperature Change per Site", y = "Temperature (°C)", x = "Year")
+
+
+##########    END     ###########
+#--------------------------------
+
+
