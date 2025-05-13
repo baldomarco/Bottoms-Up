@@ -309,34 +309,42 @@ climate_avg_91_20 <- climate_summary_91_20 %>%
 
 # PER SITE AGGREGATION AND RANGE
 
-# Create site-level summaries for 1961–1990 in a table-friendly format
+# Site-level summaries for 1961–1990
 climate_summary_1961_1990 <- climate_avg_61_90 %>%
   group_by(site) %>%
   summarise(
-    mean_annual_temp_range = paste(min(mean_annual_temp), max(mean_annual_temp), sep = "–"),
-    mean_annual_min_temp_range = paste(min(mean_annual_min_temp), max(mean_annual_min_temp), sep = "–"),
-    mean_annual_max_temp_range = paste(min(mean_annual_max_temp), max(mean_annual_max_temp), sep = "–"),
-    mean_annual_precip_range = paste(min(mean_annual_precip), max(mean_annual_precip), sep = "–"),
-    mean_annual_vpd_range = paste(min(mean_annual_vpd), max(mean_annual_vpd), sep = "–")
+    mean_annual_temp_range = paste0(round(min(mean_annual_temp), 3), "–", round(max(mean_annual_temp), 3)),
+    mean_annual_min_temp_range = paste0(round(min(mean_annual_min_temp), 3), "–", round(max(mean_annual_min_temp), 3)),
+    mean_annual_max_temp_range = paste0(round(min(mean_annual_max_temp), 3), "–", round(max(mean_annual_max_temp), 3)),
+    mean_annual_precip_range = paste0(round(min(mean_annual_precip), 3), "–", round(max(mean_annual_precip), 3)),
+    mean_annual_vpd_range = paste0(round(min(mean_annual_vpd), 3), "–", round(max(mean_annual_vpd), 3))
   )
 
-# Create site-level summaries for 1991–2020 in a table-friendly format
+# Site-level summaries for 1991–2020
 climate_summary_1991_2020 <- climate_avg_91_20 %>%
   group_by(site) %>%
   summarise(
-    mean_annual_temp_range = paste(min(mean_annual_temp), max(mean_annual_temp), sep = "–"),
-    mean_annual_min_temp_range = paste(min(mean_annual_min_temp), max(mean_annual_min_temp), sep = "–"),
-    mean_annual_max_temp_range = paste(min(mean_annual_max_temp), max(mean_annual_max_temp), sep = "–"),
-    mean_annual_precip_range = paste(min(mean_annual_precip), max(mean_annual_precip), sep = "–"),
-    mean_annual_vpd_range = paste(min(mean_annual_vpd), max(mean_annual_vpd), sep = "–")
+    mean_annual_temp_range = paste0(round(min(mean_annual_temp), 3), "–", round(max(mean_annual_temp), 3)),
+    mean_annual_min_temp_range = paste0(round(min(mean_annual_min_temp), 3), "–", round(max(mean_annual_min_temp), 3)),
+    mean_annual_max_temp_range = paste0(round(min(mean_annual_max_temp), 3), "–", round(max(mean_annual_max_temp), 3)),
+    mean_annual_precip_range = paste0(round(min(mean_annual_precip), 3), "–", round(max(mean_annual_precip), 3)),
+    mean_annual_vpd_range = paste0(round(min(mean_annual_vpd), 3), "–", round(max(mean_annual_vpd), 3))
   )
 
 # Table X. Summary of site-level climate variability for the periods 1961–1990 and 1991–2020. For each forest site, the table reports the range (minimum to maximum) of five climate variables calculated across all plots belonging to that site. The variables include annual mean daily temperature (°C), computed as the average of daily means across each year and then averaged over 30 years; annual average minimum temperature (°C); annual average maximum temperature (°C); total annual precipitation (mm); and annual mean vapor pressure deficit (kPa). These values reflect the spatial heterogeneity of climate conditions within each site, offering a basis for understanding climatic influences on ecological and biodiversity dynamics over time.
 
-# write excel
+
+
+
+# write excel ------------------------------------------------------------------
+
+# 1961-1990
 writexl::write_xlsx(climate_summary_1961_1990, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/climate_summary_1961_1990.xlsx")
 
+# 1991-2020
 writexl::write_xlsx(climate_summary_1991_2020, "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/climate/climate_summary_1991_2020.xlsx")
+
+
 
 #-------------------------------------------------------------------------------
 # ==============================================================================
@@ -402,6 +410,110 @@ plot_list <- lapply(scatter_vars, function(vars) {
 
 wrap_plots(plot_list)
 
+#-------------------------------------------------------------------------------
+# 3D RAPPRESENATATION
+
+library(plotly)
+
+# Ensure 'period' is a factor and levels are in a known order
+climate_all$period <- factor(climate_all$period, levels = c("1961-1990", "1991-2020"))
+
+# Plotly symbol names: https://plotly.com/r/reference/#scatter-marker-symbol
+plot_ly(
+  data = climate_all,
+  x = ~mean_annual_temp,
+  y = ~mean_annual_precip,
+  z = ~mean_annual_vpd,
+  color = ~site,
+  symbol = ~period,
+  symbols = c("circle", "diamond"),  # https://plotly.com/r/reference/#scatter-marker-symbol
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 4, opacity = 0.7)
+) %>%
+  layout(
+    scene = list(
+      xaxis = list(title = "Mean Annual Temperature"),
+      yaxis = list(title = "Mean Annual Precipitation"),
+      zaxis = list(title = "Mean Annual VPD")),
+      legend = list(
+        font = list(size = 16)  # 🔍 Increase legend text size here
+    )
+  )
+
+#-------------------------------------------------------------------------------
+# Second
+
+# Ensure period is a factor
+climate_all$period <- factor(climate_all$period)
+
+# Create grid for prediction
+temp_seq <- seq(min(climate_all$mean_annual_temp), max(climate_all$mean_annual_temp), length.out = 30)
+precip_seq <- seq(min(climate_all$mean_annual_precip), max(climate_all$mean_annual_precip), length.out = 30)
+grid <- expand.grid(mean_annual_temp = temp_seq, mean_annual_precip = precip_seq)
+
+# Colors for surfaces per period
+surface_colors <- c("gray", "orange")
+
+# Begin plot
+p <- plot_ly()
+
+# Loop over periods to add points and fitted surface per group
+for (i in seq_along(levels(climate_all$period))) {
+  per <- levels(climate_all$period)[i]
+  dat <- filter(climate_all, period == per)
+  
+  # Nonlinear polynomial model (2nd degree)
+  fit <- lm(mean_annual_vpd ~ poly(mean_annual_temp, 2, raw=TRUE) +
+              poly(mean_annual_precip, 2, raw=TRUE), data = dat)
+  
+  # Predict over the grid
+  grid$mean_annual_vpd <- predict(fit, newdata = grid)
+  
+  # Turn z into a matrix
+  z_matrix <- matrix(grid$mean_annual_vpd, nrow = length(temp_seq), ncol = length(precip_seq))
+  
+  # Add scatter points
+  p <- add_trace(p,
+                 data = dat,
+                 x = ~mean_annual_temp,
+                 y = ~mean_annual_precip,
+                 z = ~mean_annual_vpd,
+                 type = "scatter3d",
+                 mode = "markers",
+                 color = ~site,
+                 symbol = ~period,
+                 symbols = c("circle", "diamond"),
+                 marker = list(size = 4, opacity = 0.7),
+                 name = paste("Points", per),
+                 showlegend = TRUE
+  )
+  
+  # Add surface
+  p <- add_surface(p,
+                   x = temp_seq,
+                   y = precip_seq,
+                   z = z_matrix,
+                   opacity = 0.4,
+                   showscale = FALSE,
+                   name = paste("Fit", per),
+                   surfacecolor = matrix(rep(i, length(temp_seq) * length(precip_seq)),
+                                         nrow = length(temp_seq)),
+                   colorscale = list(c(0,1), c(surface_colors[i], surface_colors[i]))
+  )
+}
+
+# Add layout
+p <- layout(p,
+            scene = list(
+              xaxis = list(title = "Mean Annual Temperature"),
+              yaxis = list(title = "Mean Annual Precipitation"),
+              zaxis = list(title = "Mean Annual VPD")
+            ),
+            legend = list(font = list(size = 16))
+)
+
+p
 
 #-------------------------------------------------------------------------------
 # Reshape data to long format
@@ -445,7 +557,9 @@ p2 <- ggplot(climate_long_91_20, aes(x = value, fill = site)) +
 p1
 p2
 
+# Caption: Figure: Distribution of climate variables across sites for the periods 1961–1990 and 1991–2020. Histograms show the relative frequency (density) of plot-level values for each variable, grouped by site. The Y-axis represents the estimated density, allowing comparison of distribution shapes regardless of how many plots each site contains. Overlapping colors indicate where sites share similar ranges of values. Facets separate the variables for clear interpretation across climatic dimensions.
 
+#-------------------------------------------------------------------------------
 # Boxplot for each variable by site and period
 climate_all_long <- climate_all %>%
   pivot_longer(cols = starts_with("mean_"), names_to = "variable", values_to = "value")
@@ -456,6 +570,7 @@ ggplot(climate_all_long, aes(x = site, y = value, fill = period)) +
   theme_bw() +
   labs(title = "Climate Variable Distributions by Site and Period")
 
+#-------------------------------------------------------------------------------
 # Prepare for ribbon plot
 ribbon_df <- bind_rows(
   climate_avg_61_90 %>%
@@ -480,5 +595,4 @@ ggplot(ribbon_df, aes(x = year, group = site)) +
 
 ##########    END     ###########
 #--------------------------------
-
 

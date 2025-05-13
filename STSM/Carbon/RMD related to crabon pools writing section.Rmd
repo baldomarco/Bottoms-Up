@@ -31,7 +31,7 @@ Where:
   
 The `quantile` function in R uses linear interpolation to calculate quantiles. It estimates the quantiles by finding the order statistics \( x[j] \) and \( x[j+1] \) based on the specified \( p \), and then performs the linear interpolation using the formula above to estimate the quantile value.
   
-In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at \( p = 0.25, 0.5, 0.75 \)).
+In simpler terms, the `quantile` function finds the two data points that bound the specified quantile, calculates a weighted average of those points, and returns the estimated quantile value. This allows you to divide your data into segments based on the specified probabilities (e.g., quartiles at \( p = 0, 0.333333333333, 0.66666666666, 1 \)).
 
 
 

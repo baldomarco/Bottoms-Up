@@ -55,6 +55,7 @@ ggplot(BDV_long, aes(x = forest_cat, y = Species_Count)) +
 
 # Create the boxplot with larger text
 ggplot(BDV_long, aes(x = forest_cat, y = Species_Count)) +
+  stat_boxplot(geom = "errorbar", width = 0.25) +
   geom_boxplot(aes(fill = forest_cat)) + 
   facet_wrap(~Taxonomic_Group, scales = "free", ncol = 5) + 
   theme_minimal() + 
@@ -62,15 +63,164 @@ ggplot(BDV_long, aes(x = forest_cat, y = Species_Count)) +
   labs(title = "Species Richness per Taxonomic Group across Forest Categories",
        x = "Forest Categories", y = "Number of Species") +
   theme(
-    plot.title = element_text(size = 24, face = "bold"),        # Title
-    axis.title = element_text(size = 20),                       # Axis titles
-    axis.text = element_text(size = 16),                        # Axis numbers
+    plot.title = element_text(size = 19, face = "bold"),        # Title
+    axis.title = element_text(size = 15),                       # Axis titles
+    axis.text = element_text(size = 11),                        # Axis numbers
     axis.text.x = element_text(angle = 45, hjust = 1),          # Rotated x labels
-    legend.title = element_text(size = 20),                     # Legend title
-    legend.text = element_text(size = 16),                      # Legend labels
-    strip.text = element_text(size = 20)                        # Facet labels
+    legend.title = element_text(size = 15),                     # Legend title
+    legend.text = element_text(size = 11),                      # Legend labels
+    strip.text = element_text(size = 15)                        # Facet labels
   )
 
+# third way
+ggplot(BDV_long, aes(x = forest_cat, y = Species_Count)) +
+  stat_boxplot(geom = "errorbar", width = 0.25) +
+  geom_boxplot(aes(fill = forest_cat)) + 
+  facet_wrap(~Taxonomic_Group, scales = "free", ncol = 5) + 
+  theme_minimal() + 
+  scale_fill_manual(values = management_colors) +  # Fixed colors
+  scale_y_continuous(
+    breaks = seq(0, max(BDV_long$Species_Count), by = 5),  # Adjust step size as needed
+    labels = scales::comma_format()  # Use commas for better readability
+  ) +
+  labs(title = "Species Richness per Taxonomic Group across Forest Categories",
+       x = "Forest Categories", y = "Number of Species") +
+  theme(
+    plot.title = element_text(size = 19, face = "bold"),        # Title
+    axis.title = element_text(size = 15),                       # Axis titles
+    axis.text = element_text(size = 11),                        # Axis numbers
+    axis.text.x = element_text(angle = 45, hjust = 1),          # Rotated x labels
+    legend.title = element_text(size = 15),                     # Legend title
+    legend.text = element_text(size = 11),                      # Legend labels
+    strip.text = element_text(size = 15),                       # Facet labels
+    panel.grid.major = element_blank(),                         # Remove major gridlines
+    panel.grid.minor = element_blank(),                         # Remove minor gridlines
+    axis.line = element_blank()                                 # Remove axis lines
+  )
+
+# BEST WAY
+library(ggh4x)
+
+# Custom breaks for each Taxonomic_Group
+custom_breaks <- list(
+  "Beetles" = seq(0, 18, 3),
+  "Bryophytes" = seq(0, 40, 5),
+  "Lichen" = seq(0, 75, 5),
+  "Macrofungi" = seq(0, 300, 20),
+  "Moths" = seq(0, 120, 10)
+)
+
+# Generate list of scales per facet
+y_scales <- lapply(names(custom_breaks), function(group) {
+  scale_y_continuous(breaks = custom_breaks[[group]])
+})
+
+# Create the plot
+ggplot(BDV_long, aes(x = forest_cat, y = Species_Count)) +
+  stat_boxplot(geom = "errorbar", width = 0.25) +
+  geom_boxplot(aes(fill = forest_cat)) +
+  facet_wrap2(~Taxonomic_Group, scales = "free_y", ncol = 5) +
+  ggh4x::facetted_pos_scales(y = y_scales) +
+  scale_fill_manual(values = management_colors) +
+  theme_minimal() +
+  labs(
+    title = "Species Richness per Taxonomic Group across Forest Categories",
+    x = "Forest Categories", y = "Number of Species"
+  ) +
+  theme(
+    plot.title = element_text(size = 19, face = "bold"),
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 11),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.title = element_text(size = 15),
+    legend.text = element_text(size = 11),
+    strip.text = element_text(size = 15),
+    panel.grid = element_blank()
+  )
+
+# Density plots con asse Y come numero di plot
+ggplot(BDV_long, aes(x = Species_Count, fill = forest_cat, color = forest_cat)) +
+  geom_density(aes(y = ..count..), alpha = 0.4, size = 1.2) +
+  facet_wrap(~ Taxonomic_Group, scales = "free", ncol = 3) +
+  scale_fill_manual(values = management_colors, name = "Forest Category") +
+  scale_color_manual(values = management_colors, name = "Forest Category") +
+  guides(color = "none") +  # Nasconde la seconda legenda
+  labs(title = "Distribuzione assoluta della ricchezza specifica per gruppo tassonomico",
+       x = "Numero di specie", y = "Numero di plot") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Histogram for Species Richness (Species_Count)
+ggplot(BDV_long, aes(x = Species_Count, fill = forest_cat)) +
+  geom_histogram(bins = 30, alpha = 0.6, position = "identity") +
+  facet_wrap(~ Taxonomic_Group, scales = "free", ncol = 3) +
+  scale_fill_manual(values = management_colors) +
+  labs(title = "Species Richness Distribution per Taxonomic Group",
+       x = "Number of Species", y = "Frequency") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Histogram for DeadWood_C (Density) as a proxy
+ggplot(BDV_long, aes(x = DeadWood_C, fill = forest_cat)) +
+  geom_histogram(bins = 30, alpha = 0.6, position = "identity") +
+  facet_wrap(~ Taxonomic_Group, scales = "free", ncol = 3) +
+  scale_fill_manual(values = management_colors) +
+  labs(title = "Deadwood Density Distribution per Taxonomic Group",
+       x = "Deadwood (g/m²)", y = "Frequency") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Crea una nuova colonna con i gruppi "Managed" e "Unmanaged"
+BDV_long_2 <- BDV_long %>%
+  mutate(management_group = case_when(
+    forest_cat %in% c("Native Broadleaves", "Non-Native Coniferous") ~ "Managed",
+    forest_cat == "Old-Growth" ~ "Unmanaged",
+    TRUE ~ forest_cat  # Lascia invariati altri gruppi se presenti
+  ))
+
+# Verifica il risultato
+head(BDV_long_2)
+
+# Crea un boxplot per i gruppi "Managed" vs "Unmanaged" (per ogni Gruppo Tassonomico)
+ggplot(BDV_long_2, aes(x = management_group, y = Species_Count, fill = management_group)) +
+  stat_boxplot(geom = "errorbar", width = 0.25) +
+  geom_boxplot() +
+  facet_wrap(~Taxonomic_Group, scales = "free_y", ncol = 5) +
+  scale_fill_manual(values = c("Managed" = "#FF8247", "Unmanaged" = "#3B9AB2")) +  # Colori personalizzati
+  labs(title = "Confronto della Ricchezza Specifica: Managed vs Unmanaged",
+       x = "Gruppi Forestali", y = "Numero di Specie") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 19, face = "bold"),
+    axis.title = element_text(size = 15),
+    axis.text = element_text(size = 11),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    strip.text = element_text(size = 15)
+  )
+
+# Grafico di densità per la ricchezza specifica (Managed vs Unmanaged)
+ggplot(BDV_long_2, aes(x = Species_Count, fill = management_group, color = management_group)) +
+  geom_density(aes(y = ..count..), alpha = 0.4, size = 1.2) +
+  facet_wrap(~ Taxonomic_Group, scales = "free", ncol = 3) +
+  scale_fill_manual(values = c("Managed" = "#FF8247", "Unmanaged" = "#3B9AB2")) +  # Colori personalizzati
+  scale_color_manual(values = c("Managed" = "#FF8247", "Unmanaged" = "#3B9AB2")) +
+  guides(color = "none") +  # Nasconde la seconda legenda
+  labs(title = "Distribuzione di Densità della Ricchezza Specifica: Managed vs Unmanaged",
+       x = "Numero di Specie", y = "Numero di Plot") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Grafico di Istogramma per la ricchezza specifica (Managed vs Unmanaged)
+ggplot(BDV_long_2, aes(x = Species_Count, fill = management_group, color = management_group)) +
+  geom_histogram(bins = 20, alpha = 0.6, position = "identity") +
+  facet_wrap(~ Taxonomic_Group, scales = "free", ncol = 3) +
+  scale_fill_manual(values = c("Managed" = "#FF8247", "Unmanaged" = "#3B9AB2")) +  # Colori personalizzati
+  scale_color_manual(values = c("Managed" = "#FF8247", "Unmanaged" = "#3B9AB2")) +
+  guides(color = "none") +  # Nasconde la seconda legenda
+  labs(title = "Distribuzione di Densità della Ricchezza Specifica: Managed vs Unmanaged",
+       x = "Numero di Specie", y = "Numero di Plot") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
 ################################################################################ SECOND METHOD
@@ -249,6 +399,59 @@ G5 <- ggplot(subset(BDV_species_long, Species == species_names[5]),
         legend.position = "right")
 print(G5)
 
+
+#-------------------------------------------------------------------------------
+# KARNEL DENSITY PLOT
+
+# DIVIDED PER SITES
+
+# Ensure Species and Site are factors
+BDV_species_long <- BDV_species_long %>%
+  mutate(
+    Species = factor(Species),
+    Site = factor(Site)
+  )
+
+# Plot
+ggplot(BDV_species_long, aes(x = Richness, fill = Species, color = Species)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  facet_wrap(~ Site, ncol = 3) +  # 2x3 grid layout
+  labs(
+    title = "Species Richness Density per Taxon across Sites",
+    x = "Species Richness", y = "Density"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.title = element_blank(),
+    strip.text = element_text(size = 14),
+    axis.title = element_text(size = 13)
+  )
+
+
+# DIVIDED PER TAXA
+
+# Ensure 'Species' and 'Site' are factors
+BDV_species_long <- BDV_species_long %>%
+  mutate(
+    Species = factor(Species),
+    Site = factor(Site)
+  )
+
+# Plot: 5 facets (Species), 6 densities (Sites) per facet
+ggplot(BDV_species_long, aes(x = Richness, fill = Site, color = Site)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  facet_wrap(~ Species, ncol = 3, scales = "free") +  # 5 horizontal boxes
+  labs(
+    title = "Species Richness Distributions per Taxonomic Group (by Site)",
+    x = "Species Richness", y = "Density"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.title = element_blank(),
+    strip.text = element_text(size = 14),
+    axis.title = element_text(size = 13),
+    panel.grid = element_blank()
+  )
 
 
 #------------------------------------------------------------------------------- To save plots
