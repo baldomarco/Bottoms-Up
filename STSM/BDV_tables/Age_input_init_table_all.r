@@ -17,7 +17,7 @@ str(Katka_age_table)
 unique(Katka_age_table$plotID)
 
 # Create a directory where there are the text file to edit and write in:
-directory <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/init20250117/" # IN THE AND WE PASS TO MAKE IT INTO THE HP COMPUTER AND THE SYNTHESIS SCRIPTS
+directory <- "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/gis/init/init20250117/" # IN THE END WE PASS TO MAKE IT INTO THE HP COMPUTER AND THE SYNTHESIS SCRIPTS
 
 # Get a list of all text files in the directory
 text_files <- list.files(directory, pattern = "\\.txt$", full.names = TRUE)
