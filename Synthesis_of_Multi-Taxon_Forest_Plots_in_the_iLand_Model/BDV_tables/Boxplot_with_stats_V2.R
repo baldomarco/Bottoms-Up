@@ -78,6 +78,9 @@ pairwise_comparisons <- pairwise_comparisons %>%
 # PLOT THE SPECIES RICHNESS AS BOXPLOTS WITH K-W STAT TEST BETWEEN FOREST CATEGORIES
 #-------------------------------------------------------------------------------
 
+# Wilcoxon rank-sum tests (not Kruskal-Wallis), applied after Kruskal-Wallis shows significance
+# We tested for differences in observed species richness among forest categories using the Kruskal–Wallis test for each taxon. Where significant, we performed post-hoc pairwise Wilcoxon rank-sum tests with Bonferroni correction
+
 # Create the plot for Bryophytes (G1)
 G1 <- ggplot(BDV_species_long %>% filter(Species == "Bryophytes"), aes(x = forest_cat, y = Richness)) +
   geom_boxplot(aes(fill = forest_cat), color = "black", outlier.shape = NA) +  # Boxplots
@@ -87,7 +90,7 @@ G1 <- ggplot(BDV_species_long %>% filter(Species == "Bryophytes"), aes(x = fores
                      label = "p.signif", y.position = 42) +  # Add significance just above the boxplot max absolute richness + 5
   theme_minimal() +
   scale_fill_manual(values = management_colors) +  # Fixed colors
-  labs(title = "Species Richness for Bryophytes - Kruskal-Wallis test",  # Updated title with statistical test
+  labs(title = "Species Richness for Bryophytes - post-hoc pairwise Wilcoxon tests with Bonferroni p-adjust",  # Updated title with statistical test
        x = "Management Type", y = "Species Richness") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
@@ -103,7 +106,7 @@ G2 <- ggplot(BDV_species_long %>% filter(Species == "Lichens"), aes(x = forest_c
                      label = "p.signif", y.position = 76) +  # Add significance just above the boxplot max absolute richness + 5
   theme_minimal() +
   scale_fill_manual(values = management_colors) +  # Fixed colors
-  labs(title = "Species Richness for Lichens - Kruskal-Wallis test",  # Updated title with statistical test
+  labs(title = "Species Richness for Lichens - post-hoc pairwise Wilcoxon tests with Bonferroni p-adjust",  # Updated title with statistical test
        x = "Management Type", y = "Species Richness") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
@@ -119,7 +122,7 @@ G3 <- ggplot(BDV_species_long %>% filter(Species == "Macrofungi"), aes(x = fores
                      label = "p.signif", y.position = 289) +  # Add significance just above the boxplot max absolute richness + 5
   theme_minimal() +
   scale_fill_manual(values = management_colors) +  # Fixed colors
-  labs(title = "Species Richness for Macrofungi - Kruskal-Wallis test",            # Updated title with statistical test
+  labs(title = "Species Richness for Macrofungi - post-hoc pairwise Wilcoxon tests with Bonferroni p-adjust",            # Updated title with statistical test
        x = "Management Type", y = "Species Richness") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
@@ -135,7 +138,7 @@ G4 <- ggplot(BDV_species_long %>% filter(Species == "Beetles"), aes(x = forest_c
                      label = "p.signif", y.position = 20) +  # Add significance just above the boxplot
   theme_minimal() +
   scale_fill_manual(values = management_colors) +  # Fixed colors
-  labs(title = "Species Richness for Beetles - Kruskal-Wallis test",  # Updated title with statistical test
+  labs(title = "Species Richness for Beetles - post-hoc pairwise Wilcoxon tests with Bonferroni p-adjust",  # Updated title with statistical test
        x = "Management Type", y = "Species Richness") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
@@ -152,7 +155,7 @@ G5 <- ggplot(BDV_species_long %>% filter(Species == "Moths"), aes(x = forest_cat
                      label = "p.signif", y.position = 111) +  # Add significance just above the boxplot
   theme_minimal() +
   scale_fill_manual(values = management_colors) +  # Fixed colors
-  labs(title = "Species Richness for Moths - Kruskal-Wallis test",  # Updated title with statistical test
+  labs(title = "Species Richness for Moths - post-hoc pairwise Wilcoxon tests with Bonferroni p-adjust",  # Updated title with statistical test
        x = "Management Type", y = "Species Richness") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom")
