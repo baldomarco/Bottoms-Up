@@ -867,6 +867,29 @@ saveRDS(bayesian_results_all, file.path(dataroot, "bayesian_results_all.rds")) #
 saveRDS(summary_bayesian_results, file.path(dataroot, "summary_bayesian_results.rds")) # VARIABLES FOR SUMMARY THE BAYESIAN FUNCTION
 saveRDS(plot_variables_all, file.path(dataroot, "plot_variables_all.rds")) # VARIABLES NEEDED IN THE BDV STUDY
 
+
+# Save all aggregated scenario datasets
+
+saveRDS(abeStand_scen, file.path(dataroot, "abeStand_scen.rds"))
+saveRDS(abeStandDetail_scen, file.path(dataroot, "abeStandDetail_scen.rds"))
+saveRDS(abeStandRemoval_scen, file.path(dataroot, "abeStandRemoval_scen.rds"))
+saveRDS(abeUnit_scen, file.path(dataroot, "abeUnit_scen.rds"))
+saveRDS(removals, file.path(dataroot, "removals.rds"))
+saveRDS(landscape_removed_scen_natmor, file.path(dataroot, "landscape_removed_scen_natmor.rds"))
+saveRDS(landscape_removed_scen, file.path(dataroot, "landscape_removed_scen.rds"))
+saveRDS(lnd_scen, file.path(dataroot, "lnd_scen.rds"))
+saveRDS(dys_scen, file.path(dataroot, "dys_scen.rds"))
+saveRDS(tree_scen, file.path(dataroot, "tree_scen.rds"))
+saveRDS(stand_scen, file.path(dataroot, "stand_scen.rds"))
+saveRDS(carbon_scen, file.path(dataroot, "carbon_scen.rds"))
+saveRDS(carbonflow_scen, file.path(dataroot, "carbonflow_scen.rds"))
+saveRDS(bb_scen, file.path(dataroot, "bb_scen.rds"))
+saveRDS(w_scen, file.path(dataroot, "w_scen.rds"))
+saveRDS(damage.all, file.path(dataroot, "damage_all.rds"))
+saveRDS(variables.all, file.path(dataroot, "variables_all.rds"))
+saveRDS(H_BA_heterogenity_scen, file.path(dataroot, "H_BA_heterogenity_scen.rds"))
+
+
 # READ IT BACK
 big_df <- readRDS(file.path(dataroot, "Bayesian_BDV_model_V3_multi.rds"))
 
@@ -917,15 +940,17 @@ cols.all=c( "rops"="#e0e0e0", "acpl"="#A9A9A9",   "alin"="#696969", "alvi"="#2e2
             "algl"="#2ECBE9","tico"="#128FC8",  "potr"="#00468B","poni"="#5BAEB7",
             "frex"="#fe9cb5","cabe"="#fe6181","acps"="#fe223e",
             "lade"="#FFFE71","abal"="#FFD800", "pisy"="#A4DE02",
-            "fasy"="#76BA1B", "piab"="#006600",
+            "fasy"="#76BA1B", "piab"="#006600","psme"="green",
             "quro"="#FF7F00", "qupe"="#FF9900", "qupu"="#CC9900" 
 )
 
 
 # COLORATION ORDER FOR ALL THE POSSIBLE SPECIES
 
-new_order_gg.all=c("alvi","alin", "acpl", "rops","bepe" ,"coav", "casa", "ulgl", "tipl",  "soau", "soar", "saca",  "pini", "pice",
-                   "poni", "algl", "tico", "potr",  "frex","cabe", "acps",  "lade", "abal",  "qupu", "qupe","quro","pisy", "fasy", "piab", "acca")
+new_order_gg.all=c("rops","bepe" ,"coav", "casa", "ulgl", "tipl",  "soau",
+                   "soar", "saca", "poni", "algl", "alvi","alin", "tico", 
+                   "potr","frex","cabe", "acps","acpl","acca", "qupu", "qupe",
+                   "quro", "fasy", "lade", "abal", "pini","pice","pisy","psme","piab")
 
 
 # This will show at the end only the species we really have on the landscape. 
@@ -937,14 +962,28 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 
 #-------------------------------------------------------------------------------
 # COLUMN DIAGRAM PLOT ON THE HARVEST
+#removals_filtered <- removals %>% filter(year >= 0 & year <= 266)
 
 M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
   geom_bar(position="stack", stat="identity")+
-  facet_wrap(~run, ncol=3)+
+  facet_wrap(~run, ncol=10)+
   labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
   scale_fill_manual(values=c("#4897D8","#FFDB5C","#FA6E59","#B3C100"))+               #"#B7B8B6","#34675C","#B3C100" grey and greens
-  theme_bw()
-
+  theme_minimal(base_size = 28) +  
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5),
+    legend.position = "right",
+    strip.text = element_text(size = 14),   # was 10
+    axis.title = element_text(size = 24),   # was 12
+    axis.text = element_text(size = 20),    # was 10
+    legend.text = element_text(size = 20),  # was 10
+    legend.title = element_text(size = 20), # was 10
+    plot.title = element_text(size = 32, hjust = 0.5), # was 16
+    panel.grid.major = element_blank(),  # remove major gridlines
+    panel.grid.minor = element_blank(),  # remove minor gridlines
+    strip.background = element_rect(fill = "white")# white facet strip background
+  )
+M1
 # Make a plot with ggplot, volume, colored by species for the transitional period for Clear cut management system
 #-------------------------------------------------------------------------------
 # PLOT LANDSCAPE VOLUME PLOT FOR CASES (GEOM AREA)
@@ -953,17 +992,74 @@ M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","f
 #lnd_scen_L4 <- subset(lnd_scen, grepl("L4", run))
 
 # FILTER FOR THE FIRST 350 YEARS
-lnd_scen_filtered <- lnd_scen %>% filter(year >= 0 & year <= 350)
+lnd_scen_filtered <- lnd_scen %>% filter(year >= 0 & year <= 600 & species != "psme")
 
-g1 <- ggplot(lnd_scen_filtered, aes(year,volume_m3, fill=factor(species, levels=new_order_gg)))+
+g1 <- ggplot(lnd_scen_filtered, aes(year, volume_m3, fill = factor(species, levels = new_order_gg))) +
   geom_area() +
-  scale_fill_manual(values=cols[new_order_gg], guide=guide_legend(reverse=TRUE))+
-  ggtitle("Landscape volume by species")+
-  facet_wrap(~run, ncol=4)+
-  labs(x = "Year",y="Volume [m3/ha]",fill = "Species")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  #ylim(0,1200)+
-  theme_bw()
+  scale_fill_manual(values = cols[new_order_gg], guide = guide_legend(reverse = TRUE)) +
+  ggtitle("Landscape volume by species") +
+  facet_wrap(~run, ncol = 10) +
+  labs(x = "Year", y = "Volume [m3/ha]", fill = "Species") +
+  theme_minimal(base_size = 28) +  
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5),
+    legend.position = "right",
+    strip.text = element_text(size = 14),   # was 10
+    axis.title = element_text(size = 24),   # was 12
+    axis.text = element_text(size = 20),    # was 10
+    legend.text = element_text(size = 20),  # was 10
+    legend.title = element_text(size = 20), # was 10
+    plot.title = element_text(size = 32, hjust = 0.5), # was 16
+    panel.grid.major = element_blank(),  # remove major gridlines
+    panel.grid.minor = element_blank(),  # remove minor gridlines
+    strip.background = element_rect(fill = "white")# white facet strip background
+     )
+
+# FILTER FOR THE FIRST 350 YEARS
+lnd_scen_filtered <- lnd_scen %>% filter(year >= 0 & year <= 350 & species != "psme")
+
+g1 <- ggplot(lnd_scen_filtered, aes(year, volume_m3, fill = factor(species, levels = new_order_gg))) +
+  geom_area() +
+  scale_fill_manual(values = cols[new_order_gg], guide = guide_legend(reverse = TRUE)) +
+  ggtitle("Landscape volume by species") +
+  facet_wrap(~run, ncol = 10) +
+  labs(x = "Year", y = "Volume [m3/ha]", fill = "Species") +
+  
+  # Start with theme_bw() to get a clean base with a black border
+  theme_bw() +
+  
+  # Now, apply custom theme modifications to override theme_bw defaults
+  theme(
+    # --- Backgrounds ---
+    # Overall plot background (area outside panels, including titles and legend)
+    plot.background = element_rect(fill = "white", color = NA),
+    # Background of each individual facet panel where the data is plotted
+    panel.background = element_rect(fill = "white", color = NA),
+    # Background behind the facet labels (e.g., the 'run' labels)
+    strip.background = element_rect(fill = "white", color = NA),
+    
+    # --- Grid Lines (often desired to be removed with a clean white background) ---
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    
+    # --- Axis Ticks (the small lines indicating axis values) ---
+    axis.ticks = element_blank(), # Removes the tick marks on both axes
+    
+    # --- Text Sizes and Alignment ---
+    plot.title = element_text(hjust = 0.5, size = 32), # Centered and increased title size
+    axis.title = element_text(size = 24), # X and Y axis titles
+    axis.text = element_text(size = 20), # X and Y axis tick labels (values)
+    strip.text = element_text(size = 14), # Text for facet labels (e.g., 'run' values)
+    legend.text = element_text(size = 20), # Text labels within the legend
+    legend.title = element_text(size = 20), # Title of the legend
+    
+    # --- Other elements (keeping your previous settings) ---
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5), # Border around each panel
+    legend.position = "right" # Position of the legend
+    
+    # Uncomment the ylim line if you need to set y-axis limits
+    # + ylim(0, 1200)
+  )
 
 # Plot grid arrange
 grid.arrange(M1,g1, ncol=1)

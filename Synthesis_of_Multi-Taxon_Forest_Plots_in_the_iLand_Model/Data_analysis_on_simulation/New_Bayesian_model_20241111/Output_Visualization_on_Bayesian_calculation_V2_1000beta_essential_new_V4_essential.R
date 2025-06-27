@@ -66,7 +66,7 @@ B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
                width = 5,
                notch = TRUE,
                notchwidth = 0.5,
-               outlier.shape = NA,        # no outliers (optional)
+               outlier.shape = TRUE,        # NA = no outliers (optional)
                fill = NA,                 # old school — transparent
                color = "black", 
                inherit.aes = FALSE) +
@@ -97,7 +97,7 @@ B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   theme(
     panel.border = element_rect(color = "black", fill = NA, size = 0.5),
     legend.position = "right",
-    strip.text = element_text(size = 20),   # was 10
+    strip.text = element_text(size = 14),   # was 10
     axis.title = element_text(size = 24),   # was 12
     axis.text = element_text(size = 20),    # was 10
     legend.text = element_text(size = 20),  # was 10
@@ -138,7 +138,7 @@ B1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
                width = 5,
                notch = TRUE,
                notchwidth = 0.5,
-               outlier.shape = NA,        # no outliers (optional)
+               outlier.shape = TRUE,        # no outliers (optional)
                fill = NA,                 # old school — transparent
                color = "black", 
                inherit.aes = FALSE) +
@@ -214,7 +214,7 @@ B2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
                width = 5,
                notch = TRUE,
                notchwidth = 0.5,
-               outlier.shape = NA,        # no outliers (optional)
+               outlier.shape = TRUE,        # no outliers (optional)
                fill = NA,                 # old school — transparent
                color = "black", 
                inherit.aes = FALSE) +
@@ -428,29 +428,10 @@ print(B5)
 
 dev.off()
 
+############## THE END  ########################################################
 
 
-
-theme_minimal(base_size = 14) +  
-  theme(
-    panel.border = element_rect(color = "black", fill = NA, size = 0.5),
-    legend.position = "right",
-    strip.text = element_text(size = 10),   
-    axis.title = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 10),
-    plot.title = element_text(size = 16, hjust = 0.5),
-    panel.grid.major = element_blank(),  # remove major gridlines
-    panel.grid.minor = element_blank(),  # remove minor gridlines
-    strip.background = element_rect(fill = "white")# white facet strip background
-  )
-
-
-
-
-
-
+#----- THI IS JUST A TEST   -------#
 
 # Assign your plot to an object first, e.g., 'p'
 p <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
@@ -494,7 +475,7 @@ p <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
     # --- Other elements (as per your previous settings) ---
     panel.border = element_rect(color = "black", fill = NA, size = 0.5), # Border around each panel
     legend.position = "right",
-    strip.text = element_text(size = 20),
+    strip.text = element_text(size = 14),
     axis.title = element_text(size = 24),
     axis.text = element_text(size = 20),
     legend.text = element_text(size = 20),
@@ -502,13 +483,7 @@ p <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
     plot.title = element_text(size = 32, hjust = 0.5)
   )
 
-# --- THE CRITICAL STEP FOR SAVING WITH A WHITE BACKGROUND ---
-# Make sure to run this line *after* defining your plot object 'p'
-# Explicitly setting 'bg = "white"' in ggsave() ensures the output file has a white background.
-ggsave("my_final_plot_with_white_bg.jpg", plot = p, width = 15, height = 10, units = "in", dpi = 300, bg = "white")
-
-
-
+p
 
 
 
