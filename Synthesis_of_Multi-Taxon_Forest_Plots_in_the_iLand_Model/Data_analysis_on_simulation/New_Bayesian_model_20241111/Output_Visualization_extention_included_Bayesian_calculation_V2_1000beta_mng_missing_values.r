@@ -962,9 +962,9 @@ new_order_gg<- new_order_gg.all[new_order_gg.all %in% species.we.have]
 
 #-------------------------------------------------------------------------------
 # COLUMN DIAGRAM PLOT ON THE HARVEST
-#removals_filtered <- removals %>% filter(year >= 0 & year <= 266)
+removals_filtered <- removals %>% filter(year >= 0 & year <= 266)
 
-M1 <- ggplot(removals, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
+M1 <- ggplot(removals_filtered, aes(year, volume, fill=factor(type, levels=c( "regcut","finalcut","thinning","salvager"))))+
   geom_bar(position="stack", stat="identity")+
   facet_wrap(~run, ncol=10)+
   labs(x = "Year",y="Removed volume m3/ha",fill = "Removal")+
