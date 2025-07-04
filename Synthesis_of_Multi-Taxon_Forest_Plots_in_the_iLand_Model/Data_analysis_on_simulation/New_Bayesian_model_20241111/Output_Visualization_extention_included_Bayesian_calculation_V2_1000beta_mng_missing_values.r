@@ -41,9 +41,9 @@ file_paths <- list(
   bryophytes = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Bryophytes_bayesian_beta_x1000.csv",
   lichens = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Lichens_bayesian_beta_x1000.csv",
   macrofungi = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Macrofungi_bayesian_beta_x1000.csv",
-  macrofungi_red = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Macrofungi_RED_bayesian_beta_x1000.csv",
-  moths = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Moths_bayesian_beta_x1000.csv",
-  moths_red = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Moths_RED_bayesian_beta_x1000.csv"
+  # macrofungi_red = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Macrofungi_RED_bayesian_beta_x1000.csv",
+  moths = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Moths_bayesian_beta_x1000.csv"#,
+  # moths_red = "C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bayesian_model_results_V4_x1000/Moths_RED_bayesian_beta_x1000.csv"
 )
 
 
@@ -411,13 +411,23 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     summarise(broadl_40 = n() / 4, .groups = "drop") %>%
     mutate(broadl_40_2 = broadl_40^2)
   
-  # Stand age based on top 20% oldest trees
+  # Forest age based on top 20% oldest trees
   age <- tree %>%
     group_by(year) %>%
     arrange(desc(age)) %>%
     slice_head(prop = 0.2) %>%
     summarise(age = mean(age, na.rm = TRUE), .groups = "drop") %>%
     mutate(age = round(age))
+  
+  # Stand age based on abeStand age output
+  Stand_age <- abeStand %>%
+    select(year, StandAge = age)                                  # Select the columns needed and change age column name 
+  
+  year1_age <- Stand_age %>% filter(year == 1) %>% pull(StandAge) # Create a single row vector needed for the next step so StandAge in year = 1
+  year0_row <- tibble(year = 0, StandAge = year1_age - 1)         # Create a single row vector needed to be added at the original df with StandAge in year = 0
+
+  Stand_age <- bind_rows(year0_row, Stand_age) %>%                # Create the required new df for adding the StandAge at the Bayesian BDV function Recovery framework
+    arrange(year)
   
   #-----------------------------------------------------------------------------
   # Total carbon variables
@@ -493,6 +503,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   # Merge all predictors into a single data frame
   plot_L1_10_df_simul <- LAI %>%
     left_join(age, by = "year") %>%
+    left_join(Stand_age, by = "year") %>%
     left_join(tree_10_40, by = "year") %>%
     left_join(ba_broadl, by = "year") %>%
     left_join(broadl_40, by = "year") %>%
@@ -511,11 +522,14 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   Bayesian_BDV_model_V3 <- plot_L1_10_df_simul %>%
     mutate(deadwood = total_AG_DW_C_kgha) %>% # here put /4 if want a standardization at 50mx50m of deadwood pool
     select(
-      year, age, deadwood, lai_sim = LAI, ba_broadl,
+      year, age, StandAge, deadwood, lai_sim = LAI, ba_broadl,
       tree_10_40, tree_10_40_2, broadl_40, broadl_40_2
     )
   
   #-----------------------------------------------------------------------------
+  # MOST IMPORTANT SECTION
+  #-----------------------------------------------------------------------------
+  
   # Function to calculate predictions for each taxon based on the existing data frame
   calculate_predictions <- function(taxon_name, file_path, data_frame) {
     # Read the CSV file for the taxon
@@ -555,22 +569,22 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
           mutate(
             PRED_RICH_MACROFUNGI = beta0 + beta1 * age + beta2 * deadwood + beta3 * ba_broadl + beta4 * tree_10_40
           )
-      } else if (taxon_name == "macrofungi_red") {
-        fun_list[[i]] <- data_frame %>%
-          mutate(
-            PRED_RICH_MACROFUNGI_RED = beta0 + beta1 * deadwood + beta2 * ba_broadl
-          )
-      } else if (taxon_name == "moths") {
+      } #else if (taxon_name == "macrofungi_red") {
+        #fun_list[[i]] <- data_frame %>%
+          #mutate(
+            #PRED_RICH_MACROFUNGI_RED = beta0 + beta1 * deadwood + beta2 * ba_broadl
+          #)} 
+      else if (taxon_name == "moths") {
         fun_list[[i]] <- data_frame %>%
           mutate(
             PRED_RICH_MOTHS = beta0 + beta1 * tree_10_40_2 + beta2 * broadl_40
           )
-      } else if (taxon_name == "moths_red") {
-        fun_list[[i]] <- data_frame %>%
-          mutate(
-            PRED_RICH_MOTHS_RED = beta0 + beta1 * tree_10_40_2 + beta2 * broadl_40
-          )
-      }
+      } #else if (taxon_name == "moths_red") {
+        #fun_list[[i]] <- data_frame %>%
+          #mutate(
+            #PRED_RICH_MOTHS_RED = beta0 + beta1 * tree_10_40_2 + beta2 * broadl_40
+          #)
+      #}
     }
     
     # Combine results from all iterations into a single dataframe
@@ -592,9 +606,29 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     all_results[[taxon_name]] <- taxon_results
   }
   
-  # Combine all taxon results into a single dataframe
-  bayesian_results <- bind_cols(all_results)
+  # Combine all taxon results into a single df
+  # bayesian_results <- bind_cols(all_results) HERE i WAS REPEATING THE PREDICTORS VARIABLES AT EVERY TAXA CREATING NOT NECESSARTY DATA..
   
+  # Clean df version
+  # Combine all taxon results into a single df
+  # Keep predictors just from beetles (first taxon)
+  predictor_block <- all_results[[1]] %>%
+    select(year, age, StandAge, deadwood, lai_sim, ba_broadl, tree_10_40,
+           tree_10_40_2, broadl_40, broadl_40_2)
+  
+  # Extract PRED_RICH_* columns from all_results
+  taxon_predictions <- lapply(all_results, function(df) {
+    df %>% select(starts_with("PRED_RICH_"))
+  })
+  
+  # Bind (clean version line 615) predictors with taxon richness columns
+  bayesian_results <- bind_cols(
+    predictor_block,
+    bind_cols(taxon_predictions)
+  )
+  
+  
+  #-----------------------------------------------------------------------------
   # --- NEW FUNCTIONALITY FOR MIN/MAX/MEAN ---
   # Calculate summary statistics for each taxon and year
   summary_bayesian_results <- bayesian_results %>%
@@ -603,7 +637,7 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       names_to = "taxon_richness",       # Create a column identifying the taxon
       values_to = "richness_value"       # The corresponding richness value
     ) %>%
-    group_by(year...1, taxon_richness) %>%  # Group by year and taxon
+    group_by(year, taxon_richness) %>%  # Group by year and taxon
     summarize(
       min_value = quantile(richness_value, 0.05, na.rm = TRUE),  # Minimum (5th percentile)
       mean_value = mean(richness_value, na.rm = TRUE),           # Mean
@@ -625,18 +659,18 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       MACROFUNGI_PRED_RICH_97.5 = 103.14266 + 0.34920*age + 0.00054*deadwood + 5.67190*ba_broadl + 0.17916*tree_10_40,
       MACROFUNGI_PRED_RICH_50 = 83.52201 + 0.17438*age + 0.00035*deadwood + 3.29810*ba_broadl + 0.08110*tree_10_40,
       MACROFUNGI_PRED_RICH_2.5 = 62.10863 + 0.03120*age + 0.00014*deadwood + 0.82859*ba_broadl + 0.01157*tree_10_40,
-      MACROFUNGI_RED_PRED_RICH_97.5 = 134.47920 + 0.00116*deadwood + 9.44456*ba_broadl,
-      MACROFUNGI_RED_PRED_RICH_50 = 115.57863 + 0.00088*deadwood + 6.18950*ba_broadl,
-      MACROFUNGI_RED_PRED_RICH_2.5 = 97.41300 + 0.00061*deadwood + 3.06694*ba_broadl,
+      #MACROFUNGI_RED_PRED_RICH_97.5 = 134.47920 + 0.00116*deadwood + 9.44456*ba_broadl,
+      #MACROFUNGI_RED_PRED_RICH_50 = 115.57863 + 0.00088*deadwood + 6.18950*ba_broadl,
+      #MACROFUNGI_RED_PRED_RICH_2.5 = 97.41300 + 0.00061*deadwood + 3.06694*ba_broadl,
       BEETLES_PRED_RICH_97.5 = 9.32954 + 0.00003*deadwood + 0.25618*ba_broadl,
       BEETLES_PRED_RICH_50 = 8.55743 + 0.00002*deadwood + 0.11495*ba_broadl,
       BEETLES_PRED_RICH_2.5 = 7.78440 + 0.00000*deadwood + 0.01439*ba_broadl,
       MOTHS_PRED_RICH_97.5 = 64.98348 + (-0.00004)*tree_10_40_2 + 0.89673*broadl_40,
       MOTHS_PRED_RICH_50 = 61.44840 + (-0.00018)*tree_10_40_2 + 0.62675*broadl_40,
       MOTHS_PRED_RICH_2.5 = 57.88974 + (-0.00033)*tree_10_40_2 + 0.35542*broadl_40,
-      MOTHS_RED_PRED_RICH_97.5 = 66.44195 + (-0.00005)*tree_10_40_2 + 0.94178*broadl_40,
-      MOTHS_RED_PRED_RICH_50 = 62.49055 + (-0.00019)*tree_10_40_2 + 0.65890*broadl_40,
-      MOTHS_RED_PRED_RICH_2.5 = 58.73980 + (-0.00035)*tree_10_40_2 + 0.38171*broadl_40,
+      #MOTHS_RED_PRED_RICH_97.5 = 66.44195 + (-0.00005)*tree_10_40_2 + 0.94178*broadl_40,
+      #MOTHS_RED_PRED_RICH_50 = 62.49055 + (-0.00019)*tree_10_40_2 + 0.65890*broadl_40,
+      #MOTHS_RED_PRED_RICH_2.5 = 58.73980 + (-0.00035)*tree_10_40_2 + 0.38171*broadl_40,
       BRYO_PRED_RICH_50_beta1 = 0.01584*age,                          # beta[1] 50% for age
       BRYO_PRED_RICH_50_beta2 = 0.00004*deadwood,                      # beta[2] 50% for deadwood
       LICHEN_PRED_RICH_50_beta1 = 0.04723*age,
@@ -646,14 +680,14 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
       MACROFUNGI_PRED_RICH_50_beta2 = 0.00035*deadwood,
       MACROFUNGI_PRED_RICH_50_beta3 = 3.29810*ba_broadl,
       MACROFUNGI_PRED_RICH_50_beta4 = 0.08110*tree_10_40,
-      MACROFUNGI_RED_PRED_RICH_50_beta1 = 0.00088*deadwood,
-      MACROFUNGI_RED_PRED_RICH_50_beta2 = 6.18950*ba_broadl,
+      #MACROFUNGI_RED_PRED_RICH_50_beta1 = 0.00088*deadwood,
+      #MACROFUNGI_RED_PRED_RICH_50_beta2 = 6.18950*ba_broadl,
       BEETLES_PRED_RICH_50_beta1 = 0.00002*deadwood,
       BEETLES_PRED_RICH_50_beta2 = 0.11495*ba_broadl,
       MOTHS_PRED_RICH_50_beta1 = -0.00018*tree_10_40_2,
       MOTHS_PRED_RICH_50_beta2 = 0.62675*broadl_40,
-      MOTHS_RED_PRED_RICH_50_beta1 = -0.00019*tree_10_40_2,
-      MOTHS_RED_PRED_RICH_50_beta2 = 0.65890*broadl_40
+      #MOTHS_RED_PRED_RICH_50_beta1 = -0.00019*tree_10_40_2,
+      #MOTHS_RED_PRED_RICH_50_beta2 = 0.65890*broadl_40
     )
   
   
