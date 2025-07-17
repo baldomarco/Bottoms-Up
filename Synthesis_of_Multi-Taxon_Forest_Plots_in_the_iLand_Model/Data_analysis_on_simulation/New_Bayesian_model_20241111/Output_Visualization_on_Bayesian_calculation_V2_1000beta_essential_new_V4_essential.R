@@ -3,7 +3,7 @@ library(ggpointdensity)
 library(ggplot2)
 library(viridis)
 
-taxa_quartiles_thrashold # Remember to run the code in BDV_recovery_V4 or previous versions
+taxa_quartiles_thrashold # Remember to run the code in BDV_recovery_V4 or previous versions but maybe even not needed
 
 ################################################################################
 # Let's first of all calculate the median richness in protected plots
@@ -31,13 +31,18 @@ median_species_richness
 ################################################################################
 #_______________________________________________________________________________
 # FILTER FOR THE FIRST 350 YEARS
-bayesian_results_all_filtered <- bayesian_results_all %>% filter(year...1 >= 0 & year...1 <= 350)
+bayesian_results_all_filtered <- bayesian_results_all %>% filter(year >= 0 & year <= 350)
 Bayesian_BDV_model_V3_multi <- Bayesian_BDV_model_V3_multi %>% filter(year >= 0 & year <= 350)
 
 
-# Reduce dataset by 95%
+# Reduce data set of 90%
 reduced_data <- bayesian_results_all_filtered %>%
-  sample_frac(0.005)
+  sample_frac(0.01)
+
+# To select all except the runs having "_mng" inside the name
+# reduced_data <- reduced_data[!grepl("_mng", reduced_data$run), ]
+# Opposite -> To select all the runs having "_mng" inside the name
+# Bayesian_BDV_model_V3_multi<- Bayesian_BDV_model_V3_multi[grepl("_mng", Bayesian_BDV_model_V3_multi$run), ]
 
 # BEETLES OFFICIAL PLOT V4
 
@@ -49,7 +54,7 @@ BDV_predictors$plotID <- seq_len(nrow(BDV_predictors)) # required for the data s
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Non-flying beetles (0.053)")] <- "Beetles"
 
 # Combined Plot with Violin Plot and Dots
-B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
+B0 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_BEETLES)) +
   geom_pointdensity(alpha = 0.5) + 
   scale_color_viridis(option = "H", name = "Density") + 
   
@@ -86,7 +91,7 @@ B0 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
   ) +
   
   labs(
-    title = "Density Point Cloud of Predicted Coleoptera Sp. Richness",
+    title = "Coleoptera Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Coleoptera"
   ) +
@@ -119,7 +124,7 @@ print(B0)
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Epiphytic / epixilic bryophytes (0.212)")] <- "Bryophytes"
 
 # Combined Plot with Violin Plot and Dots
-B1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
+B1 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_BRYOPHYTES)) +
   # Density point cloud
   geom_pointdensity(alpha = 0.4) + 
   scale_color_viridis(option = "H", name = "Density") + 
@@ -161,7 +166,7 @@ B1 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BRYOPHYTES)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Bryophyta Sp. Richness",
+    title = "Bryophyta Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Bryophyta"
   ) +
@@ -194,7 +199,7 @@ print(B1)
 # Rename column to 'lichens'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Lichens (0.137)")] <- "Lichens"
 
-B2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
+B2 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_LICHENS)) +
   # Density point cloud
   geom_pointdensity(alpha = 0.2) + 
   scale_color_viridis(option = "H", name = "Density") + 
@@ -238,7 +243,7 @@ B2 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_LICHENS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Lichenes Sp. Richness",
+    title = "Lichenes Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Lichenes"
   ) +
@@ -276,7 +281,7 @@ print(B2)
 # Rename column to 'Macromycetes'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Macrofungi (2.118)")] <- "Macrofungi"
 
-B3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
+B3 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_MACROFUNGI)) +
   # Density point cloud
   geom_pointdensity(alpha = 0.2) + 
   scale_color_viridis(option = "H", name = "Density") + 
@@ -321,7 +326,7 @@ B3 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MACROFUNGI)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Macromycetes Sp. Richness",
+    title = "Macromycetes Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Macromycetes"
   ) +
@@ -354,7 +359,7 @@ print(B3)
 # Rename column to 'Moths'
 colnames(BDV_predictors)[which(colnames(BDV_predictors) == "Moths (0.566)")] <- "Moths"
 
-B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
+B5 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_MOTHS)) +
   # Density point cloud
   geom_pointdensity(alpha = 0.4) + 
   scale_color_viridis(option = "H", name = "Density") + 
@@ -367,7 +372,7 @@ B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Horizontal dashed lines at y = 25 and y = 106
   #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 62, color = "red", linetype = "dashed", size = 0.5) +
+  geom_hline(yintercept = 62, color = "red", linetype = "dashed", size = 0.5) + # Q3 = 72.75
 
   # Classic minimal boxplot for BDV_predictors
   geom_boxplot(data = BDV_predictors, 
@@ -399,7 +404,7 @@ B5 <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_MOTHS)) +
   
   # Titles and axis labels
   labs(
-    title = "Density Point Cloud of Predicted Lepidoptera Sp. Richness",
+    title = "Lepidoptera Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Lepidoptera"
   ) +
@@ -434,7 +439,7 @@ dev.off()
 #----- THI IS JUST A TEST   -------#
 
 # Assign your plot to an object first, e.g., 'p'
-p <- ggplot(reduced_data, aes(x = year...1, y = PRED_RICH_BEETLES)) +
+p <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_BEETLES)) +
   geom_density_2d_filled(contour_var = "density", alpha = 1) +
   
   scale_fill_brewer(palette = "Spectral", direction = 1) +

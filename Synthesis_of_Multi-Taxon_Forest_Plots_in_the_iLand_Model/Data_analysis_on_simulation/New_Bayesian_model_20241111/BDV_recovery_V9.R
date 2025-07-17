@@ -167,7 +167,7 @@ plot_taxa <- function(df, taxa) {
     threshold_label <- "Median"
   }
   
-  # 1️⃣ Calcolare la probabilità normalizzata di superamento della soglia per categoria
+  # 1 Calcolare la probabilit?? normalizzata di superamento della soglia per categoria
   G1 <- df %>%
     # Calcolare per ogni plot e anno se il valore supera la soglia (1 = supera la soglia, 0 = non supera)
     mutate(exceeds_threshold = ifelse(!!sym(col_raw) > 0, 1, 0)) %>%
@@ -185,7 +185,7 @@ plot_taxa <- function(df, taxa) {
       average_percent_above_threshold = mean(percent_above_threshold, na.rm = TRUE),  # Media della percentuale sopra la soglia per categoria
       .groups = "drop"
     ) %>%
-    # Creare il grafico a barre con probabilità normalizzata
+    # Creare il grafico a barre con probabilit?? normalizzata
     ggplot(aes(x = forest_cat, y = average_percent_above_threshold, fill = forest_cat)) +
     geom_bar(stat = "identity") +
     labs(title = paste(taxa, "- Normalized Probability of Exceeding", threshold_label),
@@ -195,7 +195,7 @@ plot_taxa <- function(df, taxa) {
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # 2️⃣ Serie temporale con ribbon (mean, min, max per anno e categoria)
+  # 2 Serie temporale con ribbon (mean, min, max per anno e categoria)
   summary_df <- df %>%
     group_by(year, forest_cat) %>%
     summarise(
@@ -350,7 +350,7 @@ taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 G1_data <- prepare_G1_data(BDV_recovery_filtered, taxa_list)
 G2_data <- prepare_G2_data(BDV_recovery_filtered, taxa_list)
 
-# 1️⃣ Plot G1: Bar plots for all taxa together
+# 1 Plot G1: Bar plots for all taxa together
 G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_threshold, fill = forest_cat)) +
   geom_bar(stat = "identity") +
   labs(title = "Normalized Probability of Exceeding Threshold (All Taxa)", 
@@ -362,7 +362,7 @@ G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_thresho
   theme(legend.position = "bottom") +
   facet_wrap(~ taxa, nrow = 1)
 
-# 2️⃣ Plot G2: Time series for all taxa together
+# 2 Plot G2: Time series for all taxa together
 G2_plot <- ggplot(G2_data, aes(x = year, y = mean_value, color = forest_cat, fill = forest_cat)) +
   geom_line(size = 1.2) +
   geom_ribbon(aes(ymin = min_value, ymax = max_value), alpha = 0.2) +
@@ -440,7 +440,7 @@ taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 G1_data <- prepare_G1_data(BDV_recovery_filtered, taxa_list)
 G2_data <- prepare_G2_data(BDV_recovery_filtered, taxa_list)
 
-# 1️⃣ Plot G1: Bar plots for all taxa together
+# 1 Plot G1: Bar plots for all taxa together
 G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_threshold, fill = forest_cat)) +
   geom_bar(stat = "identity") +
   labs(title = "Normalized Probability of Exceeding Threshold (All Taxa)", 
@@ -452,7 +452,7 @@ G1_plot <- ggplot(G1_data, aes(x = forest_cat, y = average_percent_above_thresho
         legend.position = "bottom") +  # Move legend to bottom
   facet_wrap(~ taxa, nrow = 1)
 
-# 2️⃣ Plot G2: Time series for all taxa together, separated by forest category
+# 2 Plot G2: Time series for all taxa together, separated by forest category
 G2_plot <- ggplot(G2_data, aes(x = year, y = mean_value, color = forest_cat, fill = forest_cat)) +
   geom_line(size = 1.2) +
   geom_ribbon(aes(ymin = min_value, ymax = max_value), alpha = 0.2) +
@@ -475,27 +475,27 @@ library(ggplot2)
 library(gridExtra)
 
 
-# 🔹 Define fixed colors for Forest Categorys
+# Define fixed colors for Forest Categorys
 management_colors <- c(
-  "Old-Growth"   = "#1f77b4",  # Blue → Represents conservation and stability
-  "Native Broadleaves" = "#ff7f0e",  # Orange → Associated with deciduous trees
+  "Old-Growth"   = "#1f77b4",  # Blue ??? Represents conservation and stability
+  "Native Broadleaves" = "#ff7f0e",  # Orange ??? Associated with deciduous trees
   "Non-Native Coniferous"  = "#2ca02c")
 
 management_colors <- c(
-  "Old-Growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Beech-Oak" = "#E69F00",  # Warm golden amber → Deciduous richness 
-  "Conifer"  = "#009E73"  # Burnt orange → Evergreen dominance 
+  "Old-Growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Beech-Oak" = "#E69F00",  # Warm golden amber ??? Deciduous richness 
+  "Conifer"  = "#009E73"  # Burnt orange ??? Evergreen dominance 
 )
 
 management_colors <- c(
-  "Old-Growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Beech-Oak" = "#D55E00",  # Warm golden amber → Deciduous richness 
+  "Old-Growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Beech-Oak" = "#D55E00",  # Warm golden amber ??? Deciduous richness 
   "Conifer"  = "darkolivegreen" 
 )
 
 management_colors <- c(
-  "Old-Growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Native Broadleaves" = "#FF8247",  # Warm golden amber → Deciduous richness  
+  "Old-Growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Native Broadleaves" = "#FF8247",  # Warm golden amber ??? Deciduous richness  
   "Non-Native Coniferous"  = "darkolivegreen" 
 )
 
@@ -507,11 +507,11 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
   # Nome della colonna da analizzare
   col_name <- paste0("%_above_", quartile, "_", taxa)
   
-  # 🔹 Filtra solo gli anni in cui la % è > 0 (tranne per G1)
+  # Filtra solo gli anni in cui la % ?? > 0 (tranne per G1)
   df_filtered <- df %>%
     filter(!!sym(col_name) > 0)
   
-  # 1️⃣ (G1) Bar plot: Relative % of Years Above 0 per Forest Category
+  # (G1) Bar plot: Relative % of Years Above 0 per Forest Category
   G1 <- df %>%
     group_by(forest_cat) %>%
     summarise(
@@ -524,39 +524,39 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
     labs(title = paste(taxa, quartile, "- Relative Years Above 0"),
          x = "Forest Category",
          y = "Relative % of Years Above 0") +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +  # Show % format
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
   
-  # 2️⃣ (G2) Scatter plot: Year vs. % sopra la soglia, colorato per Forest Category
+  # (G2) Scatter plot: Year vs. % sopra la soglia, colorato per Forest Category
   G2 <- ggplot(df_filtered, aes(x = year, y = !!sym(col_name), color = forest_cat)) +
     geom_point(alpha = 0.1) +
     geom_smooth(method = "loess", se = FALSE, size = 1.5, span = 0.3) + # Lower span = more wiggly curve
     labs(title = paste(taxa, quartile, "- % Above Threshold per Year"),
          x = "Year",
          y = paste("% Above", quartile)) +
-    scale_color_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_color_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal()
   
-  # 3️⃣ (G3) Boxplot: Distribuzione delle % sopra la soglia per Forest Category
+  # (G3) Boxplot: Distribuzione delle % sopra la soglia per Forest Category
   G3 <- ggplot(df_filtered, aes(x = forest_cat, y = !!sym(col_name), fill = forest_cat)) +
     geom_boxplot(outlier.color = "black", outlier.alpha = 0.1) +
     labs(title = paste(taxa, quartile, "- Distribution of % Above"),
          x = "Forest Category",
          y = paste("% Above", quartile)) +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # 4️⃣ (G4) Boxplot per età in cui si supera la soglia
+  # (G4) Boxplot per et?? in cui si supera la soglia
   G4 <- ggplot(df_filtered, aes(x = forest_cat, y = age, fill = forest_cat)) +
     geom_boxplot(outlier.shape = 1, outlier.color = "gray40", outlier.size = 1, outlier.alpha = 0.3) +
     labs(title = paste(taxa, quartile, "- Age Distribution Above Threshold"),
          x = "Forest Category",
          y = "Age") +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -564,7 +564,7 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
   grid.arrange(G1, G2, G3, G4, ncol = 2)
 }
 
-# 🚀 Esempio per Bryophytes e quartile Median
+# Esempio per Bryophytes e quartile Median
 # plot_taxa_quartile(BDV_recovery_filtered, "BRYOPHYTES", "Median")
 
 # Per generare tutti i grafici per ogni taxa e quartile:
@@ -590,11 +590,11 @@ plot_taxa_filtered <- function(df, taxa) {
   # Column name
   col_name <- paste0("%_above_", quartile, "_", taxa)
   
-  # 🔹 Filter only years where % > 0 (except for G1)
+  # Filter only years where % > 0 (except for G1)
   df_filtered <- df %>%
     filter(!!sym(col_name) > 0)
   
-  # 1️⃣ (G1) Bar plot: Relative % of Years Above 0 per Forest Category
+  # (G1) Bar plot: Relative % of Years Above 0 per Forest Category
   G1 <- df %>%
     group_by(forest_cat) %>%
     summarise(
@@ -613,7 +613,7 @@ plot_taxa_filtered <- function(df, taxa) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "bottom")  # Move legend to bottom
   
-  # 2️⃣ (G2) Scatter plot: Year vs. % Above Threshold
+  # (G2) Scatter plot: Year vs. % Above Threshold
   G2 <- ggplot(df_filtered, aes(x = year, y = !!sym(col_name), color = forest_cat)) +
     geom_point(alpha = 0.1) +
     geom_smooth(method = "loess", se = FALSE, size = 1.5, span = 0.3) +  
@@ -624,7 +624,7 @@ plot_taxa_filtered <- function(df, taxa) {
     theme_minimal() +
     theme(legend.position = "none")  # Hide legend to avoid duplication
   
-  # 3️⃣ (G3) Boxplot: Distribution of % Above by Forest Category
+  # (G3) Boxplot: Distribution of % Above by Forest Category
   G3 <- ggplot(df_filtered, aes(x = forest_cat, y = !!sym(col_name), fill = forest_cat)) +
     geom_boxplot(outlier.color = "black", outlier.alpha = 0.1) +
     labs(title = paste(taxa, "-", quartile, "- Distribution of % Above"),
@@ -635,7 +635,7 @@ plot_taxa_filtered <- function(df, taxa) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "none")  # Hide legend
   
-  # 4️⃣ (G4) Boxplot: Age Distribution Above Threshold
+  # (G4) Boxplot: Age Distribution Above Threshold
   G4 <- ggplot(df_filtered, aes(x = forest_cat, y = age, fill = forest_cat)) +
     geom_boxplot(outlier.shape = 1, outlier.color = "gray40", outlier.size = 1, outlier.alpha = 0.3) +
     labs(title = paste(taxa, "-", quartile, "- Age Distribution Above Threshold"),
@@ -650,7 +650,7 @@ plot_taxa_filtered <- function(df, taxa) {
   grid.arrange(G1, G2, G3, G4, ncol = 4)
 }
 
-# 🚀 Generate graphs for each taxa (only "Median" or "Q3" for moths)
+# Generate graphs for each taxa (only "Median" or "Q3" for moths)
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 
 for (taxa in taxa_list) {
@@ -676,12 +676,12 @@ plot_single_type_all_taxa <- function(df, plot_type) {
     quartile <- ifelse(taxa == "MOTHS", "Q3", "Median")
     col_name <- paste0("%_above_", quartile, "_", taxa)
     
-    # 🔹 Filtra solo gli anni in cui la % è > 0 (tranne per G1)
+    # ???? Filtra solo gli anni in cui la % ?? > 0 (tranne per G1)
     df_filtered <- df %>%
       filter(!!sym(col_name) > 0)
     
     if (plot_type == "bar") {
-      # 1️⃣ (G1) Bar plot: Relative % of Years Above 0 per Forest Category
+      # (G1) Bar plot: Relative % of Years Above 0 per Forest Category
       p <- df %>%
         group_by(forest_cat) %>%
         summarise(
@@ -701,7 +701,7 @@ plot_single_type_all_taxa <- function(df, plot_type) {
               legend.position = "bottom")  # Legenda in basso
       
     } else if (plot_type == "scatter") {
-      # 2️⃣ (G2) Scatter plot: Year vs. % Above Threshold
+      # (G2) Scatter plot: Year vs. % Above Threshold
       p <- ggplot(df_filtered, aes(x = year, y = !!sym(col_name), color = forest_cat)) +
         geom_point(alpha = 0.1) +
         geom_smooth(method = "loess", se = FALSE, size = 1.5, span = 0.3) +  
@@ -713,7 +713,7 @@ plot_single_type_all_taxa <- function(df, plot_type) {
         theme(legend.position = "bottom")  # Legenda in basso
       
     } else if (plot_type == "box") {
-      # 3️⃣ (G3) Boxplot: Distribution of % Above by Forest Category
+      # (G3) Boxplot: Distribution of % Above by Forest Category
       p <- ggplot(df_filtered, aes(x = forest_cat, y = !!sym(col_name), fill = forest_cat)) +
         geom_boxplot(outlier.color = "black", outlier.alpha = 0.1) +
         labs(title = paste(taxa), # "-", quartile, "- Distribution of % Above"),
@@ -725,7 +725,7 @@ plot_single_type_all_taxa <- function(df, plot_type) {
               legend.position = "bottom")  # Legenda in basso
       
     } else if (plot_type == "age") {
-      # 4️⃣ (G4) Boxplot: Age Distribution Above Threshold
+      # (G4) Boxplot: Age Distribution Above Threshold
       p <- ggplot(df_filtered, aes(x = forest_cat, y = age, fill = forest_cat)) +
         geom_boxplot(outlier.shape = 1, outlier.color = "gray40", outlier.size = 1, outlier.alpha = 0.3) +
         labs(title = paste(taxa), # "-", quartile, "- Age Distribution Above Threshold"),
@@ -744,7 +744,7 @@ plot_single_type_all_taxa <- function(df, plot_type) {
   grid.arrange(grobs = plot_list, ncol = 5)  # 5 colonne per 5 taxa
 }
 
-# 🚀 Genera un grafico per ogni tipo (bar, scatter, box, age) per tutti i taxa
+# Genera un grafico per ogni tipo (bar, scatter, box, age) per tutti i taxa
 plot_single_type_all_taxa(BDV_recovery_filtered, "bar")   # Bar plot
 plot_single_type_all_taxa(BDV_recovery_filtered, "scatter")  # Scatter plot
 plot_single_type_all_taxa(BDV_recovery_filtered, "box")    # Boxplot
@@ -773,7 +773,7 @@ BDV_recovery_data <- read_xlsx("C:/iLand/20230901_Bottoms_Up/20230914_plot_exper
 BDV_recovery_data
 
 #------------------
-# 1️⃣ Initial recovery stage: first row (year == 0) per plot
+# 1 Initial recovery stage: first row (year == 0) per plot
 initial_recovery_stage <- BDV_recovery_data %>%
   filter(year == 0) %>%
   group_by(plotID) %>%
@@ -782,7 +782,7 @@ initial_recovery_stage <- BDV_recovery_data %>%
 
 initial_recovery_stage
 
-# 2️⃣ Recovery years (YoR) per plot and taxa-threshold. The YoR will be assigned at every % threshold Taxa richness, so instead then the % reaching the threshold now you will have the year in which at least 10% recovered.
+# 2 Recovery years (YoR) per plot and taxa-threshold. The YoR will be assigned at every % threshold Taxa richness, so instead then the % reaching the threshold now you will have the year in which at least 10% recovered.
 recovery_years <- BDV_recovery_data %>%
   group_by(plotID) %>%
   summarise(
@@ -815,26 +815,26 @@ pdf(paste0(dataroot, "BDV_recovery_15_no_old_growth.pdf"), height=9, width=16)
 
 #--------------------
 management_colors <- c(
-  "Old-Growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Native Broadleaves" = "#FF8247",  # Warm golden amber → Deciduous richness  
+  "Old-Growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Native Broadleaves" = "#FF8247",  # Warm golden amber ??? Deciduous richness  
   "Non-Native Coniferous"  = "darkolivegreen" 
 )
 
 # 8' graph
 #-------------------------------------------------------------------------------
-# 🏗️ Function to generate 2x3 plots for a given taxa
+# Function to generate 2x3 plots for a given taxa
 plot_taxa_overview <- function(df, taxa_name) {
   df_taxa <- df %>%
     filter(str_detect(taxa_threshold, taxa_name))
   
   quartiles <- c("Q1", "Median", "Q3")
   
-  # 🔁 Generate plots per quartile
+  # Generate plots per quartile
   plots <- lapply(quartiles, function(q) {
     df_q <- df_taxa %>%
       filter(str_detect(taxa_threshold, q))
     
-    # 📈 Scatter plot
+    # Scatter plot
     scatter <- ggplot(df_q, aes(x = age, y = YoR , color = forest_cat)) +
       geom_point(alpha = 0.7, size = 2.5) +
       ylim(0,NA)+
@@ -844,7 +844,7 @@ plot_taxa_overview <- function(df, taxa_name) {
       theme_minimal() +
       theme(legend.position = "none")
     
-    # 📊 Boxplot
+    # Boxplot
     box <- ggplot(df_q, aes(x = forest_cat, y = YoR, fill = forest_cat)) +
       geom_boxplot(outlier.shape = 21, outlier.size = 1.5, outlier.color = "black") +
       labs(title = paste(taxa_name, "-", q, "Boxplot"), x = "Forest Categories", y = "YoR") +
@@ -855,7 +855,7 @@ plot_taxa_overview <- function(df, taxa_name) {
     list(scatter, box)
   })
   
-  # 🔗 Arrange plots in a 2x3 grid (scatter on top, box below)
+  # Arrange plots in a 2x3 grid (scatter on top, box below)
   grid.arrange(
     plots[[1]][[1]], plots[[2]][[1]], plots[[3]][[1]],
     plots[[1]][[2]], plots[[2]][[2]], plots[[3]][[2]],
@@ -864,7 +864,7 @@ plot_taxa_overview <- function(df, taxa_name) {
   )
 }
 
-# 🐛 Generate plots for all taxa
+# Generate plots for all taxa
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 for (taxa in taxa_list) {
   plot_taxa_overview(recovery_long, taxa)
@@ -875,12 +875,12 @@ for (taxa in taxa_list) {
 #-------------------------------------------------------------------------------
 # LET'S DO THE SAME VISUALIZATION BUT WITH A SCATTER PLOT AND A BOXPLOT OF THE RECOVERY FOR EVERY QUARTILE AND TAXA
 
-# 🏗️ Function to generate 1x2 plots (scatter + boxplot) per taxa and quartile
+# Function to generate 1x2 plots (scatter + boxplot) per taxa and quartile
 plot_taxa_quartile_1x2 <- function(df, taxa_name, quartile) {
   df_filtered <- df %>%
     filter(str_detect(taxa_threshold, taxa_name) & str_detect(taxa_threshold, quartile))
   
-  # 📈 Scatter plot
+  # Scatter plot
   scatter <- ggplot(df_filtered, aes(x = YoR, y = age, color = forest_cat)) +
     geom_point(alpha = 0.7, size = 2.5) +
     labs(title = paste(taxa_name, "-", quartile, "Scatter Plot"), x = "YoR", y = "Age") +
@@ -888,7 +888,7 @@ plot_taxa_quartile_1x2 <- function(df, taxa_name, quartile) {
     theme_minimal() +
     theme(legend.position = "bottom")
   
-  # 📊 Boxplot
+  # Boxplot
   box <- ggplot(df_filtered, aes(x = forest_cat, y = YoR, fill = forest_cat)) +
     geom_boxplot(outlier.shape = 21, outlier.size = 1.5, outlier.color = "black") +
     labs(title = paste(taxa_name, "-", quartile, "Boxplot"), x = "Forest Categories", y = "YoR") +
@@ -896,11 +896,11 @@ plot_taxa_quartile_1x2 <- function(df, taxa_name, quartile) {
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none")
   
-  # 🔗 Combine scatter + boxplot in 1x2 layout
+  # Combine scatter + boxplot in 1x2 layout
   grid.arrange(scatter, box, ncol = 2, top = paste("Taxa:", taxa_name, "| Quartile:", quartile))
 }
 
-# 🚀 Loop over taxa and quartiles to generate all plots
+# Loop over taxa and quartiles to generate all plots
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 quartiles <- c("Q1", "Median", "Q3")
 
@@ -929,7 +929,7 @@ plot_taxa_plots <- function(df, taxa_list, quartile) {
     return(NULL)
   }
   
-  # 📈 Scatter plot con modello lineare per ogni categoria forestale
+  # Scatter plot con modello lineare per ogni categoria forestale
   scatter <- ggplot(df_filtered, aes(x = age, y = YoR, color = forest_cat)) +
     geom_point(alpha = 0.7, size = 2.5) +
     geom_smooth(method = "lm", se = FALSE, aes(group = forest_cat)) +  # Modello lineare per ogni categoria forestale
@@ -939,7 +939,7 @@ plot_taxa_plots <- function(df, taxa_list, quartile) {
     theme_minimal() +
     theme(legend.position = "bottom")
   
-  # 📊 Boxplot per tutti i taxa e quartile, per categoria forestale
+  # Boxplot per tutti i taxa e quartile, per categoria forestale
   box <- ggplot(df_filtered, aes(x = forest_cat, y = YoR, fill = forest_cat)) +
     geom_boxplot(outlier.shape = 21, outlier.size = 1.5, outlier.color = "black") +
     labs(title = paste("Boxplot - ", taxa_list, " - ", quartile), x = "Forest Categories", y = "Year of Recovery (YoR)") +
@@ -948,11 +948,11 @@ plot_taxa_plots <- function(df, taxa_list, quartile) {
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom")
   
-  # 🔗 Mostra i due grafici separati
+  # Mostra i due grafici separati
   grid.arrange(scatter, box, ncol = 1)
 }
 
-# 🚀 Genera i grafici per tutti i taxa e quartili (solo Q3 per Moths, Median per gli altri taxa)
+# Genera i grafici per tutti i taxa e quartili (solo Q3 per Moths, Median per gli altri taxa)
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 quartiles <- c("Median", "Q3")  # Median per tutti i taxa tranne Moths, Q3 per Moths
 
@@ -967,7 +967,7 @@ for (q in quartiles) {
 # 11' 
 #-------------------------------------------------------------------------------
 
-# 🏗️ Function to generate combined plots for selected quartiles and taxa (scatter and boxplot)
+# Function to generate combined plots for selected quartiles and taxa (scatter and boxplot)
 plot_combined_taxa <- function(df, taxa_list, quartiles, min_y_value = 0) {
   
   # Generate the list of data for selected quartiles and taxa
@@ -1026,11 +1026,11 @@ plot_combined_taxa <- function(df, taxa_list, quartiles, min_y_value = 0) {
   return(combined_grid)
 }
 
-# 🐛 Define taxa and quartiles for filtering
+# Define taxa and quartiles for filtering
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 quartiles <- c("Median", "Q3")  # Median for all taxa except Moths, Q3 for Moths
 
-# 🐛 Generate the combined plots for selected taxa and quartiles with a min y-value of 0
+# Generate the combined plots for selected taxa and quartiles with a min y-value of 0
 combined_taxa_plot <- plot_combined_taxa(recovery_long, taxa_list, quartiles, min_y_value = 0)
 
 # Print the combined plot
@@ -1093,8 +1093,8 @@ saveRDS(Observed_vs_Simulated, file.path(dataroot, "Observed_vs_Simulated_reduce
 
 # Define management colors
 management_colors <- c(
-  "Old-Growth" = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Native Broadleaves" = "#FF8247",  # Warm golden amber → Deciduous richness  
+  "Old-Growth" = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Native Broadleaves" = "#FF8247",  # Warm golden amber ??? Deciduous richness  
   "Non-Native Coniferous" = "darkolivegreen" 
 )
 
@@ -1310,9 +1310,9 @@ library(writexl)
 
 # --- Define the color palette --- #
 management_colors <- c(
-  "Old-Growth" = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Native Broadleaves" = "#FF8247",  # Warm golden amber → Deciduous richness  
-  "Non-Native Coniferous" = "darkolivegreen"  # Earthy green → Non-native conifers
+  "Old-Growth" = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Native Broadleaves" = "#FF8247",  # Warm golden amber ??? Deciduous richness  
+  "Non-Native Coniferous" = "darkolivegreen"  # Earthy green ??? Non-native conifers
 )
 
 # --- MERGE OBSERVED AND SIMULATED DATA --- #
@@ -1441,5 +1441,3 @@ doc <- doc %>%
 print(doc, target = "species_richness_differences_V2.docx")
 
 ##################    THE END     ################
-
-

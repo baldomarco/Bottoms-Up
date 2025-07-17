@@ -419,41 +419,41 @@ library(ggplot2)
 library(gridExtra)
 
 
-# 🔹 Define fixed colors for management types
+# ???? Define fixed colors for management types
 management_colors <- c(
-  "Old-growth"   = "#1f77b4",  # Blue → Represents conservation and stability
-  "Broadl" = "#ff7f0e",  # Orange → Associated with deciduous trees
-  "Mixed"       = "#2ca02c",  # Green → Represents biodiversity and mixture
-  "Conifer"  = "#d62728",  # Red → Symbolizing evergreen dominance
-  "Transition"  = "#9467bd",  # Purple → Signifies change and transformation
-  "Clearcutted" = "#8c564b"   # Brown → Reflecting soil exposure and disturbance
+  "Old-growth"   = "#1f77b4",  # Blue ??? Represents conservation and stability
+  "Broadl" = "#ff7f0e",  # Orange ??? Associated with deciduous trees
+  "Mixed"       = "#2ca02c",  # Green ??? Represents biodiversity and mixture
+  "Conifer"  = "#d62728",  # Red ??? Symbolizing evergreen dominance
+  "Transition"  = "#9467bd",  # Purple ??? Signifies change and transformation
+  "Clearcutted" = "#8c564b"   # Brown ??? Reflecting soil exposure and disturbance
 )
 
 management_colors <- c(
-  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Broadl" = "#E69F00",  # Warm golden amber → Deciduous richness  
-  "Mixed"       = "#009E73",  # Vibrant jade green → Diversity and life  
-  "Conifer"  = "#D55E00",  # Burnt orange → Evergreen dominance  
-  "Transition"  = "#CC79A7",  # Soft magenta → Transformation and change  
-  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown → Soil and disturbance  
+  "Old-growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Broadl" = "#E69F00",  # Warm golden amber ??? Deciduous richness  
+  "Mixed"       = "#009E73",  # Vibrant jade green ??? Diversity and life  
+  "Conifer"  = "#D55E00",  # Burnt orange ??? Evergreen dominance  
+  "Transition"  = "#CC79A7",  # Soft magenta ??? Transformation and change  
+  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown ??? Soil and disturbance  
 )
 
 management_colors <- c(
-  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Broadl" = "#D55E00",  # Warm golden amber → Deciduous richness  
-  "Mixed"       = "#E69F00",  # Vibrant jade green → Diversity and life  
-  "Conifer"  = "darkolivegreen",  # Burnt orange → Evergreen dominance  
-  "Transition"  = "#FF1493",  # Soft magenta → Transformation and change  
-  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown → Soil and disturbance  
+  "Old-growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Broadl" = "#D55E00",  # Warm golden amber ??? Deciduous richness  
+  "Mixed"       = "#E69F00",  # Vibrant jade green ??? Diversity and life  
+  "Conifer"  = "darkolivegreen",  # Burnt orange ??? Evergreen dominance  
+  "Transition"  = "#FF1493",  # Soft magenta ??? Transformation and change  
+  "Clearcutted" = "#7A4E2D"   # Earthy cocoa brown ??? Soil and disturbance  
 )
 
 management_colors <- c(
-  "Old-growth"   = "#3B9AB2",  # Elegant teal → Stability, conservation  
-  "Broadl" = "#FF8247",  # Warm golden amber → Deciduous richness  
-  "Mixed"       = "goldenrod1",  # Vibrant jade green → Diversity and life  
-  "Conifer"  = "darkolivegreen",  # Burnt orange → Evergreen dominance  
-  "Transition"  = "#9370DB",  # Soft magenta → Transformation and change  
-  "Clearcutted" = "navajowhite3"   # Earthy cocoa brown → Soil and disturbance  
+  "Old-growth"   = "#3B9AB2",  # Elegant teal ??? Stability, conservation  
+  "Broadl" = "#FF8247",  # Warm golden amber ??? Deciduous richness  
+  "Mixed"       = "goldenrod1",  # Vibrant jade green ??? Diversity and life  
+  "Conifer"  = "darkolivegreen",  # Burnt orange ??? Evergreen dominance  
+  "Transition"  = "#9370DB",  # Soft magenta ??? Transformation and change  
+  "Clearcutted" = "navajowhite3"   # Earthy cocoa brown ??? Soil and disturbance  
 )
 
 # FUNZIONE per generare i grafici per un dato taxa e quartile
@@ -462,11 +462,11 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
   # Nome della colonna da analizzare
   col_name <- paste0("%_above_", quartile, "_", taxa)
   
-  # 🔹 Filtra solo gli anni in cui la % è > 0 (tranne per G1)
+  # ???? Filtra solo gli anni in cui la % ?? > 0 (tranne per G1)
   df_filtered <- df %>%
     filter(!!sym(col_name) > 0)
   
-  # 1️⃣ (G1) Bar plot: Numero di anni in cui la % supera 0 per management type
+  # 1?????? (G1) Bar plot: Numero di anni in cui la % supera 0 per management type
   G1 <- df %>%
     filter(!!sym(col_name) > 0) %>%
     group_by(management_type) %>%
@@ -476,37 +476,37 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
     labs(title = paste(taxa, quartile, "- Years Above 0"),
          x = "Management Type",
          y = "Years Above 0") +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # 2️⃣ (G2) Scatter plot: Year vs. % sopra la soglia, colorato per management type
+  # 2?????? (G2) Scatter plot: Year vs. % sopra la soglia, colorato per management type
   G2 <- ggplot(df_filtered, aes(x = year, y = !!sym(col_name), color = management_type)) +
     geom_point(alpha = 0.7) +
     geom_smooth(method = "loess", se = FALSE) +
     labs(title = paste(taxa, quartile, "- % Above Threshold per Year"),
          x = "Year",
          y = paste("% Above", quartile)) +
-    scale_color_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_color_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal()
   
-  # 3️⃣ (G3) Boxplot: Distribuzione delle % sopra la soglia per management type
+  # 3?????? (G3) Boxplot: Distribuzione delle % sopra la soglia per management type
   G3 <- ggplot(df_filtered, aes(x = management_type, y = !!sym(col_name), fill = management_type)) +
     geom_boxplot(outlier.color = "black", outlier.alpha = 0.1) +
     labs(title = paste(taxa, quartile, "- Distribution of % Above"),
          x = "Management Type",
          y = paste("% Above", quartile)) +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  # 4️⃣ (G4) Boxplot per età in cui si supera la soglia
+  # 4?????? (G4) Boxplot per et?? in cui si supera la soglia
   G4 <- ggplot(df_filtered, aes(x = management_type, y = age, fill = management_type)) +
     geom_boxplot(outlier.shape = 1, outlier.color = "gray40", outlier.size = 1, outlier.alpha = 0.3) +
     labs(title = paste(taxa, quartile, "- Age Distribution Above Threshold"),
          x = "Management Type",
          y = "Age") +
-    scale_fill_manual(values = management_colors) +  # 🔹 Fixed colors
+    scale_fill_manual(values = management_colors) +  # ???? Fixed colors
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -514,7 +514,7 @@ plot_taxa_quartile <- function(df, taxa, quartile) {
   grid.arrange(G1, G2, G3, G4, ncol = 2)
 }
 
-# 🚀 Esempio per Bryophytes e quartile Median
+# ???? Esempio per Bryophytes e quartile Median
 plot_taxa_quartile(BDV_recovery_filtered, "BRYOPHYTES", "Median")
 
 # Per generare tutti i grafici per ogni taxa e quartile:
