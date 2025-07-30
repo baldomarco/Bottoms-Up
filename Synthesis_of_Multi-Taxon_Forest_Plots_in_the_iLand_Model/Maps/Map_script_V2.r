@@ -13,7 +13,7 @@ library(ggspatial)
 # IMPORT THE TABLE WITH THE COORDINATES AND OTHE PLOT INFORMATIONS AND CREATE GEOREFERNTIAL OBJECTS
 
 # Directory
-dataroot <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/STSM/Maps/"
+dataroot <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/Synthesis_of_Multi-Taxon_Forest_Plots_in_the_iLand_Model/Maps/"
 
 # Tables where I find my coordinates and plots id
 tab1 <- read_csv(file.path(dataroot, "CLIM_DATA_REQUEST.csv"))

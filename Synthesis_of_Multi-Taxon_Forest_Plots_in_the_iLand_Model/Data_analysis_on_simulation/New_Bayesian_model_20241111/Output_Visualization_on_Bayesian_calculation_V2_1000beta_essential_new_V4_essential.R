@@ -31,8 +31,14 @@ median_species_richness
 ################################################################################
 #_______________________________________________________________________________
 # FILTER FOR THE FIRST 350 YEARS
-bayesian_results_all_filtered <- bayesian_results_all %>% filter(year >= 0 & year <= 350)
-Bayesian_BDV_model_V3_multi <- Bayesian_BDV_model_V3_multi %>% filter(year >= 0 & year <= 350)
+bayesian_results_all_filtered <- bayesian_results_all_1991_2020 %>% filter(year >= 0 & year <= 350)
+Bayesian_BDV_model_V3_multi <- Bayesian_BDV_model_V3_multi_1991_2020 %>% filter(year >= 0 & year <= 350)
+
+bayesian_results_all_filtered <- bayesian_results_all_filtered[!grepl("_mng", bayesian_results_all_filtered$run), ]
+Bayesian_BDV_model_V3_multi <- Bayesian_BDV_model_V3_multi[!grepl("_mng", Bayesian_BDV_model_V3_multi$run), ]
+
+bayesian_results_all_filtered <- bayesian_results_all_filtered[grepl("_mng", bayesian_results_all_filtered$run), ]
+Bayesian_BDV_model_V3_multi <- Bayesian_BDV_model_V3_multi[grepl("_mng", Bayesian_BDV_model_V3_multi$run), ]
 
 
 # Reduce data set of 90%
@@ -372,7 +378,7 @@ B5 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_MOTHS)) +
   
   # Horizontal dashed lines at y = 25 and y = 106
   #geom_hline(yintercept = 25, color = "red", linetype = "dashed", size = 0.5) +
-  geom_hline(yintercept = 62, color = "red", linetype = "dashed", size = 0.5) + # Q3 = 72.75
+  geom_hline(yintercept = 72.75, color = "red", linetype = "dashed", size = 0.5) + # Q3 = 72.75
 
   # Classic minimal boxplot for BDV_predictors
   geom_boxplot(data = BDV_predictors, 
@@ -404,7 +410,7 @@ B5 <- ggplot(reduced_data, aes(x = year, y = PRED_RICH_MOTHS)) +
   
   # Titles and axis labels
   labs(
-    title = "Lepidoptera Sp. Richness Prediction in Climate 1961-1990 Unmanaged Scenario",
+    title = "Lepidoptera Sp. Richness Prediction in Climate 1991-2020 Managed Scenario",
     x = "Year",
     y = "Predicted Sp. Richness of Lepidoptera"
   ) +

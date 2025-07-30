@@ -17,7 +17,7 @@ library(dplyr)
 # IMPORT THE TABLE WITH THE COORDINATES AND OTHE PLOT INFORMATIONS AND CREATE GEOREFERNTIAL OBJECTS
 
 # Directory
-dataroot <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/STSM/Maps/"
+dataroot <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/Synthesis_of_Multi-Taxon_Forest_Plots_in_the_iLand_Model/Maps/"
 
 # Tables where I find my coordinates and plots id
 tab1 <- read_csv(file.path(dataroot, "CLIM_DATA_REQUEST.csv"))
@@ -47,6 +47,12 @@ europe <- world[world$continent == "Europe", ]
 # Calculate centroids of each country for labeling
 europe_centroids <- st_centroid(europe)
 
+# Site centroids in CZ
+site_centroids_sf <- bdv_plot_sf %>%
+  group_by(site) %>%
+  summarise(geometry = st_centroid(st_union(geometry))) %>%
+  ungroup()
+
 # Plot CZ map with color per site
 ggplot() +
   geom_sf(data = czech_republic, fill = "gray90", color = "black") +  # Plot the Czech Republic borders with gray fill
@@ -56,12 +62,12 @@ ggplot() +
 
 # Europe with country codes
 ggplot() +
-  geom_sf(data = europe, fill = "gray90", color = "black") +  # Plot Europe borders with gray fill
-  geom_sf(data = bdv_plot_sf, aes(color = site)) +  # Plot the BDV plots
-  geom_sf_text(data = europe_centroids, aes(label = iso_a3), size = 3, color = "black", check_overlap = TRUE) +  # Add country codes
-  coord_sf(xlim = c(5, 25), ylim = c(45, 55), expand = FALSE) +  # Adjust limits to focus on central Europe
+  geom_sf(data = europe, fill = "gray90", color = "black") +  # Plot Europe borders
+  geom_sf(data = site_centroids_sf, shape = 21, fill = NA, color = "black", size = 3, stroke = 1) +  # Hollow black circles
+  geom_sf_text(data = europe_centroids, aes(label = iso_a2), size = 3, color = "black", check_overlap = TRUE) +  # Country codes
+  coord_sf(xlim = c(5, 25), ylim = c(45, 55), expand = FALSE) +  # Focus on central Europe
   theme_minimal() +
-  labs(title = "BDV Plots in Europe", x = "Longitude", y = "Latitude", color = "Site")
+  labs(title = "BDV Plots in Europe", x = "Longitude", y = "Latitude")
 
 #-------------------------------------------------------------------------------
 # Add the Czech Rep. DEM at the figure!
