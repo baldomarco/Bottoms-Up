@@ -8,6 +8,7 @@ library(raster)
 library(ggspatial)
 library(dplyr)
 library(ggspatial)
+library(viridis)
 
 #-------------------------------------------------------------------------------
 # IMPORT THE TABLE WITH THE COORDINATES AND OTHE PLOT INFORMATIONS AND CREATE GEOREFERNTIAL OBJECTS
@@ -74,7 +75,7 @@ ggplot() +
 # Add the Czech Rep. DEM at the figure!
 
 # Directory for DEM data (example path, replace with actual path to DEM file)
-dem_file <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/STSM/Maps/Czech_DEM/DEM_czech.tif"
+dem_file <- "C:/Users/baldo/Documents/GitHub/Bottoms-Up/Synthesis_of_Multi-Taxon_Forest_Plots_in_the_iLand_Model/Maps/Czech_DEM/DEM_czech.tif"
 
 # Load DEM data
 dem <- raster(dem_file)
@@ -88,6 +89,13 @@ dem[dem <= 0] <- NA
 # Now can be plotted without the background
 plot(dem, colNA = "white", main = "DEM Czech Republic - Cleaned")
 
+# Now let's invert the color gradient
+cols_inv <- terrain.colors(255)
+
+plot(dem, col = cols_inv, colNA = "white")
+
+# Now let's make it with the magma color palette
+plot(dem, col = rev(magma(255)), colNA = "white")
 
 #-------------------------------------------------------------------------------
 # Convert clipped DEM to a data frame suitable for ggplot2
