@@ -187,3 +187,21 @@ ggplot() +
   labs(title = "BDV Plots on DEM in Czech Republic", x = "Longitude", y = "Latitude", color = "Site", fill = "Elevation") +
   theme(legend.position = "right")
 
+#-------------------------------------------------------------------------------
+# PLOT WITH MAGMA BACKGROUND AND SINGLE PLOT DOTS LIGHT BLUE
+
+# Full color per dots-plots
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +
+  scale_fill_gradientn(colors = rev(magma(255)), na.value = "white") +
+  geom_sf(data = bdv_plot_sf, color = "#00FFFF", shape = 21, fill  = "#00FFFF", stroke = 0.4, size = 2)+
+  theme_minimal() +
+  labs(title = "BDV plots on DEM (Czech Republic)", x = "Longitude", y = "Latitude", fill = "Elevation")
+
+# Empty circle per site
+ggplot() +
+  geom_raster(data = dem_df, aes(x = x, y = y, fill = elevation)) +
+  scale_fill_gradientn(colors = rev(magma(255)), na.value = "white") +
+  geom_sf(data = bdv_plot_sf_unique, shape  = 21, fill   = NA, color  = "#00FFFF", size   = 3, stroke = 1.5) +
+  theme_minimal() +
+  labs(title = "BDV sites on DEM (Czech Republic)", x = "Longitude", y = "Latitude", fill = "Elevation")
