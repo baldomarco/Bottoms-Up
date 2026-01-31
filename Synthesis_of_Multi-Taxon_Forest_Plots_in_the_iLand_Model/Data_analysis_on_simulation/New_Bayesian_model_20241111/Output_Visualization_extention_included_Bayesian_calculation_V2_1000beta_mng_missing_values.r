@@ -1689,8 +1689,8 @@ dev.off()
 P1 <-ggplot(Bayesian_BDV_model_V3_multi, aes(year, ymin = BRYO_PRED_RICH_2.5, ymax = BRYO_PRED_RICH_97.5,fill=run))+
   geom_ribbon(  alpha=0.3)+
   geom_line(aes(year,BRYO_PRED_RICH_50, color=run), lwd=0.9)+
-  facet_grid(~run, scales = "free", switch="y")+
-  facet_wrap(~run, scales = "free", ncol = 4) +
+  facet_grid(~run, switch="y")+
+  facet_wrap(~run, ncol = 2) +
   ylab("")+
   scale_fill_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
   scale_color_manual(values=c("chocolate3","chocolate3", "chocolate3", "chocolate3","chocolate3","chocolate3", "chocolate3", "chocolate3"))+
@@ -1706,6 +1706,8 @@ P1 <-ggplot(Bayesian_BDV_model_V3_multi, aes(year, ymin = BRYO_PRED_RICH_2.5, ym
 
 
 print(P1)
+
+
 
 #-------------------------------------------------------------------------------
 ###############    BRYOPHYTES DEADWOOD CHANGING ################
