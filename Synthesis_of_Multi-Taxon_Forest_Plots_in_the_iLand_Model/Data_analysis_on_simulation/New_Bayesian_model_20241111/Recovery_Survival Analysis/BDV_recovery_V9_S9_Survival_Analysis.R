@@ -37,7 +37,8 @@ bayesian_results_all_1991_2020 <- bayesian_results_all_1991_2020[!grepl("_mng", 
 taxa_list <- c("BRYOPHYTES", "LICHENS", "MACROFUNGI", "BEETLES", "MOTHS")
 
 # Load the data
-BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_tes - Copy.xlsx")
+BDV_predictors <- read_excel("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/Jenik/final_table_imp/tables_for_stat/Bdv_predictors_table_BayesianMod_results_track/20_Bdv_predictors_table_BayesianMod_results_th_with_elevation_mng_DWC_GAMage_snags_tot_deadwood_tes_Copy.xlsx")
+
 
 # Remake the names in the table for a better understanding and coding
 BDV_predictors <- BDV_predictors %>%
@@ -227,8 +228,8 @@ readr::write_csv(BDV_recovery_1991_2020, "C:/iLand/2023/20230901_Bottoms_Up/2023
 
 # ANALYSIS
 #------------------
-BDV_recovery_data_1961_1990 <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_1961_1990_350Y.csv")
-BDV_recovery_data_1991_2020 <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_1991_2020_350Y.csv")
+BDV_recovery_data_1961_1990 <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output - Copy/BDV_recovery_1961_1990_350Y.csv")
+BDV_recovery_data_1991_2020 <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output - Copy/BDV_recovery_1991_2020_350Y.csv")
 
 BDV_recovery_data_1961_1990
 BDV_recovery_data_1991_2020

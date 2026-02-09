@@ -6,7 +6,8 @@ library(ggpubr)
 
 # --- Configuration ---
 # Make sure this path is correct for your system
-Recovery_wide_df <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/recovery_analysis_by_taxon_climate_wide_xCompare.csv")
+Recovery_wide_df <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output - Copy/recovery_analysis_by_taxon_climate_wide_xCompare.csv")
+Recovery_wide_df 
 
 management_colors <- c(
   "Native Broadleaves" = "chocolate",

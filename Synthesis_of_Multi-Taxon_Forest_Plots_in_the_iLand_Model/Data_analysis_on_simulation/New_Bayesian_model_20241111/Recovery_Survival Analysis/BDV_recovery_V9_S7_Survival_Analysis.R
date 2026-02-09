@@ -13,8 +13,8 @@ library(ggpubr)
 
 
 
-Recovery_wide_df <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/recovery_analysis_by_taxon_climate_wide_xCompare.csv")
-Recovery_wide_df
+Recovery_wide_df <- read.csv("C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output - Copy/recovery_analysis_by_taxon_climate_wide_xCompare.csv")
+Recovery_wide_df 
 
 #--------------------
 # NEED TO OPEN A PDF WRITER AND GIVE IT THE ROOT, THE NAME, AND THE SIZE
