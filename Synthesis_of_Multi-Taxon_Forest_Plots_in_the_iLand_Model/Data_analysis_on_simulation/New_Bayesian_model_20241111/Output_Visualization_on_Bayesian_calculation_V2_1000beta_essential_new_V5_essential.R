@@ -1,4 +1,4 @@
-# Marco Baldo 25-11-2024 
+# Marco Baldo 10-02-2026 
 # To replicate the code be sure to use the same data, right directory and clean the R environment before to start
 # Create iLand simulation results from the Bottoms-Up model plots to analyze the multi-taxa biodiversity indicators in the forest ecosystems of Czechia
 # Refer the results and visualization to the pdf within this same GitHub folder: OK_final_20231214_BDV_mng_plot_L1_10_300.pdf
