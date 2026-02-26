@@ -3239,7 +3239,7 @@ geom_line(
 ) +
   
 geom_hline(aes(yintercept = 192,
-               linetype = "Median sp. rich."),
+               linetype = "Median old-growth sp. rich."),
                color = "red",
                linewidth = 0.4) +
   
@@ -3251,6 +3251,7 @@ geom_boxplot(
   notch = TRUE,
   fill = NA,
   color = "black",
+  outlier.shape = NA, # remove in case you want outliers visible
   inherit.aes = FALSE
 ) +
   
@@ -3267,7 +3268,7 @@ geom_boxplot(
   scale_linetype_manual(
     values = c(
       "Median function" = "solid",
-      "Median sp. rich." = "dashed"
+      "Median old-growth sp. rich." = "dashed"
     ),
     name = NULL
   ) +
@@ -3279,7 +3280,7 @@ geom_boxplot(
   ) +
   
   scale_y_continuous(
-    limits = c(0, NA),
+    limits = c(40, 250), 
     breaks = pretty_breaks(n = 6)
   ) +
   
