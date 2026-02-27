@@ -10,7 +10,7 @@
 # Load the database
 load("C:/_R/R_bottoms_up/db/alldata (1).RData")     # Bottoms-Up data
 
-speciesrichnessdata_95_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/plot_init/R/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
+speciesrichnessdata_95_CZ <- readRDS("C:/iLand/2023/20230901_Bottoms_Up/Sources_bottoms_up/R/stsm_roma/official/speciesrichnessdata_95_CZ.rds")
 C_stock_total_CZ <- readRDS("C:/_R/R_bottoms_up/db/C_stock_total_CZ.rds")
 dataBIRD_CZ <- readRDS("C:/_R/R_bottoms_up/db/dataBIRD_CZ.rds")
 dataBRYO_CZ <- readRDS("C:/_R/R_bottoms_up/db/dataBRYO_CZ.rds")
