@@ -210,6 +210,14 @@ BDV_recovery_1991_2020 <- BDV_recovery_1991_2020 %>%
   filter(year >= 0 &  forest_cat %in% c("Native Broadleaves"  ,  "Non-Native Coniferous")) # "Old-Growth"
 
 
+
+###-----------------
+
+This is saving the data carful to not over write
+
+###-----------------
+
+
 # For saving (C:\iLand\2023\20230901_Bottoms_Up\outputs\20250116_official\20250116_official\20250704\DB_R_Graph_1961_1990_umng_mng\DB_R_1961_1990_unmng_mng)
 saveRDS(BDV_recovery_1961_1990, file.path(dataroot, "BDV_recovery_1961_1990_350Y.rds")) # VARIABLES NEEDED IN THE BDV STUDY - Bayesian_BDV_model_bryophytes_V2
 saveRDS(BDV_recovery_1991_2020, file.path(dataroot, "BDV_recovery_1991_2020_350Y.rds")) # VARIABLES NEEDED IN THE BDV STUDY - Bayesian_BDV_model_bryophytes_V2
@@ -220,6 +228,11 @@ readr::write_csv(BDV_recovery_1961_1990, "C:/iLand/2023/20230901_Bottoms_Up/2023
 # write excel % csv
 writexl::write_xlsx(BDV_recovery_1991_2020, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_1991_2020_350Y.xlsx")
 readr::write_csv(BDV_recovery_1991_2020, "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/BDV_recovery_1991_2020_350Y.csv")
+
+
+
+
+
 
 
 ################################################################################
@@ -280,6 +293,15 @@ recovery_long_1961_1990 <- recovery_years_1961_1990 %>%
   select(-StandAge.x, -StandAge.y)
 
 
+
+###-----------------
+
+This is saving the data carful to not over write
+
+###-----------------
+
+
+
 # write excel needed for the next script
 write.csv(recovery_long_1961_1990, 
           "C:/iLand/2023/20230901_Bottoms_Up/20230914_plot_experiment/_project/output/recovery_long_1961_1990_350Y.csv", 
@@ -332,6 +354,16 @@ recovery_long_1991_2020 <- recovery_years_1991_2020 %>%
   # Create unified 'Stand age' column and drop redundant columns if they exist
   mutate(StandAge = coalesce(StandAge.x, StandAge.y)) %>%
   select(-StandAge.x, -StandAge.y)
+
+
+
+###-----------------
+
+This is saving the data carful to not over write
+
+###-----------------
+
+
 
 
 # write excel needed for the next script
@@ -412,6 +444,16 @@ summary_table_paired <- summary_table_long %>%
     values_fill = 0
   ) %>%
   arrange(taxa_threshold, forest_cat)
+
+
+
+###-----------------
+
+This is saving the data carful to not over write
+
+###-----------------
+
+
 
 
 # write excel needed for the next script

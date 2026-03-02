@@ -630,6 +630,8 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
   
   #-----------------------------------------------------------------------------
   # --- NEW FUNCTIONALITY FOR MIN/MAX/MEAN ---
+  # THIS PART CLEAN THE OUTLIERS TO THE PREDICTION 1000 FUNCTIONS
+  
   # Calculate summary statistics for each taxon and year
   summary_bayesian_results <- bayesian_results %>%
     pivot_longer(
@@ -640,10 +642,23 @@ for (i in (1:length(database_files)))  {    # We read in the files in the loop. 
     group_by(year, taxon_richness) %>%  # Group by year and taxon
     summarize(
       min_value = quantile(richness_value, 0.05, na.rm = TRUE),  # Minimum (5th percentile)
+      # IN CASE YOU WANT THE OUTLIERS TOO THEN REPLACE THE ABOVE SCRIPT WITH IT
+      # min_value = min(richness_value, na.rm = TRUE),
       mean_value = mean(richness_value, na.rm = TRUE),           # Mean
       max_value = quantile(richness_value, 0.95, na.rm = TRUE),  # Maximum (95th percentile)
+      #max_value = max(richness_value, na.rm = TRUE),
       .groups = "drop"                                           # Ungroup after summarization
     )
+  
+  
+  
+  # IN CASE YOU WANT THE OUTLIERS TOO THEN REPLACE THE ABOVE SCRIPT WITH IT:
+  
+  
+  
+  
+  
+  
   
   # CREATE THE Y BDV VALUE PREDICTED
   # SELECT VARIABLES NEEDED
@@ -885,13 +900,6 @@ library(ggplot2)
 library(GGally)
 library(corrplot)
 library(gridExtra) # To arrange the graphs in a grid
-
-
-
-
-
-#---
-1+1
 
 
 #-------------------------------------------------------------------------------
@@ -3280,7 +3288,7 @@ geom_boxplot(
   ) +
   
   scale_y_continuous(
-    limits = c(40, 250), 
+    limits = c(NA, 250),
     breaks = pretty_breaks(n = 6)
   ) +
   
@@ -3398,5 +3406,25 @@ Final_plot <- B3 / MF1 +
 
 print(Final_plot)
 
-
+########################################
+ USE IT TO KNOW THE YEAR IN WHICH A SPECIFIC 
+  RUN REACH THE TARGET BIODIVERSITY VALUE
+########################################
+  
+  threshold <- 192
+  
+  df_A <- subset(reduced_data, run == "A_Unmanaged_Beech_Stand.sqlite")
+  
+  # Order by year to ensure chronological order
+  df_A <- df_A[order(df_A$year), ]
+  
+  # Identify first crossing
+  first_index <- which(df_A$PRED_RICH_MACROFUNGI >= threshold)[1]
+  
+  first_year  <- df_A$year[first_index]
+  first_value <- df_A$PRED_RICH_MACROFUNGI[first_index]
+  
+  first_year
+  first_value
+  
 
