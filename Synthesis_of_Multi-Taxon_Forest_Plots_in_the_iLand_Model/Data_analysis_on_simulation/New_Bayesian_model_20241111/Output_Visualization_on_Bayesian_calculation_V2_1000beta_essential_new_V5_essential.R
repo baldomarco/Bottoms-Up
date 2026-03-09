@@ -3406,6 +3406,8 @@ Final_plot <- B3 / MF1 +
 
 print(Final_plot)
 
+
+
 ########################################
  USE IT TO KNOW THE YEAR IN WHICH A SPECIFIC 
   RUN REACH THE TARGET BIODIVERSITY VALUE
