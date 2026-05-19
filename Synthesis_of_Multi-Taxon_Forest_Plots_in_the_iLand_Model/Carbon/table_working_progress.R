@@ -22,7 +22,7 @@ clean_deadwood_iland <- standing_lying_deadwood_data %>%
 
 # Deadwood decay stage basic wood density conversion from 5 to 4 classes in Eu tree sp (loop). This conversion is based on the adjusted values for a generalization in Europe of https://doi.org/10.1016/j.foreco.2023.121431. Tree species not into the table coming from the laboratory analysis (https://doi.org/10.1016/j.foreco.2023.121431) on the deadwood deacy stages of every analyzed species are categorized as deciduous or coniferous unless the Genus was shared as in Alnus, Quercus, Pinus, Abies and Fraxinus see line 215 tree species conversion 
 {
-# Create a list of original values for each species
+# Create a list of original values for each species Bitunjac et al., 2023 - table 6 - kg/m3
 species_decstag <- list(
   Abies = c(343, 305, 247, 174, 149),
   Alnus = c(422, 359, 286, 197, 120),
@@ -179,7 +179,7 @@ quartiles
 
 # Run it always otherwise you will lose the consistency between clean_deadwood_iland and decstag
 # Change the tree species names for the tables merging 
-
+1
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Picea abies", "Picea", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Abies alba", "Abies", treesp))
   clean_deadwood_iland <- mutate(clean_deadwood_iland, treesp = if_else(treesp == "Larix decidua", "coniferous", treesp))
