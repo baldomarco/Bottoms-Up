@@ -48,7 +48,7 @@ if (!dir.exists(plot_dir)) {
   dir.create(plot_dir)
 }
 
-# Process each site
+# Process each site and save into the new folder in .xlsx format
 unique_sites <- unique(treedata$siteID)
 for (site in unique_sites) {
   site_data <- subset(treedata, siteID == site)

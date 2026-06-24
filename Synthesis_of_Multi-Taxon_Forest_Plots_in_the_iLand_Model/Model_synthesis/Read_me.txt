@@ -6,6 +6,10 @@ IN THIS VERSION WE HAVE TWO PARTS OF THE ANALYSIS:
 1) ONE IS THE WHOLE BOTTOMS UP DATABASE CONVERSION OF THE PLOTS INTO EXCEL TABLES EVERY SINGLE PLOTS DIVIDED BY FOLDERS RAPPRESENTING THE DIFFERENT SITES/DATASET OF PLOTS. HERE THE MAIN CHANGE IS THE COORDINATES CONVERSION IN METRICS COORDINATES OF EVERY SINGLE TREE PRESENT AND DELETE OF NA VALUES.
 2) PROCESS ONLY FOR THE CZECH REPUBLIC CZ1 SITE EVERYTHING NEEDED FOR THE INPUT TABLES IN ILAND (INIT, GIS, ENV TABLES, RU, ETC)
 
+Updates: here there are few issues. 
+1. The first is that not all the bottoms-up dataset has same plot size
+2. Another issue is that for make the ENV input file .txt with soil and climate (moreover) isn't enough. You need to add a piece of code from: PC path: C:\Users\baldo\Documents\GitHub\Bottoms-Up\Synthesis_of_Multi-Taxon_Forest_Plots_in_the_iLand_Model\Model_synthesis\back_up_r_script\Sampling_Plot_Synthesis_v1 - line 777
+3. The initial script isn't intended to have the age column, so you need to run that part too.
 
 # Sampling_Plot_Synthesis.r
 
@@ -15,3 +19,6 @@ STILL HERE DOESN'T WORK IN THE DELL PC. IT WAS USED TO PLOT THE COORDINATES CONV
 # Sampling_Plot_Synthesis_loop_working_progress.r
 
 AS FOR THE SAMPLING PLOT SYNTHESIS BUT TRYING TO MAKE A LOOP TO PROCESS ALL THE PLOTS TOGETHER INSTEAD THEN SEPARETLY LIKE IT IS NOW.
+
+
+# Plot_synthesis_automatised_v1.r
